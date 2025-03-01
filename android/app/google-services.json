@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "235124206131",
+    "project_id": "cancer-scan",
+    "storage_bucket": "cancer-scan.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:235124206131:android:9e8fa0cac3df92c85a9146",
+        "android_client_info": {
+          "package_name": "com.example.canser_scan"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8Ec3NJNshGMpmNsbuf8z3xuIeTgREIc4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
