@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class TakeTestPage extends StatelessWidget {
   const TakeTestPage({super.key});
-
+  static String id = 'TakeTestPage';
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;

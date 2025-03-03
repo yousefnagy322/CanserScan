@@ -7,7 +7,7 @@ import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
-
+  static String id = "LoginPage";
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
@@ -95,12 +95,7 @@ class _LoginPageState extends State<LoginPage> {
                             try {
                               await loginUser();
                               showSnackBar(context, 'suucess');
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => HomePage(),
-                                ),
-                              );
+                              Navigator.pushNamed(context, HomePage.id);
                             } on FirebaseAuthException catch (e) {
                               if (e.code == 'user-not-found') {
                                 showSnackBar(
@@ -140,12 +135,7 @@ class _LoginPageState extends State<LoginPage> {
                   Center(
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => RegisterPage(),
-                          ),
-                        );
+                        Navigator.pushNamed(context, RegisterPage.id);
                       },
                       child: Text(
                         'Don\'t Have Account.?',

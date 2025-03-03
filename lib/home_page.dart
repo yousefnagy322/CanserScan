@@ -5,7 +5,7 @@ import 'package:simple_gradient_text/simple_gradient_text.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
-
+  static String id = "HomePage";
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;

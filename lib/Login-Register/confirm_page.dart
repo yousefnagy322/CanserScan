@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class ConfirmPage extends StatelessWidget {
   const ConfirmPage({super.key});
-
+  static String id = "ConfirmPage";
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;

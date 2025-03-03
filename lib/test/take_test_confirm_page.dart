@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class TakeTestConfirmPage extends StatelessWidget {
   const TakeTestConfirmPage({super.key});
+  static String id = 'TakeTestConfirmPage';
 
   @override
   Widget build(BuildContext context) {

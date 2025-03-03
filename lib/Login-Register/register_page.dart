@@ -1,10 +1,12 @@
 import 'package:canser_scan/helper/show_snack_bar.dart';
+import 'package:canser_scan/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
+  static String id = "RegisterPage";
 
   @override
   RegisterPageState createState() => RegisterPageState();
@@ -111,7 +113,7 @@ class RegisterPageState extends State<RegisterPage> {
                             try {
                               await registeruser();
                               showSnackBar(context, 'suucess');
-                              Navigator.pop(context);
+                              Navigator.pushNamed(context, HomePage.id);
                             } on FirebaseAuthException catch (e) {
                               if (e.code == 'weak-password') {
                                 showSnackBar(

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AccountSettings extends StatefulWidget {
   const AccountSettings({super.key});
-
+  static String id = "AccountSettings";
   @override
   AccountSettingsState createState() => AccountSettingsState();
 }
