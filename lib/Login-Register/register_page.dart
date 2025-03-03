@@ -1,5 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:canser_scan/helper/show_snack_bar.dart';
 import 'package:canser_scan/home_page.dart';
+import 'package:canser_scan/widgets/custom_label.dart';
+import 'package:canser_scan/widgets/cutom_text_filed.dart';
+import 'package:canser_scan/widgets/main_custom_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
@@ -13,11 +18,10 @@ class RegisterPage extends StatefulWidget {
 }
 
 class RegisterPageState extends State<RegisterPage> {
-  String? gender; // To store selected gender
+  String? gender;
   String? email;
   String? password;
   bool isLoading = false;
-
   GlobalKey<FormState> formKey = GlobalKey();
   @override
   Widget build(BuildContext context) {
@@ -62,58 +66,69 @@ class RegisterPageState extends State<RegisterPage> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 46),
+                  const SizedBox(height: 46),
 
-                  buildLabel("First name"),
-                  buildTextField(screenWidth * 0.8),
+                  const BuildLabel(label: 'First name'),
+                  BuildTextField(
+                    screenWidth: screenWidth * 0.8,
+                    onChanged: (data) {},
+                  ),
 
-                  SizedBox(height: 26),
-                  buildLabel("Second name"),
-                  buildTextField(screenWidth * 0.8),
+                  const SizedBox(height: 26),
+                  const BuildLabel(label: "Second name"),
+                  BuildTextField(
+                    screenWidth: screenWidth * 0.8,
+                    onChanged: (data) {},
+                  ),
 
-                  SizedBox(height: 26),
-                  buildLabel("Gender"),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 26),
+                  const BuildLabel(label: "Gender"),
+                  const SizedBox(height: 12),
                   buildGenderOption("Male"),
                   buildGenderOption("Female"),
 
-                  SizedBox(height: 26),
-                  buildLabel("Email"),
-                  buildTextField(
+                  const SizedBox(height: 26),
+                  const BuildLabel(label: "Email"),
+                  BuildTextField(
                     onChanged: (data) {
                       email = data;
                     },
-                    screenWidth,
+                    screenWidth: screenWidth,
                     hintText: "Enter your email or phone number..",
                   ),
 
-                  SizedBox(height: 26),
-                  buildLabel("Password"),
-                  buildTextField(
+                  const SizedBox(height: 26),
+                  const BuildLabel(label: "Password"),
+                  BuildTextField(
                     onChanged: (data) {
                       password = data;
                     },
-                    screenWidth,
+                    screenWidth: screenWidth,
                     hintText: "Create password at least 8ch ..",
                     obscureText: true,
                   ),
 
-                  SizedBox(height: 36),
+                  const SizedBox(height: 36),
                   Center(
                     child: SizedBox(
                       height: 45,
                       width:
                           screenWidth *
                           0.7, // Button width adjusts to screen size
-                      child: ElevatedButton(
+                      child: BuildCustomButton(
+                        buttonText: 'Confirm',
                         onPressed: () async {
                           if (formKey.currentState!.validate()) {
-                            isLoading = true;
-                            setState(() {});
+                            setState(() {
+                              isLoading = true;
+                            });
                             try {
                               await registeruser();
                               showSnackBar(context, 'suucess');
-                              Navigator.pushNamed(context, HomePage.id);
+                              Navigator.pushReplacementNamed(
+                                context,
+                                HomePage.id,
+                              );
                             } on FirebaseAuthException catch (e) {
                               if (e.code == 'weak-password') {
                                 showSnackBar(
@@ -127,28 +142,15 @@ class RegisterPageState extends State<RegisterPage> {
                                 );
                               }
                             }
-                            isLoading = false;
-                            setState(() {});
+                            setState(() {
+                              isLoading = false;
+                            });
                           } else {}
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xff3674B5),
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                        ),
-                        child: Text(
-                          "Confirm",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
@@ -161,56 +163,6 @@ class RegisterPageState extends State<RegisterPage> {
   Future<void> registeruser() async {
     UserCredential user = await FirebaseAuth.instance
         .createUserWithEmailAndPassword(email: email!, password: password!);
-  }
-
-  Widget buildLabel(String text) {
-    return Text(
-      text,
-      style: TextStyle(
-        color: Colors.white,
-        fontSize: 18,
-        fontWeight: FontWeight.w400,
-        fontFamily: 'Roboto',
-      ),
-    );
-  }
-
-  Widget buildTextField(
-    double screenWidth, {
-    Function(String)? onChanged,
-    String? hintText,
-    bool obscureText = false,
-  }) {
-    return SizedBox(
-      width: screenWidth * 0.9,
-      child: TextFormField(
-        validator: (data) {
-          if (data!.isEmpty) {
-            return "field can't be empty";
-          }
-          return null;
-        },
-        onChanged: onChanged,
-        style: TextStyle(color: Colors.white),
-        cursorColor: Colors.white,
-        obscureText: obscureText,
-        decoration: InputDecoration(
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.white, width: 1.5),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.white),
-          ),
-          hintText: hintText,
-          hintStyle: TextStyle(
-            color: Colors.white70,
-            fontSize: 15,
-            fontWeight: FontWeight.w400,
-            fontFamily: 'Roboto',
-          ),
-        ),
-      ),
-    );
   }
 
   Widget buildGenderOption(String genderValue) {

@@ -1,6 +1,13 @@
+// ignore_for_file: use_build_context_synchronously
+
 import r'package:canser_scan/Login-Register/register_page.dart';
+import 'package:canser_scan/helper/constants.dart';
 import 'package:canser_scan/helper/show_snack_bar.dart';
 import 'package:canser_scan/home_page.dart';
+
+import 'package:canser_scan/widgets/custom_label.dart';
+import 'package:canser_scan/widgets/cutom_text_filed.dart';
+import 'package:canser_scan/widgets/main_custom_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
@@ -26,7 +33,7 @@ class _LoginPageState extends State<LoginPage> {
       color: Colors.white70,
       progressIndicator: CircularProgressIndicator(color: Colors.white),
       child: Scaffold(
-        backgroundColor: const Color(0xFF194D59),
+        backgroundColor: kPrimaryColor,
         body: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
@@ -35,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 250),
+                  const SizedBox(height: 250),
                   Center(
                     child: Text(
                       'Login',
@@ -48,29 +55,29 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 24),
-                  buildLabel('Email'),
-                  SizedBox(height: 8),
-                  buildTextField(
+                  const SizedBox(height: 24),
+                  const BuildLabel(label: 'Email'),
+                  const SizedBox(height: 8),
+                  BuildTextField(
                     onChanged: (data) {
                       email = data;
                     },
-                    screenWidth,
+                    screenWidth: screenWidth,
                     hintText: 'Enter your email',
                   ),
-                  SizedBox(height: 16),
-                  buildLabel('Password'),
-                  SizedBox(height: 8),
-                  buildTextField(
+                  const SizedBox(height: 16),
+                  const BuildLabel(label: 'Password'),
+                  const SizedBox(height: 8),
+                  BuildTextField(
                     onChanged: (data) {
                       password = data;
                     },
-                    screenWidth,
+                    screenWidth: screenWidth,
                     obscureText: true,
                     hintText: 'Enter your password',
                   ),
-                  SizedBox(height: 16),
-                  Text(
+                  const SizedBox(height: 16),
+                  const Text(
                     'Forget your password..?',
                     style: TextStyle(
                       decoration: TextDecoration.underline,
@@ -80,20 +87,21 @@ class _LoginPageState extends State<LoginPage> {
                       fontWeight: FontWeight.w400,
                     ),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Center(
                     child: SizedBox(
-                      height: 45,
                       width:
                           screenWidth *
                           0.65, // Button width adjusts to screen size
-                      child: ElevatedButton(
+                      child: BuildCustomButton(
+                        buttonText: 'Login',
                         onPressed: () async {
                           if (formKey.currentState!.validate()) {
-                            isLoading = true;
-                            setState(() {});
+                            setState(() {
+                              isLoading = true;
+                            });
                             try {
-                              await loginUser();
+                              await loginUser(email, password);
                               showSnackBar(context, 'suucess');
                               Navigator.pushNamed(context, HomePage.id);
                             } on FirebaseAuthException catch (e) {
@@ -109,29 +117,15 @@ class _LoginPageState extends State<LoginPage> {
                                 );
                               }
                             }
-                            isLoading = false;
-                            setState(() {});
+                            setState(() {
+                              isLoading = false;
+                            });
                           } else {}
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xff3674B5),
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                        ),
-                        child: Text(
-                          "Login",
-                          style: TextStyle(
-                            fontFamily: 'Roboto',
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
                       ),
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Center(
                     child: GestureDetector(
                       onTap: () {
@@ -158,58 +152,8 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Future<void> loginUser() async {
+  Future<void> loginUser(email, password) async {
     UserCredential user = await FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email!, password: password!);
-  }
-
-  Widget buildLabel(String text) {
-    return Text(
-      text,
-      style: TextStyle(
-        color: Colors.white,
-        fontSize: 18,
-        fontWeight: FontWeight.w400,
-        fontFamily: 'Roboto',
-      ),
-    );
-  }
-
-  Widget buildTextField(
-    double screenWidth, {
-    Function(String)? onChanged,
-    String? hintText,
-    bool obscureText = false,
-  }) {
-    return SizedBox(
-      width: screenWidth * 0.9,
-      child: TextFormField(
-        validator: (data) {
-          if (data!.isEmpty) {
-            return "field can't be empty";
-          }
-          return null;
-        },
-        onChanged: onChanged,
-        style: TextStyle(color: Colors.white),
-        cursorColor: Colors.white,
-        obscureText: obscureText,
-        decoration: InputDecoration(
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.white, width: 1.5),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.white),
-          ),
-          hintText: hintText,
-          hintStyle: TextStyle(
-            color: Colors.white70,
-            fontSize: 15,
-            fontWeight: FontWeight.w400,
-            fontFamily: 'Roboto',
-          ),
-        ),
-      ),
-    );
   }
 }

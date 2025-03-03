@@ -1,7 +1,9 @@
 import 'package:canser_scan/Login-Register/confirm_page.dart';
 import 'package:canser_scan/Login-Register/login_page.dart';
+import 'package:canser_scan/helper/constants.dart';
 import 'package:canser_scan/test/take_test_confirm_page.dart';
 import 'package:canser_scan/test/test_result_neg.dart';
+import 'package:canser_scan/widgets/main_custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_shadow/simple_shadow.dart';
 
@@ -12,7 +14,7 @@ class WelcomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF194D59),
+      backgroundColor: kPrimaryColor,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -49,7 +51,7 @@ class WelcomePage extends StatelessWidget {
                 fontWeight: FontWeight.w700,
               ),
             ),
-            Text(
+            const Text(
               'to',
               style: TextStyle(
                 color: Colors.white54,
@@ -67,32 +69,14 @@ class WelcomePage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 44),
-            ElevatedButton(
+            BuildCustomButton(
+              buttonText: 'Get Started',
               onPressed: () {
-                Navigator.pushNamed(context, LoginPage.id);
+                Navigator.pushReplacementNamed(context, LoginPage.id);
               },
-              style: ElevatedButton.styleFrom(
-                fixedSize: const Size(271, 45),
-                backgroundColor: const Color(0xFF3674B5),
-                foregroundColor: Colors.black,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 12,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-              child: const Text(
-                "Get Started",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontFamily: 'Roboto',
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
             ),
+
+            //will be removed
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -102,7 +86,6 @@ class WelcomePage extends StatelessWidget {
               },
               child: Text('confirm screen'),
             ),
-
             ElevatedButton(
               onPressed: () {
                 Navigator.push(

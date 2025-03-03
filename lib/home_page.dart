@@ -1,4 +1,5 @@
 import 'package:canser_scan/account_settings.dart';
+import 'package:canser_scan/helper/constants.dart';
 import 'package:canser_scan/test/take_test_page.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
@@ -113,7 +114,7 @@ class HomePage extends StatelessWidget {
                                 Text(
                                   'Yousef',
                                   style: TextStyle(
-                                    color: Color(0xff194D59),
+                                    color: kPrimaryColor,
                                     fontSize: 16,
                                     fontWeight: FontWeight.w400,
                                   ),
@@ -136,7 +137,7 @@ class HomePage extends StatelessWidget {
                         colors: [Color(0xff12748B), Color(0xff051F25)],
                       ),
                     ),
-                    SizedBox(height: 125),
+                    const SizedBox(height: 125),
                     buildnewbutton(
                       screenWidth,
                       'Take test',

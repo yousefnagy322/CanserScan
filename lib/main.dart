@@ -2,6 +2,7 @@ import 'package:canser_scan/Login-Register/confirm_page.dart';
 import 'package:canser_scan/Login-Register/login_page.dart';
 import 'package:canser_scan/Login-Register/register_page.dart';
 import 'package:canser_scan/account_settings.dart';
+import 'package:canser_scan/helper/constants.dart';
 import 'package:canser_scan/home_page.dart';
 import 'package:canser_scan/test/take_test_confirm_page.dart';
 import 'package:canser_scan/test/take_test_page.dart';
@@ -24,6 +25,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        primaryColor: kPrimaryColor,
+        textSelectionTheme: TextSelectionThemeData(
+          cursorColor: const Color(0xFF26A69A),
+          selectionColor: const Color(0xFF7AC5C9),
+          selectionHandleColor: const Color(0xFF26A69A),
+        ),
+      ),
       routes: {
         WelcomePage.id: (context) => WelcomePage(),
         LoginPage.id: (context) => LoginPage(),
