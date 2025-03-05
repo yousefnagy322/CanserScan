@@ -5,9 +5,12 @@ import 'package:canser_scan/home_page.dart';
 import 'package:canser_scan/widgets/custom_label.dart';
 import 'package:canser_scan/widgets/cutom_text_filed.dart';
 import 'package:canser_scan/widgets/main_custom_button.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+
+FirebaseFirestore db = FirebaseFirestore.instance;
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -18,6 +21,7 @@ class RegisterPage extends StatefulWidget {
 }
 
 class RegisterPageState extends State<RegisterPage> {
+  String? firstName, secondName;
   String? gender;
   String? email;
   String? password;
@@ -71,14 +75,18 @@ class RegisterPageState extends State<RegisterPage> {
                   const BuildLabel(label: 'First name'),
                   BuildTextField(
                     screenWidth: screenWidth * 0.8,
-                    onChanged: (data) {},
+                    onChanged: (data) {
+                      firstName = data;
+                    },
                   ),
 
                   const SizedBox(height: 26),
                   const BuildLabel(label: "Second name"),
                   BuildTextField(
                     screenWidth: screenWidth * 0.8,
-                    onChanged: (data) {},
+                    onChanged: (data) {
+                      secondName = data;
+                    },
                   ),
 
                   const SizedBox(height: 26),
@@ -163,6 +171,17 @@ class RegisterPageState extends State<RegisterPage> {
   Future<void> registeruser() async {
     UserCredential user = await FirebaseAuth.instance
         .createUserWithEmailAndPassword(email: email!, password: password!);
+
+    String uid = user.user!.uid;
+
+    await FirebaseFirestore.instance.collection('users').doc(uid).set({
+      'First name': firstName,
+      'Second name': secondName,
+      'Gender': gender,
+      'Email': email,
+      'Password': password,
+      'uid': uid,
+    });
   }
 
   Widget buildGenderOption(String genderValue) {

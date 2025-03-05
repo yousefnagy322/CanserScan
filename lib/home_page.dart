@@ -1,6 +1,8 @@
 import 'package:canser_scan/account_settings.dart';
 import 'package:canser_scan/helper/constants.dart';
 import 'package:canser_scan/test/take_test_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
 
@@ -28,12 +30,11 @@ class HomePage extends StatelessWidget {
                       height: screenWidth * 0.1,
                       width: screenWidth * 0.1,
                     ),
-                    Text(
-                      'Yousef',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: screenWidth * 0.04,
-                      ),
+                    buildUserData(
+                      filed: 'First name',
+                      color: Colors.black,
+                      fontSize: screenWidth * 0.04,
+                      fontWeight: FontWeight.w700,
                     ),
                   ],
                 ),
@@ -43,10 +44,7 @@ class HomePage extends StatelessWidget {
                 'settings',
                 'assets/photos/settings.png',
                 ontap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => AccountSettings()),
-                  );
+                  Navigator.pushNamed(context, AccountSettings.id);
                 },
               ),
               builddrawercategory(
@@ -93,7 +91,7 @@ class HomePage extends StatelessWidget {
               child: Padding(
                 padding: EdgeInsets.symmetric(
                   vertical: screenWidth * 0.14,
-                  horizontal: screenWidth * 0.1,
+                  horizontal: screenWidth * 0.05,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,13 +109,11 @@ class HomePage extends StatelessWidget {
                             child: Row(
                               children: [
                                 Image.asset('assets/photos/person.png'),
-                                Text(
-                                  'Yousef',
-                                  style: TextStyle(
-                                    color: kPrimaryColor,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w400,
-                                  ),
+                                buildUserData(
+                                  filed: 'First name',
+                                  color: kPrimaryColor,
+                                  fontSize: screenWidth * 0.04,
+                                  fontWeight: FontWeight.w400,
                                 ),
                               ],
                             ),
@@ -137,7 +133,7 @@ class HomePage extends StatelessWidget {
                         colors: [Color(0xff12748B), Color(0xff051F25)],
                       ),
                     ),
-                    const SizedBox(height: 125),
+                    const SizedBox(height: 110),
                     buildnewbutton(
                       screenWidth,
                       'Take test',
@@ -167,6 +163,12 @@ class HomePage extends StatelessWidget {
                     buildnewbutton(
                       screenWidth,
                       'About us',
+                      'assets/photos/about us.png',
+                    ),
+                    SizedBox(height: 24),
+                    buildnewbutton(
+                      screenWidth,
+                      'test',
                       'assets/photos/about us.png',
                     ),
                   ],
@@ -250,6 +252,54 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Future<String> getUserData(String filed) async {
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    DocumentSnapshot userDoc =
+        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    return userDoc[filed];
+  }
+
+  Widget buildUserData({
+    var filed,
+    Color color = Colors.black,
+    double fontSize = 16,
+    FontWeight fontWeight = FontWeight.w400,
+  }) {
+    return FutureBuilder<String>(
+      future: getUserData(filed),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Text(
+            'Loading...',
+            style: TextStyle(
+              color: color,
+              fontSize: fontSize,
+              fontWeight: fontWeight,
+            ),
+          );
+        }
+        if (snapshot.hasError) {
+          return Text(
+            'Error loading name',
+            style: TextStyle(
+              color: color,
+              fontSize: fontSize,
+              fontWeight: fontWeight,
+            ),
+          );
+        }
+        return Text(
+          '${snapshot.data}',
+          style: TextStyle(
+            color: color,
+            fontSize: fontSize,
+            fontWeight: fontWeight,
+          ),
+        );
+      },
     );
   }
 }
