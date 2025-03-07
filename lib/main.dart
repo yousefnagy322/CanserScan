@@ -7,6 +7,7 @@ import 'package:canser_scan/home_page.dart';
 import 'package:canser_scan/test/take_test_confirm_page.dart';
 import 'package:canser_scan/test/take_test_page.dart';
 import 'package:canser_scan/test/test_result_neg.dart';
+import 'package:canser_scan/test/test_result_pos.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: kPrimaryColor,
         textSelectionTheme: TextSelectionThemeData(
@@ -43,6 +45,7 @@ class MyApp extends StatelessWidget {
         TakeTestPage.id: (context) => TakeTestPage(),
         TakeTestConfirmPage.id: (context) => TakeTestConfirmPage(),
         TestResultNeg.id: (context) => TestResultNeg(),
+        TestResultPos.id: (context) => TestResultPos(),
       },
       initialRoute: WelcomePage.id,
     );

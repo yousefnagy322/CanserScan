@@ -1,8 +1,50 @@
+import 'dart:io';
+import 'package:canser_scan/test/take_test_confirm_page.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 
 class TakeTestPage extends StatelessWidget {
-  const TakeTestPage({super.key});
+  TakeTestPage({super.key});
   static String id = 'TakeTestPage';
+
+  File? imageFile;
+
+  final picker = ImagePicker();
+
+  pickimagegallery(context) async {
+    final PickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (PickedFile != null) {
+      imageFile = File(PickedFile.path);
+    }
+
+    if (imageFile != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => TakeTestConfirmPage(imageFile: imageFile),
+        ),
+      );
+    }
+  }
+
+  pickimagecamera(context) async {
+    final PickedFile = await picker.pickImage(source: ImageSource.camera);
+
+    if (PickedFile != null) {
+      imageFile = File(PickedFile.path);
+    }
+
+    if (imageFile != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => TakeTestConfirmPage(imageFile: imageFile),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -29,6 +71,7 @@ class TakeTestPage extends StatelessWidget {
             leading: IconButton(
               padding: const EdgeInsets.all(0),
               onPressed: () {
+                imageFile = null;
                 Navigator.pop(context);
               },
               icon: Image.asset('assets/photos/dark_back_arrow.png'),
@@ -61,22 +104,32 @@ class TakeTestPage extends StatelessWidget {
               children: [
                 Padding(
                   padding: EdgeInsets.only(left: screenWidth * 0.09),
-                  child: Column(
-                    children: [
-                      buildbox(screenWidth, 'assets/photos/take_photo.png'),
-                      SizedBox(height: 8),
-                      buildlabel(screenWidth, 'Take Photo'),
-                    ],
+                  child: GestureDetector(
+                    onTap: () {
+                      pickimagecamera(context);
+                    },
+                    child: Column(
+                      children: [
+                        buildbox(screenWidth, 'assets/photos/take_photo.png'),
+                        SizedBox(height: 8),
+                        buildlabel(screenWidth, 'Take Photo'),
+                      ],
+                    ),
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.only(left: screenWidth * 0.09),
-                  child: Column(
-                    children: [
-                      buildbox(screenWidth, 'assets/photos/Choose_image.png'),
-                      SizedBox(height: 8),
-                      buildlabel(screenWidth, 'Choose Image'),
-                    ],
+                  child: GestureDetector(
+                    onTap: () {
+                      pickimagegallery(context);
+                    },
+                    child: Column(
+                      children: [
+                        buildbox(screenWidth, 'assets/photos/Choose_image.png'),
+                        SizedBox(height: 8),
+                        buildlabel(screenWidth, 'Choose Image'),
+                      ],
+                    ),
                   ),
                 ),
               ],

@@ -3,6 +3,7 @@ import 'package:canser_scan/Login-Register/login_page.dart';
 import 'package:canser_scan/helper/constants.dart';
 import 'package:canser_scan/test/take_test_confirm_page.dart';
 import 'package:canser_scan/test/test_result_neg.dart';
+import 'package:canser_scan/test/test_result_pos.dart';
 import 'package:canser_scan/widgets/main_custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_shadow/simple_shadow.dart';
@@ -96,15 +97,6 @@ class WelcomePage extends StatelessWidget {
                 );
               },
               child: Text('confirm screen'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => TestResultNeg()),
-                );
-              },
-              child: Text('test neg screen'),
             ),
             const Spacer(flex: 1),
           ],

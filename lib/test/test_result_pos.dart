@@ -1,11 +1,12 @@
 import 'package:canser_scan/helper/constants.dart';
-import 'package:canser_scan/widgets/main_custom_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
-class TestResultNeg extends StatelessWidget {
-  const TestResultNeg({super.key});
-
-  static String id = 'TestResultNeg';
+class TestResultPos extends StatelessWidget {
+  String? highestClass;
+  int? highestConfidence;
+  TestResultPos({super.key, this.highestClass, this.highestConfidence});
+  static String id = 'TestResultPos';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,15 +52,46 @@ class TestResultNeg extends StatelessWidget {
             ),
             SizedBox(height: 30),
             Text(
-              'Negative',
+              'Postive',
               style: TextStyle(
-                color: Colors.green,
-                fontSize: 30,
-                fontWeight: FontWeight.w700,
+                color: Colors.red,
+                fontSize: 32,
+                fontWeight: FontWeight.w400,
               ),
             ),
-            SizedBox(height: 60),
-            BuildCustomButton(buttonText: 'Try again', onPressed: () {}),
+            Container(
+              height: 270,
+              width: 300,
+              decoration: BoxDecoration(
+                color: kPrimaryColor,
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Column(
+                children: [
+                  SizedBox(height: 30),
+                  Text(
+                    'Cancer Type',
+                    style: TextStyle(
+                      fontSize: 22,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Text(
+                    '$highestClass',
+                    style: TextStyle(fontSize: 20, color: Colors.white),
+                  ),
+                  Text(
+                    'Confidence',
+                    style: TextStyle(fontSize: 20, color: Colors.white),
+                  ),
+                  Text(
+                    '${highestConfidence!}%',
+                    style: TextStyle(fontSize: 20, color: Colors.white),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
