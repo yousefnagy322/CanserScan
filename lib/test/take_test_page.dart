@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:canser_scan/home_page.dart';
 import 'package:canser_scan/test/take_test_confirm_page.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
@@ -72,7 +73,7 @@ class TakeTestPage extends StatelessWidget {
               padding: const EdgeInsets.all(0),
               onPressed: () {
                 imageFile = null;
-                Navigator.pop(context);
+                Navigator.pushReplacementNamed(context, HomePage.id);
               },
               icon: Image.asset('assets/photos/dark_back_arrow.png'),
             ),

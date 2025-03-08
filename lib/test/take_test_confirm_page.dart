@@ -1,10 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:canser_scan/test/take_test_page.dart';
 import 'package:canser_scan/test/test_result_neg.dart';
 import 'package:canser_scan/test/test_result_pos.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:image/image.dart' as img;
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 
@@ -19,9 +22,14 @@ class TakeTestConfirmPage extends StatefulWidget {
 }
 
 class _TakeTestConfirmPageState extends State<TakeTestConfirmPage> {
-  String highestClass = '';
-  int confidencePercentage = 0;
-  double highestConfidence = 0;
+  String highestClassApi = '';
+  int confidencePercentageApi = 0;
+  double highestConfidenceApi = 0;
+
+  String highestClassModel = '';
+  int confidencePercentageModel = 0;
+  double highestConfidenceModel = 0;
+
   bool isLoading = false;
   @override
   Widget build(BuildContext context) {
@@ -88,21 +96,35 @@ class _TakeTestConfirmPageState extends State<TakeTestConfirmPage> {
                           });
                           try {
                             await classifyImageAPI(widget.imageFile!);
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (context) => TestResultPos(
-                                      highestClass: highestClass,
-                                      highestConfidence: confidencePercentage,
-                                    ),
-                              ),
-                            );
+                            await classifyImageModel(widget.imageFile!);
+
+                            if (highestClassModel == "Unknown" ||
+                                confidencePercentageApi < 50) {
+                              Navigator.pushReplacementNamed(
+                                context,
+                                TestResultNeg.id,
+                              );
+                            } else {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => TestResultPos(
+                                        highestClassApi: highestClassApi,
+                                        highestConfidenceApi:
+                                            confidencePercentageApi,
+                                        highestClassModel: highestClassModel,
+                                        highestConfidenceModel:
+                                            confidencePercentageModel,
+                                      ),
+                                ),
+                              );
+                            }
                           } catch (e) {}
                           setState(() {
                             isLoading = false;
                           });
-                        } else if (confidencePercentage <= 0) {
+                        } else {
                           Navigator.pushReplacementNamed(
                             context,
                             TestResultNeg.id,
@@ -160,20 +182,91 @@ class _TakeTestConfirmPageState extends State<TakeTestConfirmPage> {
 
         predictions.forEach((key, value) {
           double confidence = value['confidence'];
-          if (confidence > highestConfidence) {
-            highestConfidence = confidence;
-            highestClass = key;
+          if (confidence > highestConfidenceApi) {
+            highestConfidenceApi = confidence;
+            highestClassApi = key;
           }
         });
-        confidencePercentage = (highestConfidence * 100).round();
-        print('Highest Class: $highestClass');
-        print('Highest Confidence: ${highestConfidence * 100}');
+        confidencePercentageApi = (highestConfidenceApi * 100).round();
+        print('Highest Class: $highestClassApi');
+        print('Highest Confidence: ${highestConfidenceApi * 100}');
       } else {
         print("Error: ${response.reasonPhrase}");
       }
     } catch (e) {
       print("Exception: $e");
     }
+  }
+
+  Future<void> classifyImageModel(File imageFile) async {
+    final interpreter = await Interpreter.fromAsset(
+      'assets/model_unquant.tflite',
+    );
+    final labels = await rootBundle
+        .loadString('assets/labels.txt')
+        .then((value) => value.split('\n'));
+
+    // Load and preprocess image
+    img.Image? image = img.decodeImage(await imageFile.readAsBytes());
+    if (image == null) {
+      print("Error decoding image");
+      return;
+    }
+    image = img.copyResize(image, width: 224, height: 224);
+
+    // Convert image to float32 tensor with normalization (-1 to 1)
+    var input = List.generate(
+      224,
+      (y) => List.generate(224, (x) {
+        final pixel = image!.getPixel(x, y);
+        return [
+          (pixel.r.toDouble() - 127.5) / 127.5,
+          (pixel.g.toDouble() - 127.5) / 127.5,
+          (pixel.b.toDouble() - 127.5) / 127.5,
+        ];
+      }),
+    );
+
+    var inputTensor = [input]; // Shape: [1, 224, 224, 3]
+    var outputTensor = List.filled(1 * 9, 0.0).reshape([1, 9]);
+
+    // Run inference
+    interpreter.run(inputTensor, outputTensor);
+
+    // Get highest confidence label
+    List<double> confidences = outputTensor[0];
+
+    for (int i = 0; i < confidences.length; i++) {
+      if (confidences[i] > highestConfidenceModel) {
+        highestConfidenceModel = confidences[i];
+        highestClassModel = labels[i];
+      }
+    }
+
+    confidencePercentageModel = (highestConfidenceModel * 100).round();
+    print('Highest Class: $highestClassModel');
+    print('Highest Confidence: $confidencePercentageModel%');
+  }
+
+  List<double> imageToByteListFloat32(
+    img.Image image,
+    int inputSize,
+    double mean,
+    double std,
+  ) {
+    // Convert image to byte list and normalize
+    var convertedBytes = Float32List(inputSize * inputSize * 3);
+    var buffer = Float32List.view(convertedBytes.buffer);
+    int pixelIndex = 0;
+    for (var y = 0; y < inputSize; y++) {
+      for (var x = 0; x < inputSize; x++) {
+        var pixel = image.getPixel(x, y);
+        buffer[pixelIndex++] = (pixel.r - mean) / std; // Red component
+        buffer[pixelIndex++] = (pixel.g - mean) / std; // Green component
+        buffer[pixelIndex++] = (pixel.b - mean) / std; // Blue component
+      }
+    }
+    return convertedBytes;
   }
 
   Text buildlabel(double screenWidth, String text) {

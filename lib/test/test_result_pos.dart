@@ -3,9 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class TestResultPos extends StatelessWidget {
-  String? highestClass;
-  int? highestConfidence;
-  TestResultPos({super.key, this.highestClass, this.highestConfidence});
+  String? highestClassApi;
+  int? highestConfidenceApi;
+  String? highestClassModel;
+  int? highestConfidenceModel;
+
+  TestResultPos({
+    super.key,
+    this.highestClassApi,
+    this.highestConfidenceApi,
+    this.highestClassModel,
+    this.highestConfidenceModel,
+  });
   static String id = 'TestResultPos';
   @override
   Widget build(BuildContext context) {
@@ -70,7 +79,7 @@ class TestResultPos extends StatelessWidget {
                 children: [
                   SizedBox(height: 30),
                   Text(
-                    'Cancer Type',
+                    'Cancer Type API',
                     style: TextStyle(
                       fontSize: 22,
                       color: Colors.white,
@@ -78,7 +87,7 @@ class TestResultPos extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '$highestClass',
+                    '$highestClassApi',
                     style: TextStyle(fontSize: 20, color: Colors.white),
                   ),
                   Text(
@@ -86,7 +95,27 @@ class TestResultPos extends StatelessWidget {
                     style: TextStyle(fontSize: 20, color: Colors.white),
                   ),
                   Text(
-                    '${highestConfidence!}%',
+                    '${highestConfidenceApi!}%',
+                    style: TextStyle(fontSize: 20, color: Colors.white),
+                  ),
+                  Text(
+                    'Cancer Type Model',
+                    style: TextStyle(
+                      fontSize: 22,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Text(
+                    '$highestClassModel',
+                    style: TextStyle(fontSize: 20, color: Colors.white),
+                  ),
+                  Text(
+                    'Confidence',
+                    style: TextStyle(fontSize: 20, color: Colors.white),
+                  ),
+                  Text(
+                    '${highestConfidenceApi!}%',
                     style: TextStyle(fontSize: 20, color: Colors.white),
                   ),
                 ],

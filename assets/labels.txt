@@ -1,0 +1,9 @@
+Unknown
+Benign Keratosis(bkl)
+Vascular Lesion(vasc)
+Squamous Cell Carcinoma(akiec)
+Melanoma(mel)
+Melanocytic Nevus(nv)
+Dermatofibroma(df)
+Actinic Keratosis(akiec)
+Basal Cell Carcinoma(bcc)

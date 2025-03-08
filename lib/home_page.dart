@@ -1,3 +1,4 @@
+import 'package:canser_scan/Login-Register/login_page.dart';
 import 'package:canser_scan/account_settings.dart';
 import 'package:canser_scan/helper/constants.dart';
 import 'package:canser_scan/test/take_test_page.dart';
@@ -12,6 +13,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Scaffold(
         drawer: Drawer(
@@ -56,6 +58,9 @@ class HomePage extends StatelessWidget {
                 screenWidth,
                 'Log Out',
                 'assets/photos/logout.png',
+                ontap: () {
+                  Navigator.pushReplacementNamed(context, LoginPage.id);
+                },
               ),
             ],
           ),
@@ -133,7 +138,7 @@ class HomePage extends StatelessWidget {
                         colors: [Color(0xff12748B), Color(0xff051F25)],
                       ),
                     ),
-                    const SizedBox(height: 110),
+                    SizedBox(height: screenWidth * 0.25),
                     buildnewbutton(
                       screenWidth,
                       'Take test',
@@ -147,7 +152,15 @@ class HomePage extends StatelessWidget {
                         );
                       },
                     ),
+
                     SizedBox(height: 24),
+                    buildnewbutton(
+                      screenWidth,
+                      'Find Doctor',
+                      'assets/photos/person.png',
+                    ),
+                    SizedBox(height: 24),
+
                     buildnewbutton(
                       screenWidth,
                       'Information',
@@ -163,12 +176,6 @@ class HomePage extends StatelessWidget {
                     buildnewbutton(
                       screenWidth,
                       'About us',
-                      'assets/photos/about us.png',
-                    ),
-                    SizedBox(height: 24),
-                    buildnewbutton(
-                      screenWidth,
-                      'test',
                       'assets/photos/about us.png',
                     ),
                   ],
