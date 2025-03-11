@@ -27,6 +27,7 @@ Future<void> loginOnPressed(
 }
 
 Future<void> loginUser(email, password) async {
+  // ignore: unused_local_variable
   UserCredential user = await FirebaseAuth.instance.signInWithEmailAndPassword(
     email: email!,
     password: password!,

@@ -1,8 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
+
 import r'package:canser_scan/Login-Register/register_page.dart';
 import 'package:canser_scan/helper/constants.dart';
 import 'package:canser_scan/helper/show_snack_bar.dart';
-import 'package:canser_scan/home_page.dart';
+import 'package:canser_scan/home_page_v2.dart';
 import 'package:canser_scan/widgets/custom_label.dart';
 import 'package:canser_scan/widgets/cutom_text_filed.dart';
 import 'package:canser_scan/widgets/main_custom_button.dart';
@@ -99,17 +100,19 @@ class _LoginPageState extends State<LoginPage> {
                               isLoading = true;
                             });
                             try {
+                              FocusManager.instance.primaryFocus?.unfocus();
                               await loginUser(email, password);
-                              showSnackBar(context, 'suucess');
+                              showSnackBar(context, 'Success');
                               Navigator.pushReplacementNamed(
                                 context,
-                                HomePage.id,
+                                HomePageV2.id,
                               );
                             } on FirebaseAuthException catch (e) {
-                              if (e.code == 'user-not-found') {
+                              print(e.code);
+                              if (e.code == 'invalid-credential') {
                                 showSnackBar(
                                   context,
-                                  'No user found for that email.',
+                                  'Invalid email or password.',
                                 );
                               } else if (e.code == 'wrong-password') {
                                 showSnackBar(
@@ -154,6 +157,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> loginUser(email, password) async {
+    // ignore: unused_local_variable
     UserCredential user = await FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email!, password: password!);
   }

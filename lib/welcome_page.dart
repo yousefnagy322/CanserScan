@@ -2,8 +2,6 @@ import 'package:canser_scan/Login-Register/confirm_page.dart';
 import 'package:canser_scan/Login-Register/login_page.dart';
 import 'package:canser_scan/helper/constants.dart';
 import 'package:canser_scan/test/take_test_confirm_page.dart';
-import 'package:canser_scan/test/test_result_neg.dart';
-import 'package:canser_scan/test/test_result_pos.dart';
 import 'package:canser_scan/widgets/main_custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_shadow/simple_shadow.dart';
@@ -22,27 +20,18 @@ class WelcomePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const Spacer(flex: 1),
-            Padding(
-              padding: const EdgeInsets.only(right: 150),
-              child: SimpleShadow(
-                child: Image.asset(
-                  'assets/photos/welcome_small.png',
-                  height: 50,
-                  width: 50,
-                ),
-              ),
-            ),
+
             SimpleShadow(
               offset: const Offset(0, 4),
               opacity: 0.5,
-              color: Colors.black,
+              color: Colors.white54,
               child: Image.asset(
-                'assets/photos/Welcome_big.png',
-                height: 215,
+                'assets/photos/big_logo-removebg-preview.png',
+                height: 250,
                 width: 311,
               ),
             ),
-            const SizedBox(height: 73.5),
+            const SizedBox(height: 60),
             const Text(
               'Welcome',
               style: TextStyle(

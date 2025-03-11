@@ -1,9 +1,13 @@
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:canser_scan/test/take_test_page.dart';
 import 'package:canser_scan/test/test_result_neg.dart';
 import 'package:canser_scan/test/test_result_pos.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -100,11 +104,13 @@ class _TakeTestConfirmPageState extends State<TakeTestConfirmPage> {
 
                             if (highestClassModel == "Unknown" ||
                                 confidencePercentageApi < 50) {
+                              saveTestResult("Negative");
                               Navigator.pushReplacementNamed(
                                 context,
                                 TestResultNeg.id,
                               );
                             } else {
+                              saveTestResult('Positive');
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -120,7 +126,9 @@ class _TakeTestConfirmPageState extends State<TakeTestConfirmPage> {
                                 ),
                               );
                             }
-                          } catch (e) {}
+                          } catch (e) {
+                            print(e);
+                          }
                           setState(() {
                             isLoading = false;
                           });
@@ -157,6 +165,38 @@ class _TakeTestConfirmPageState extends State<TakeTestConfirmPage> {
     );
   }
 
+  Future<void> saveTestResult(String result) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      print("No user logged in!");
+      return;
+    }
+
+    // Firestore references
+    DocumentReference userDoc = FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid);
+    CollectionReference testResults = userDoc.collection('Test_Results');
+    DocumentReference latestTestDoc = userDoc
+        .collection('Latest_Test_Results')
+        .doc('Latest');
+
+    Map<String, dynamic> testData = {
+      'Result': result,
+      'prediction': highestClassApi,
+      'confidence': confidencePercentageModel,
+      'timestamp': FieldValue.serverTimestamp(),
+    };
+
+    // Perform batch write: Save in subcollection & update latest test document
+    WriteBatch batch = FirebaseFirestore.instance.batch();
+    batch.set(testResults.doc(), testData); // Add to Test Results
+    batch.set(latestTestDoc, testData); // Overwrite latest result
+
+    await batch.commit();
+    print("Test result saved & latest test updated!");
+  }
+
   Future<void> classifyImageAPI(File imageFile) async {
     const String apiUrl =
         "https://classify.roboflow.com/skin-cancer-classification-kjic2/1";
@@ -188,8 +228,8 @@ class _TakeTestConfirmPageState extends State<TakeTestConfirmPage> {
           }
         });
         confidencePercentageApi = (highestConfidenceApi * 100).round();
-        print('Highest Class: $highestClassApi');
-        print('Highest Confidence: ${highestConfidenceApi * 100}');
+        print('Highest ClassApi: $highestClassApi');
+        print('Highest ConfidenceApi: ${highestConfidenceApi * 100}');
       } else {
         print("Error: ${response.reasonPhrase}");
       }
@@ -244,8 +284,8 @@ class _TakeTestConfirmPageState extends State<TakeTestConfirmPage> {
     }
 
     confidencePercentageModel = (highestConfidenceModel * 100).round();
-    print('Highest Class: $highestClassModel');
-    print('Highest Confidence: $confidencePercentageModel%');
+    print('Highest ClassModel: $highestClassModel');
+    print('Highest ConfidenceModel: $confidencePercentageModel%');
   }
 
   List<double> imageToByteListFloat32(
@@ -288,7 +328,16 @@ class _TakeTestConfirmPageState extends State<TakeTestConfirmPage> {
         color: Color(0xff194D59),
         borderRadius: BorderRadius.all(Radius.circular(15)),
       ),
-      child: Image.asset(image, scale: 1.5),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: Image.file(widget.imageFile!, fit: BoxFit.fill),
+          ),
+          Image.asset(image, scale: 1.5),
+        ],
+      ),
     );
   }
 }

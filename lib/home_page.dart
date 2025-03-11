@@ -15,175 +15,169 @@ class HomePage extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
-      body: Scaffold(
-        drawer: Drawer(
-          backgroundColor: Color(0xffEBEBEB),
-          width: screenWidth * 0.5,
-          child: Column(
-            children: [
-              Container(
-                padding: EdgeInsets.only(top: 58),
-                height: 180,
-                child: Row(
-                  children: [
-                    SizedBox(width: 20),
-                    Image.asset(
-                      'assets/photos/drawer_person.png',
-                      height: screenWidth * 0.1,
-                      width: screenWidth * 0.1,
-                    ),
-                    buildUserData(
-                      filed: 'First name',
-                      color: Colors.black,
-                      fontSize: screenWidth * 0.04,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ],
-                ),
-              ),
-              builddrawercategory(
-                screenWidth,
-                'settings',
-                'assets/photos/settings.png',
-                ontap: () {
-                  Navigator.pushNamed(context, AccountSettings.id);
-                },
-              ),
-              builddrawercategory(
-                screenWidth,
-                'Language',
-                'assets/photos/language.png',
-              ),
-              builddrawercategory(
-                screenWidth,
-                'Log Out',
-                'assets/photos/logout.png',
-                ontap: () {
-                  Navigator.pushReplacementNamed(context, LoginPage.id);
-                },
-              ),
-            ],
-          ),
-        ),
-        body: Stack(
+      drawer: Drawer(
+        backgroundColor: const Color(0xffEBEBEB),
+        width: screenWidth * 0.5,
+        child: Column(
           children: [
-            // Top Background
-            Positioned.fill(
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: Image.asset(
-                  'assets/photos/home_top.png',
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
+            Container(
+              padding: EdgeInsets.only(top: 58),
+              height: 180,
+              child: Row(
+                children: [
+                  const SizedBox(width: 20),
+                  Image.asset(
+                    'assets/photos/drawer_person.png',
+                    height: screenWidth * 0.1,
+                    width: screenWidth * 0.1,
+                  ),
+                  buildUserData(
+                    filed: 'First name',
+                    color: Colors.black,
+                    fontSize: screenWidth * 0.04,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ],
               ),
             ),
+            builddrawercategory(
+              screenWidth,
+              'settings',
+              'assets/photos/settings.png',
+              ontap: () {
+                Navigator.pushNamed(context, AccountSettings.id);
+              },
+            ),
+            builddrawercategory(
+              screenWidth,
+              'Language',
+              'assets/photos/language.png',
+            ),
+            builddrawercategory(
+              screenWidth,
+              'Log Out',
+              'assets/photos/logout.png',
+              ontap: () {
+                Navigator.pushReplacementNamed(context, LoginPage.id);
+              },
+            ),
+          ],
+        ),
+      ),
 
-            // Bottom Background
-            Positioned.fill(
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Image.asset(
-                  'assets/photos/home_bottom.png',
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
+      body: Stack(
+        children: [
+          // Top Background
+          Positioned.fill(
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: Image.asset(
+                'assets/photos/home_top.png',
+                width: double.infinity,
+                fit: BoxFit.cover,
               ),
             ),
+          ),
 
-            SizedBox(
-              width: double.infinity,
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  vertical: screenWidth * 0.14,
-                  horizontal: screenWidth * 0.05,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: screenWidth * 0.1,
-                      width: screenWidth * 0.3,
-                      child: Builder(
-                        builder: (context) {
-                          return GestureDetector(
-                            onTap: () {
-                              Scaffold.of(context).openDrawer();
-                            },
-                            child: Row(
-                              children: [
-                                Image.asset('assets/photos/person.png'),
-                                buildUserData(
-                                  filed: 'First name',
-                                  color: kPrimaryColor,
-                                  fontSize: screenWidth * 0.04,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    SizedBox(height: screenWidth * 0.12),
-                    Center(
-                      child: GradientText(
-                        'CancerScan',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: screenWidth * 0.123,
-                        ),
-                        colors: [Color(0xff12748B), Color(0xff051F25)],
-                      ),
-                    ),
-                    SizedBox(height: screenWidth * 0.25),
-                    buildnewbutton(
-                      screenWidth,
-                      'Take test',
-                      'assets/photos/test.png',
-                      onpressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => TakeTestPage(),
+          // Bottom Background
+          Positioned.fill(
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Image.asset(
+                'assets/photos/home_bottom.png',
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          SizedBox(
+            width: double.infinity,
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                vertical: screenWidth * 0.14,
+                horizontal: screenWidth * 0.05,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: screenWidth * 0.1,
+                    width: screenWidth * 0.3,
+                    child: Builder(
+                      builder: (context) {
+                        return GestureDetector(
+                          onTap: () {
+                            Scaffold.of(context).openDrawer();
+                          },
+                          child: Row(
+                            children: [
+                              Image.asset('assets/photos/person.png'),
+                              buildUserData(
+                                filed: 'First name',
+                                color: kPrimaryColor,
+                                fontSize: screenWidth * 0.04,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ],
                           ),
                         );
                       },
                     ),
-
-                    SizedBox(height: 24),
-                    buildnewbutton(
-                      screenWidth,
-                      'Find Doctor',
-                      'assets/photos/person.png',
+                  ),
+                  SizedBox(height: screenWidth * 0.12),
+                  Center(
+                    child: GradientText(
+                      'CancerScan',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: screenWidth * 0.123,
+                      ),
+                      colors: [
+                        const Color(0xff12748B),
+                        const Color(0xff051F25),
+                      ],
                     ),
-                    SizedBox(height: 24),
-
-                    buildnewbutton(
-                      screenWidth,
-                      'Information',
-                      'assets/photos/information.png',
-                    ),
-                    SizedBox(height: 24),
-                    buildnewbutton(
-                      screenWidth,
-                      'History',
-                      'assets/photos/history.png',
-                    ),
-                    SizedBox(height: 24),
-                    buildnewbutton(
-                      screenWidth,
-                      'About us',
-                      'assets/photos/about us.png',
-                    ),
-                  ],
-                ),
+                  ),
+                  SizedBox(height: screenHeight * 0.09),
+                  buildnewbutton(
+                    screenWidth,
+                    'Take test',
+                    'assets/photos/test.png',
+                    onpressed: () {
+                      Navigator.pushNamed(context, TakeTestPage.id);
+                    },
+                  ),
+                  const SizedBox(height: 24),
+                  buildnewbutton(
+                    screenWidth,
+                    'Find Doctor',
+                    'assets/photos/person.png',
+                  ),
+                  const SizedBox(height: 24),
+                  buildnewbutton(
+                    screenWidth,
+                    'Information',
+                    'assets/photos/information.png',
+                  ),
+                  const SizedBox(height: 24),
+                  buildnewbutton(
+                    screenWidth,
+                    'History',
+                    'assets/photos/history.png',
+                  ),
+                  const SizedBox(height: 24),
+                  buildnewbutton(
+                    screenWidth,
+                    'About us',
+                    'assets/photos/about us.png',
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

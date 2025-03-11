@@ -45,6 +45,7 @@ dependencies:
   image_picker: ^1.1.2
   tflite_flutter: ^0.11.0
   image: ^4.5.3
+  intl: ^0.20.2
  
 
 dev_dependencies:
@@ -74,6 +75,7 @@ flutter:
     - assets/photos/
     - assets/model_unquant.tflite
     - assets/labels.txt
+    - assets/information_text/
     - assets/
 
   # An image asset can refer to one or more resolution-specific "variants", see

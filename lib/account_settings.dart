@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:canser_scan/Login-Register/login_page.dart';
 import 'package:canser_scan/helper/constants.dart';
 import 'package:canser_scan/helper/get_user_build.dart';
@@ -17,13 +19,13 @@ class AccountSettingsState extends State<AccountSettings> {
   String? storedGender;
   String? newfirstname, newsecoundname, newemail, newpassword;
   GlobalKey<FormState> formKey = GlobalKey();
-  TextEditingController _passwordController = TextEditingController();
   @override
   void initState() {
     super.initState();
     fetchGenderFromDatabase(); // Fetch data when widget initializes
   }
 
+  @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -140,7 +142,7 @@ class AccountSettingsState extends State<AccountSettings> {
                     child: ElevatedButton(
                       onPressed: () {
                         updateUserData();
-                        Navigator.pushNamed(context, LoginPage.id);
+                        Navigator.pushReplacementNamed(context, LoginPage.id);
                       },
                       style: ElevatedButton.styleFrom(
                         fixedSize: Size(screenWidth * 0.6, 45),
@@ -241,7 +243,7 @@ class AccountSettingsState extends State<AccountSettings> {
 
     if (mounted) {
       setState(() {
-        gender = storedGender ?? ""; // Ensure null safety
+        gender = storedGender; // Ensure null safety
       });
     }
   }

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:canser_scan/home_page.dart';
+import 'package:canser_scan/home_page_v2.dart';
 import 'package:canser_scan/test/take_test_confirm_page.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
@@ -13,10 +14,10 @@ class TakeTestPage extends StatelessWidget {
   final picker = ImagePicker();
 
   pickimagegallery(context) async {
-    final PickedFile = await picker.pickImage(source: ImageSource.gallery);
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
-    if (PickedFile != null) {
-      imageFile = File(PickedFile.path);
+    if (pickedFile != null) {
+      imageFile = File(pickedFile.path);
     }
 
     if (imageFile != null) {
@@ -30,10 +31,10 @@ class TakeTestPage extends StatelessWidget {
   }
 
   pickimagecamera(context) async {
-    final PickedFile = await picker.pickImage(source: ImageSource.camera);
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
 
-    if (PickedFile != null) {
-      imageFile = File(PickedFile.path);
+    if (pickedFile != null) {
+      imageFile = File(pickedFile.path);
     }
 
     if (imageFile != null) {
@@ -73,7 +74,7 @@ class TakeTestPage extends StatelessWidget {
               padding: const EdgeInsets.all(0),
               onPressed: () {
                 imageFile = null;
-                Navigator.pushReplacementNamed(context, HomePage.id);
+                Navigator.pushReplacementNamed(context, HomePageV2.id);
               },
               icon: Image.asset('assets/photos/dark_back_arrow.png'),
             ),
