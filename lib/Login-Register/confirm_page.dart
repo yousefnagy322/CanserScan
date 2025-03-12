@@ -1,3 +1,4 @@
+import 'package:canser_scan/Login-Register/email_verfiy.dart';
 import 'package:flutter/material.dart';
 
 class ConfirmPage extends StatelessWidget {
@@ -44,7 +45,10 @@ class ConfirmPage extends StatelessWidget {
               Center(
                 child: Text(
                   textAlign: TextAlign.center,
-                  'Enter the 8-digit confirmation code you received in the mail to confirm',
+                  "A verification email has been sent to your email address.\n"
+                  "Please check your inbox.\n"
+                  '\n'
+                  "After verification\n log in again to continue",
                   style: TextStyle(
                     height: 1.1,
                     color: Colors.white70,
@@ -55,34 +59,7 @@ class ConfirmPage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 16),
-              TextField(
-                style: TextStyle(color: Colors.white),
-
-                cursorColor: Colors.white,
-                decoration: InputDecoration(
-                  hintText: 'Enter code..',
-                  hintStyle: TextStyle(color: Colors.white70),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    borderSide: BorderSide(color: Colors.white, width: 1.5),
-                  ),
-                ),
-              ),
               SizedBox(height: 8),
-              Text(
-                'Resend code',
-                style: TextStyle(
-                  decoration: TextDecoration.underline,
-                  decorationColor: Colors.white70,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 16,
-                  color: Colors.white70,
-                ),
-              ),
               SizedBox(height: 24),
               Center(
                 child: ElevatedButton(
@@ -90,9 +67,11 @@ class ConfirmPage extends StatelessWidget {
                     backgroundColor: const Color(0xff3674B5),
                     fixedSize: Size(screenWidth * 0.7, 45),
                   ),
-                  onPressed: () {},
+                  onPressed: () async {
+                    await resendVerificationEmail();
+                  },
                   child: Text(
-                    'confirm',
+                    'Resend code',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,

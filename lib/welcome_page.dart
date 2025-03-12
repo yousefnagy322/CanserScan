@@ -76,17 +76,6 @@ class WelcomePage extends StatelessWidget {
               },
               child: Text('confirm screen'),
             ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => TakeTestConfirmPage(),
-                  ),
-                );
-              },
-              child: Text('confirm screen'),
-            ),
             const Spacer(flex: 1),
           ],
         ),

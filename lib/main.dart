@@ -1,3 +1,4 @@
+import 'package:canser_scan/Chatbot/chat_page.dart';
 import 'package:canser_scan/Login-Register/confirm_page.dart';
 import 'package:canser_scan/Login-Register/login_page.dart';
 import 'package:canser_scan/Login-Register/register_page.dart';
@@ -14,6 +15,7 @@ import 'package:canser_scan/info_pages/melanocytic_nevus.dart';
 import 'package:canser_scan/info_pages/melanoma.dart';
 import 'package:canser_scan/info_pages/skin_cancer.dart';
 import 'package:canser_scan/info_pages/vascular_lesion.dart';
+import 'package:canser_scan/splash.dart';
 import 'package:canser_scan/test/take_test_confirm_page.dart';
 import 'package:canser_scan/test/take_test_page.dart';
 import 'package:canser_scan/test/test_result_neg.dart';
@@ -69,8 +71,10 @@ class MyApp extends StatelessWidget {
         Dermatofibroma.id: (context) => Dermatofibroma(),
         ActinicKeratosis.id: (context) => ActinicKeratosis(),
         BasalCellCarcinoma.id: (context) => BasalCellCarcinoma(),
+        ChatPage.id: (context) => ChatPage(),
+        SplashScreen.id: (context) => SplashScreen(),
       },
-      initialRoute: WelcomePage.id,
+      initialRoute: SplashScreen.id,
     );
   }
 }

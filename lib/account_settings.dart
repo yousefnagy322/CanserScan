@@ -226,14 +226,8 @@ class AccountSettingsState extends State<AccountSettings> {
             updatedPassword,
           );
         }
-
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Profile Updated Successfully")));
       } catch (e) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Error: ${e.toString()}")));
+        print('Error updating user data: $e');
       }
     }
   }

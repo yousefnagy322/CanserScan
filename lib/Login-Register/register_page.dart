@@ -1,7 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:canser_scan/Login-Register/confirm_page.dart';
+import 'package:canser_scan/Login-Register/email_verfiy.dart';
 import 'package:canser_scan/helper/show_snack_bar.dart';
-import 'package:canser_scan/home_page.dart';
+import 'package:canser_scan/home_page_v2.dart';
 import 'package:canser_scan/widgets/custom_label.dart';
 import 'package:canser_scan/widgets/cutom_text_filed.dart';
 import 'package:canser_scan/widgets/main_custom_button.dart';
@@ -132,10 +134,11 @@ class RegisterPageState extends State<RegisterPage> {
                             });
                             try {
                               await registeruser();
+                              await sendVerificationEmail();
                               showSnackBar(context, 'suucess');
                               Navigator.pushReplacementNamed(
                                 context,
-                                HomePage.id,
+                                ConfirmPage.id,
                               );
                             } on FirebaseAuthException catch (e) {
                               if (e.code == 'weak-password') {

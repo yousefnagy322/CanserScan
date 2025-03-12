@@ -1,9 +1,10 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:canser_scan/Login-Register/email_verfiy.dart';
 import r'package:canser_scan/Login-Register/register_page.dart';
 import 'package:canser_scan/helper/constants.dart';
 import 'package:canser_scan/helper/show_snack_bar.dart';
-import 'package:canser_scan/home_page_v2.dart';
+import 'package:canser_scan/splash.dart';
 import 'package:canser_scan/widgets/custom_label.dart';
 import 'package:canser_scan/widgets/cutom_text_filed.dart';
 import 'package:canser_scan/widgets/main_custom_button.dart';
@@ -102,11 +103,8 @@ class _LoginPageState extends State<LoginPage> {
                             try {
                               FocusManager.instance.primaryFocus?.unfocus();
                               await loginUser(email, password);
-                              showSnackBar(context, 'Success');
-                              Navigator.pushReplacementNamed(
-                                context,
-                                HomePageV2.id,
-                              );
+                              await isEmailVerified();
+                              checkEmailVerification(context);
                             } on FirebaseAuthException catch (e) {
                               print(e.code);
                               if (e.code == 'invalid-credential') {
@@ -146,6 +144,12 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                     ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, SplashScreen.id);
+                    },
+                    child: Text('data'),
                   ),
                 ],
               ),

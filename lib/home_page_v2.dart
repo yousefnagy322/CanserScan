@@ -1,3 +1,4 @@
+import 'package:canser_scan/Chatbot/chat_page.dart';
 import 'package:canser_scan/Login-Register/login_page.dart';
 import 'package:canser_scan/account_settings.dart';
 import 'package:canser_scan/helper/constants.dart';
@@ -38,7 +39,7 @@ class _HomePageV2State extends State<HomePageV2> {
 
     return Scaffold(
       drawer: Drawer(
-        backgroundColor: const Color(0xffEBEBEB),
+        backgroundColor: const Color(0xffFFFFFF),
         width: screenWidth * 0.5,
         child: Column(
           children: [
@@ -212,77 +213,96 @@ class _HomePageV2State extends State<HomePageV2> {
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
+                  if (result != null &&
+                      prediction != null &&
+                      confidence != null) ...[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              'Test result : ',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            Text(
+                              '$result',
+                              style: TextStyle(
+                                color:
+                                    result == 'Positive'
+                                        ? Colors.red
+                                        : Colors.green,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          '$formattedDate',
+                          style: TextStyle(color: Colors.white70),
+                        ),
+                      ],
+                    ),
+                    Text(
+                      'Cancer type : $prediction',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Text(
+                      'confidence : $confidence%',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Spacer(flex: 1),
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          fixedSize: Size(screenWidth * 0.5, 32),
+                          foregroundColor: kPrimaryColor,
+                          backgroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                        ),
+                        child: Text(
+                          'Show all',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ] else ...[
+                    SizedBox(height: 40),
+                    Center(
+                      child: Column(
                         children: [
                           Text(
-                            'Test result : ',
+                            "No recent test found.",
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 16,
                               color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          Text(
-                            '$result',
-                            style: TextStyle(
-                              color:
-                                  result == 'Positive'
-                                      ? Colors.red
-                                      : Colors.green,
-                              fontSize: 14,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
                         ],
                       ),
-                      Text(
-                        '$formattedDate',
-                        style: TextStyle(color: Colors.white70),
-                      ),
-                    ],
-                  ),
-                  Text(
-                    'Cancer type : $prediction',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
                     ),
-                  ),
-                  Text(
-                    'confidence : $confidence%',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 54),
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        fixedSize: Size(screenWidth * 0.5, 32),
-                        foregroundColor: kPrimaryColor,
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                      ),
-                      child: Text(
-                        'Show all',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                  ),
+                  ],
                 ],
               ),
             ),
@@ -293,6 +313,40 @@ class _HomePageV2State extends State<HomePageV2> {
                 color: Color(0xff3674B5),
                 fontSize: 22,
                 fontWeight: FontWeight.w400,
+              ),
+            ),
+            Transform.translate(
+              offset: Offset(16, 190),
+              child: Expanded(
+                child: Align(
+                  alignment: Alignment.bottomRight,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 50),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, ChatPage.id);
+                      },
+                      child: Container(
+                        height: 42,
+                        width: 80,
+                        decoration: BoxDecoration(
+                          color: Color(0xff17D3E5),
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(50),
+                            bottomLeft: Radius.circular(50),
+                          ),
+                        ),
+                        child: Align(
+                          alignment: Alignment(-0.6, 0),
+                          child: Image.asset(
+                            'assets/photos/gpt.png',
+                            height: 32,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
           ],
