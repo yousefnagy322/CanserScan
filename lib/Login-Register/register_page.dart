@@ -3,7 +3,6 @@
 import 'package:canser_scan/Login-Register/confirm_page.dart';
 import 'package:canser_scan/Login-Register/email_verfiy.dart';
 import 'package:canser_scan/helper/show_snack_bar.dart';
-import 'package:canser_scan/home_page_v2.dart';
 import 'package:canser_scan/widgets/custom_label.dart';
 import 'package:canser_scan/widgets/cutom_text_filed.dart';
 import 'package:canser_scan/widgets/main_custom_button.dart';

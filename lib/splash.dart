@@ -28,7 +28,7 @@ class SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       backgroundColor: kPrimaryColor,
       body: Center(
-        child: Container(
+        child: SizedBox(
           width: double.infinity,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

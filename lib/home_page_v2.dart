@@ -1,6 +1,7 @@
 import 'package:canser_scan/Chatbot/chat_page.dart';
 import 'package:canser_scan/Login-Register/login_page.dart';
 import 'package:canser_scan/account_settings.dart';
+import 'package:canser_scan/doctors_page.dart';
 import 'package:canser_scan/helper/constants.dart';
 import 'package:canser_scan/info_pages/information_page.dart';
 import 'package:canser_scan/test/take_test_page.dart';
@@ -38,6 +39,7 @@ class _HomePageV2State extends State<HomePageV2> {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      backgroundColor: const Color(0xffFFFFFF),
       drawer: Drawer(
         backgroundColor: const Color(0xffFFFFFF),
         width: screenWidth * 0.5,
@@ -137,6 +139,9 @@ class _HomePageV2State extends State<HomePageV2> {
                   NavBarElement(
                     image: 'assets/photos/navbardoctor.png',
                     text: 'Doctors',
+                    ontap: () {
+                      Navigator.pushNamed(context, DoctorsPage.id);
+                    },
                   ),
                 ],
               ),
@@ -316,7 +321,7 @@ class _HomePageV2State extends State<HomePageV2> {
               ),
             ),
             Transform.translate(
-              offset: Offset(16, 190),
+              offset: Offset(16, screenHeight * 0.2),
               child: Expanded(
                 child: Align(
                   alignment: Alignment.bottomRight,

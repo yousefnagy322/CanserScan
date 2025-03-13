@@ -3,6 +3,7 @@ import 'package:canser_scan/Login-Register/confirm_page.dart';
 import 'package:canser_scan/Login-Register/login_page.dart';
 import 'package:canser_scan/Login-Register/register_page.dart';
 import 'package:canser_scan/account_settings.dart';
+import 'package:canser_scan/doctors_page.dart';
 import 'package:canser_scan/helper/constants.dart';
 import 'package:canser_scan/home_page.dart';
 import 'package:canser_scan/home_page_v2.dart';
@@ -73,6 +74,7 @@ class MyApp extends StatelessWidget {
         BasalCellCarcinoma.id: (context) => BasalCellCarcinoma(),
         ChatPage.id: (context) => ChatPage(),
         SplashScreen.id: (context) => SplashScreen(),
+        DoctorsPage.id: (context) => DoctorsPage(),
       },
       initialRoute: SplashScreen.id,
     );

@@ -34,25 +34,31 @@ class _ChatPageState extends State<ChatPage> {
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Color(0xff56EACF),
-                Color(0xff194D59),
-              ], // Change colors as needed
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
+          decoration: const BoxDecoration(color: Colors.white),
           child: AppBar(
             centerTitle: true,
-            title: Text(
-              'Chatbot',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
+            title: Row(
+              children: [
+                Image.asset('assets/photos/bluebot.png'),
+                SizedBox(width: 10),
+                Column(
+                  children: [
+                    Text(
+                      'Chatbot',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
+                    ),
+                    Text(
+                      'Online',
+                      style: TextStyle(color: Colors.green, fontSize: 17),
+                    ),
+                  ],
+                ),
+              ],
             ),
             scrolledUnderElevation: 0,
             toolbarHeight: 40,

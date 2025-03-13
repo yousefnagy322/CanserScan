@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:canser_scan/home_page.dart';
 import 'package:canser_scan/home_page_v2.dart';
 import 'package:canser_scan/test/take_test_confirm_page.dart';
 import 'package:image_picker/image_picker.dart';
