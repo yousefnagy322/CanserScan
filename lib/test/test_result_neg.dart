@@ -1,4 +1,5 @@
 import 'package:canser_scan/helper/constants.dart';
+import 'package:canser_scan/test/take_test_page.dart';
 import 'package:canser_scan/widgets/main_custom_button.dart';
 import 'package:flutter/material.dart';
 
@@ -59,7 +60,13 @@ class TestResultNeg extends StatelessWidget {
               ),
             ),
             SizedBox(height: 60),
-            BuildCustomButton(buttonText: 'Try again', onPressed: () {}),
+            BuildCustomButton(
+              color: kPrimaryColor,
+              buttonText: 'Another test',
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, TakeTestPage.id);
+              },
+            ),
           ],
         ),
       ),

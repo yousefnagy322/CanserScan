@@ -18,6 +18,7 @@ class AccountSettingsState extends State<AccountSettings> {
   String? gender;
   String? storedGender;
   String? newfirstname, newsecoundname, newemail, newpassword;
+  bool hidePassword = true;
   GlobalKey<FormState> formKey = GlobalKey();
   @override
   void initState() {
@@ -127,15 +128,35 @@ class AccountSettingsState extends State<AccountSettings> {
                   ),
                   SizedBox(height: 26),
                   buildLabel('Password'),
-                  FutureBuilder(
-                    future: getUserData('Password'),
-                    builder: (context, snapshot) {
-                      return buildTextField(
-                        screenWidth,
-                        hintText: snapshot.data,
-                        onchanged: (value) => newpassword = value,
-                      );
-                    },
+                  Stack(
+                    children: [
+                      FutureBuilder(
+                        future: getUserData('Password'),
+                        builder: (context, snapshot) {
+                          return buildTextField(
+                            screenWidth,
+                            hintText:
+                                hidePassword ? '**********' : snapshot.data,
+                            onchanged: (value) => newpassword = value,
+                            obscureText: hidePassword,
+                          );
+                        },
+                      ),
+                      Positioned(
+                        top: -10,
+                        right: 0,
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.remove_red_eye,
+                            color: kPrimaryColor,
+                          ),
+                          onPressed: () {
+                            hidePassword = !hidePassword;
+                            setState(() {});
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(height: 32),
                   Center(

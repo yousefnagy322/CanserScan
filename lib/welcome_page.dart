@@ -59,6 +59,7 @@ class WelcomePage extends StatelessWidget {
             ),
             const SizedBox(height: 44),
             BuildCustomButton(
+              color: ksecondarycolor,
               buttonText: 'Get Started',
               onPressed: () {
                 Navigator.pushReplacementNamed(context, LoginPage.id);

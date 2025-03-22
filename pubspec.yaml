@@ -49,6 +49,10 @@ dependencies:
   flutter_ai_toolkit: ^0.6.8
   google_generative_ai: ^0.4.6
   shared_preferences: ^2.5.2
+  google_maps_flutter: ^2.10.1
+  location: ^8.0.0
+  google_places_flutter: ^2.1.0
+  dio: ^5.8.0+1
 
 
 dev_dependencies:
@@ -79,6 +83,7 @@ flutter:
     - assets/model_unquant.tflite
     - assets/labels.txt
     - assets/information_text/
+    - assets/doctor_photo/
     - assets/
 
   # An image asset can refer to one or more resolution-specific "variants", see

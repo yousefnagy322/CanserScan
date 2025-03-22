@@ -12,7 +12,7 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  final String geminiApiKey = 'AIzaSyC3a5Z5r333CiijVKlzoDl3DDLFQpyDqi4';
+  final String geminiApiKey = 'AIzaSyCIcDAUfJMDoUOpGjB8HrQ1N7PJuoIF-Eg';
 
   late final _provider = GeminiProvider(
     model: GenerativeModel(

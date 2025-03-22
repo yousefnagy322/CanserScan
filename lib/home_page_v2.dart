@@ -3,7 +3,9 @@ import 'package:canser_scan/Login-Register/login_page.dart';
 import 'package:canser_scan/account_settings.dart';
 import 'package:canser_scan/doctors_page.dart';
 import 'package:canser_scan/helper/constants.dart';
+import 'package:canser_scan/history_page.dart';
 import 'package:canser_scan/info_pages/information_page.dart';
+import 'package:canser_scan/map_page.dart';
 import 'package:canser_scan/test/take_test_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -28,7 +30,7 @@ class _HomePageV2State extends State<HomePageV2> {
   }
 
   String? result;
-  String? prediction;
+  String? prediction = "No Cancer";
   double? confidence;
   Timestamp? timestamp;
   String? formattedDate;
@@ -148,7 +150,6 @@ class _HomePageV2State extends State<HomePageV2> {
             ),
           ),
           Positioned(
-            width: screenWidth / 2,
             top: -25,
             child: Container(
               height: 48,
@@ -273,7 +274,9 @@ class _HomePageV2State extends State<HomePageV2> {
                     Spacer(flex: 1),
                     Center(
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushNamed(context, HistoryPage.id);
+                        },
                         style: ElevatedButton.styleFrom(
                           fixedSize: Size(screenWidth * 0.5, 32),
                           foregroundColor: kPrimaryColor,
@@ -320,13 +323,52 @@ class _HomePageV2State extends State<HomePageV2> {
                 fontWeight: FontWeight.w400,
               ),
             ),
+            SizedBox(
+              height: 95,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  doctorCard(
+                    context,
+                    image: 'assets/doctor_photo/doctor1.jpg',
+                    name: 'Dr: Mohmed',
+                    location: 'Bani sweif',
+                  ),
+                  doctorCard(
+                    context,
+                    image: 'assets/doctor_photo/doctor2.jpg',
+                    name: 'Dr: Mario',
+                    location: 'Cairo',
+                  ),
+                  doctorCard(
+                    context,
+                    image: 'assets/doctor_photo/doctor3.jpg',
+                    name: 'Dr: Youssef',
+                    location: 'Cairo',
+                  ),
+                  doctorCard(
+                    context,
+                    image: 'assets/doctor_photo/doctor4.jpg',
+                    name: 'Dr: Nadi',
+                    location: 'Elshrouke',
+                  ),
+                  doctorCard(
+                    context,
+                    image: 'assets/doctor_photo/doctor5.jpg',
+                    name: 'Dr: Marime',
+                    location: 'Banha',
+                  ),
+                ],
+              ),
+            ),
+
             Transform.translate(
-              offset: Offset(16, screenHeight * 0.2),
+              offset: Offset(16, screenHeight * 0.05),
               child: Expanded(
                 child: Align(
                   alignment: Alignment.bottomRight,
                   child: Padding(
-                    padding: const EdgeInsets.only(bottom: 50),
+                    padding: const EdgeInsets.only(bottom: 0),
                     child: GestureDetector(
                       onTap: () {
                         Navigator.pushNamed(context, ChatPage.id);
@@ -344,7 +386,42 @@ class _HomePageV2State extends State<HomePageV2> {
                         child: Align(
                           alignment: Alignment(-0.6, 0),
                           child: Image.asset(
-                            'assets/photos/gpt.png',
+                            'assets/photos/gemini.png',
+                            height: 32,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            Transform.translate(
+              offset: Offset(16, screenHeight * 0.06),
+              child: Expanded(
+                child: Align(
+                  alignment: Alignment.bottomRight,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 0),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, MapPage.id);
+                      },
+                      child: Container(
+                        height: 42,
+                        width: 50,
+                        decoration: BoxDecoration(
+                          color: Color(0xff17D3E5),
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(50),
+                            bottomLeft: Radius.circular(50),
+                          ),
+                        ),
+                        child: Align(
+                          alignment: Alignment(-0.4, 0),
+                          child: Image.asset(
+                            'assets/photos/homemap.png',
                             height: 32,
                           ),
                         ),
@@ -356,6 +433,61 @@ class _HomePageV2State extends State<HomePageV2> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget doctorCard(
+    BuildContext context, {
+    required String image,
+    required String name,
+    required String location,
+  }) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 10),
+      height: 80,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Image.asset(
+            image,
+            fit: BoxFit.cover,
+            alignment: Alignment.topCenter,
+            height: 60,
+            width: 71,
+          ),
+
+          Container(
+            height: 35,
+            width: 71,
+            decoration: BoxDecoration(
+              border: Border.all(color: Color(0xffD9D9D9), width: 1),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+                ),
+
+                Row(
+                  children: [
+                    Image.asset('assets/photos/location.png', height: 10),
+                    SizedBox(width: 4),
+                    Text(
+                      location,
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -424,7 +556,7 @@ class _HomePageV2State extends State<HomePageV2> {
 
       // Extract values into variables
       result = data['Result'] ?? '';
-      prediction = data['prediction'] ?? '';
+      prediction = data['prediction'] ?? 'No Cancer';
       confidence = (data['confidence'] ?? 0).toDouble();
       timestamp = data['timestamp']; // Firestore Timestamp format
 

@@ -2,6 +2,7 @@
 
 import 'package:canser_scan/Login-Register/confirm_page.dart';
 import 'package:canser_scan/Login-Register/email_verfiy.dart';
+import 'package:canser_scan/helper/constants.dart';
 import 'package:canser_scan/helper/show_snack_bar.dart';
 import 'package:canser_scan/widgets/custom_label.dart';
 import 'package:canser_scan/widgets/cutom_text_filed.dart';
@@ -125,6 +126,7 @@ class RegisterPageState extends State<RegisterPage> {
                           screenWidth *
                           0.7, // Button width adjusts to screen size
                       child: BuildCustomButton(
+                        color: ksecondarycolor,
                         buttonText: 'Confirm',
                         onPressed: () async {
                           if (formKey.currentState!.validate()) {

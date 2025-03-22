@@ -5,6 +5,7 @@ import 'package:canser_scan/Login-Register/register_page.dart';
 import 'package:canser_scan/account_settings.dart';
 import 'package:canser_scan/doctors_page.dart';
 import 'package:canser_scan/helper/constants.dart';
+import 'package:canser_scan/history_page.dart';
 import 'package:canser_scan/home_page.dart';
 import 'package:canser_scan/home_page_v2.dart';
 import 'package:canser_scan/info_pages/actinic_keratosis.dart';
@@ -16,6 +17,7 @@ import 'package:canser_scan/info_pages/melanocytic_nevus.dart';
 import 'package:canser_scan/info_pages/melanoma.dart';
 import 'package:canser_scan/info_pages/skin_cancer.dart';
 import 'package:canser_scan/info_pages/vascular_lesion.dart';
+import 'package:canser_scan/map_page.dart';
 import 'package:canser_scan/splash.dart';
 import 'package:canser_scan/test/take_test_confirm_page.dart';
 import 'package:canser_scan/test/take_test_page.dart';
@@ -75,6 +77,8 @@ class MyApp extends StatelessWidget {
         ChatPage.id: (context) => ChatPage(),
         SplashScreen.id: (context) => SplashScreen(),
         DoctorsPage.id: (context) => DoctorsPage(),
+        MapPage.id: (context) => MapPage(),
+        HistoryPage.id: (context) => HistoryPage(),
       },
       initialRoute: SplashScreen.id,
     );

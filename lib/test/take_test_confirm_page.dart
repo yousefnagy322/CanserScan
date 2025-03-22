@@ -101,16 +101,17 @@ class _TakeTestConfirmPageState extends State<TakeTestConfirmPage> {
                           try {
                             await classifyImageAPI(widget.imageFile!);
                             await classifyImageModel(widget.imageFile!);
+                            highestClassApi = getFullName(highestClassApi);
 
                             if (highestClassModel == "Unknown" ||
                                 confidencePercentageApi < 50) {
-                              saveTestResult("Negative");
+                              saveTestResultNeg("Negative");
                               Navigator.pushReplacementNamed(
                                 context,
                                 TestResultNeg.id,
                               );
                             } else {
-                              saveTestResult('Positive');
+                              saveTestResultPos('Positive');
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -165,7 +166,21 @@ class _TakeTestConfirmPageState extends State<TakeTestConfirmPage> {
     );
   }
 
-  Future<void> saveTestResult(String result) async {
+  String getFullName(String shortcut) {
+    Map<String, String> diseaseMap = {
+      'bkl': 'Benign Keratosis',
+      'vasc': 'Vascular Lesion',
+      'mel': 'Melanoma',
+      'nv': 'Melanocytic Nevus',
+      'df': 'Dermatofibroma',
+      'akiec': 'Actinic Keratosis',
+      'bcc': 'Basal Cell Carcinoma',
+    };
+
+    return diseaseMap[shortcut.toLowerCase()] ?? 'Unknown';
+  }
+
+  Future<void> saveTestResultPos(String result) async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       print("No user logged in!");
@@ -184,6 +199,37 @@ class _TakeTestConfirmPageState extends State<TakeTestConfirmPage> {
     Map<String, dynamic> testData = {
       'Result': result,
       'prediction': highestClassApi,
+      'confidence': confidencePercentageModel,
+      'timestamp': FieldValue.serverTimestamp(),
+    };
+
+    // Perform batch write: Save in subcollection & update latest test document
+    WriteBatch batch = FirebaseFirestore.instance.batch();
+    batch.set(testResults.doc(), testData); // Add to Test Results
+    batch.set(latestTestDoc, testData); // Overwrite latest result
+
+    await batch.commit();
+    print("Test result saved & latest test updated!");
+  }
+
+  Future<void> saveTestResultNeg(String result) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      print("No user logged in!");
+      return;
+    }
+
+    // Firestore references
+    DocumentReference userDoc = FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid);
+    CollectionReference testResults = userDoc.collection('Test_Results');
+    DocumentReference latestTestDoc = userDoc
+        .collection('Latest_Test_Results')
+        .doc('Latest');
+
+    Map<String, dynamic> testData = {
+      'Result': result,
       'confidence': confidencePercentageModel,
       'timestamp': FieldValue.serverTimestamp(),
     };

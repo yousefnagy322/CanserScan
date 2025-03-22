@@ -5,8 +5,9 @@ class BuildCustomButton extends StatelessWidget {
     super.key,
     this.onPressed,
     required this.buttonText,
+    required this.color,
   });
-
+  final dynamic color;
   final String? buttonText;
   final VoidCallback? onPressed;
 
@@ -16,7 +17,7 @@ class BuildCustomButton extends StatelessWidget {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         fixedSize: const Size(271, 47),
-        backgroundColor: const Color(0xFF3674B5),
+        backgroundColor: color,
         foregroundColor: Colors.black,
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),

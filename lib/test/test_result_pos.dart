@@ -1,4 +1,14 @@
+import 'package:canser_scan/doctors_page.dart';
 import 'package:canser_scan/helper/constants.dart';
+import 'package:canser_scan/info_pages/actinic_keratosis.dart';
+import 'package:canser_scan/info_pages/basal_cell_carcinoma.dart';
+import 'package:canser_scan/info_pages/benign_keratosis.dart';
+import 'package:canser_scan/info_pages/dermatofibroma.dart';
+import 'package:canser_scan/info_pages/melanocytic_nevus.dart';
+import 'package:canser_scan/info_pages/melanoma.dart';
+import 'package:canser_scan/info_pages/vascular_lesion.dart';
+import 'package:canser_scan/test/take_test_page.dart';
+import 'package:canser_scan/widgets/main_custom_button.dart';
 import 'package:flutter/material.dart';
 
 class TestResultPos extends StatelessWidget {
@@ -17,6 +27,8 @@ class TestResultPos extends StatelessWidget {
   static String id = 'TestResultPos';
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
@@ -68,8 +80,8 @@ class TestResultPos extends StatelessWidget {
               ),
             ),
             Container(
-              height: 270,
-              width: 300,
+              height: screenHeight * 0.22,
+              width: screenWidth * 0.6,
               decoration: BoxDecoration(
                 color: kPrimaryColor,
                 borderRadius: BorderRadius.circular(15),
@@ -78,7 +90,7 @@ class TestResultPos extends StatelessWidget {
                 children: [
                   SizedBox(height: 30),
                   Text(
-                    'Cancer Type API',
+                    'Cancer Type',
                     style: TextStyle(
                       fontSize: 22,
                       color: Colors.white,
@@ -89,36 +101,55 @@ class TestResultPos extends StatelessWidget {
                     '$highestClassApi',
                     style: TextStyle(fontSize: 20, color: Colors.white),
                   ),
+                  const SizedBox(height: 20),
                   Text(
                     'Confidence',
                     style: TextStyle(fontSize: 20, color: Colors.white),
                   ),
                   Text(
-                    '${highestConfidenceApi!}%',
-                    style: TextStyle(fontSize: 20, color: Colors.white),
-                  ),
-                  Text(
-                    'Cancer Type Model',
-                    style: TextStyle(
-                      fontSize: 22,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  Text(
-                    '$highestClassModel',
-                    style: TextStyle(fontSize: 20, color: Colors.white),
-                  ),
-                  Text(
-                    'Confidence',
-                    style: TextStyle(fontSize: 20, color: Colors.white),
-                  ),
-                  Text(
-                    '${highestConfidenceApi!}%',
+                    '${highestConfidenceModel!}%',
                     style: TextStyle(fontSize: 20, color: Colors.white),
                   ),
                 ],
               ),
+            ),
+            const SizedBox(height: 32),
+            BuildCustomButton(
+              color: kPrimaryColor,
+              buttonText: 'Another test',
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, TakeTestPage.id);
+              },
+            ),
+            const SizedBox(height: 32),
+            BuildCustomButton(
+              color: kPrimaryColor,
+              buttonText: 'More info',
+              onPressed: () {
+                if (highestClassApi == 'Benign Keratosis') {
+                  Navigator.pushNamed(context, BenignKeratosis.id);
+                } else if (highestClassApi == 'Vascular Lesion') {
+                  Navigator.pushNamed(context, VascularLesion.id);
+                } else if (highestClassApi == 'Melanoma') {
+                  Navigator.pushNamed(context, Melanoma.id);
+                } else if (highestClassApi == 'Melanocytic Nevus') {
+                  Navigator.pushNamed(context, MelanocyticNevus.id);
+                } else if (highestClassApi == 'Dermatofibroma') {
+                  Navigator.pushNamed(context, Dermatofibroma.id);
+                } else if (highestClassApi == 'Actinic Keratosis') {
+                  Navigator.pushNamed(context, ActinicKeratosis.id);
+                } else if (highestClassApi == 'Basal Cell Carcinoma') {
+                  Navigator.pushNamed(context, BasalCellCarcinoma.id);
+                }
+              },
+            ),
+            const SizedBox(height: 32),
+            BuildCustomButton(
+              color: kPrimaryColor,
+              buttonText: 'Find doctor',
+              onPressed: () {
+                Navigator.pushNamed(context, DoctorsPage.id);
+              },
             ),
           ],
         ),
