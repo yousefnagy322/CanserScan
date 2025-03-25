@@ -85,6 +85,7 @@ class _HomePageV2State extends State<HomePageV2> {
               'Log Out',
               'assets/photos/logout.png',
               ontap: () {
+                FirebaseAuth.instance.signOut();
                 Navigator.pushReplacementNamed(context, LoginPage.id);
               },
             ),

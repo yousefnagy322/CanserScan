@@ -1,7 +1,10 @@
 import 'dart:async';
-import 'package:canser_scan/Login-Register/login_page.dart';
-import 'package:canser_scan/helper/constants.dart';
+import 'package:canser_scan/home_page_v2.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:canser_scan/Login-Register/login_page.dart';
+import 'package:canser_scan/home_page.dart'; // Your main screen after login
+import 'package:canser_scan/helper/constants.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -15,11 +18,24 @@ class SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+
     Future.delayed(Duration(seconds: 5), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => LoginPage()),
-      );
+      // Check if a user is logged in
+      User? user = FirebaseAuth.instance.currentUser;
+
+      if (user != null) {
+        // User is logged in, navigate to Home Page
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePageV2()),
+        );
+      } else {
+        // User is not logged in, navigate to Login Page
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()),
+        );
+      }
     });
   }
 

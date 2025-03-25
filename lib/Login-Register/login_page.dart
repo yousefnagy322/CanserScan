@@ -148,18 +148,18 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
 
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, SplashScreen.id);
-                    },
-                    child: Text('data'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, MapPage.id);
-                    },
-                    child: Text('map'),
-                  ),
+                  // ElevatedButton(
+                  //   onPressed: () {
+                  //     Navigator.pushNamed(context, SplashScreen.id);
+                  //   },
+                  //   child: Text('data'),
+                  // ),
+                  // ElevatedButton(
+                  //   onPressed: () {
+                  //     Navigator.pushNamed(context, MapPage.id);
+                  //   },
+                  //   child: Text('map'),
+                  // ),
                 ],
               ),
             ),
