@@ -3,7 +3,6 @@ import 'package:canser_scan/home_page_v2.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:canser_scan/Login-Register/login_page.dart';
-import 'package:canser_scan/home_page.dart'; // Your main screen after login
 import 'package:canser_scan/helper/constants.dart';
 
 class SplashScreen extends StatefulWidget {

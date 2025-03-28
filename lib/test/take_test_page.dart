@@ -1,50 +1,69 @@
 import 'dart:io';
-import 'package:canser_scan/doctors_page.dart';
-import 'package:canser_scan/helper/constants.dart';
-import 'package:canser_scan/home_page_v2.dart';
-import 'package:canser_scan/info_pages/information_page.dart';
+import 'package:canser_scan/navigation_provider.dart';
 import 'package:canser_scan/test/take_test_confirm_page.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:simple_shadow/simple_shadow.dart';
+import 'package:provider/provider.dart';
+import 'package:canser_scan/widgets/bottom_nav_bar.dart';
 
-class TakeTestPage extends StatelessWidget {
-  TakeTestPage({super.key});
-  static String id = 'TakeTestPage';
+// TakeTestPage Widget (already a StatefulWidget)
+class TakeTestPage extends StatefulWidget {
+  const TakeTestPage({super.key});
+  static const String id = 'TakeTestPage';
 
-  File? imageFile;
+  @override
+  State<TakeTestPage> createState() => _TakeTestPageState();
+}
 
+class _TakeTestPageState extends State<TakeTestPage> {
+  File? _imageFile;
   final picker = ImagePicker();
 
-  pickimagegallery(context) async {
+  @override
+  void initState() {
+    super.initState();
+    // Set the selectedIndex to 0 (Test tab) when the page is loaded
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<NavigationProvider>(
+        context,
+        listen: false,
+      ).setSelectedIndex(0);
+    });
+  }
+
+  Future<void> pickImageGallery(BuildContext context) async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
-      imageFile = File(pickedFile.path);
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
     }
 
-    if (imageFile != null) {
+    if (_imageFile != null) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => TakeTestConfirmPage(imageFile: imageFile),
+          builder: (context) => TakeTestConfirmPage(imageFile: _imageFile),
         ),
       );
     }
   }
 
-  pickimagecamera(context) async {
+  Future<void> pickImageCamera(BuildContext context) async {
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
 
     if (pickedFile != null) {
-      imageFile = File(pickedFile.path);
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
     }
 
-    if (imageFile != null) {
+    if (_imageFile != null) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => TakeTestConfirmPage(imageFile: imageFile),
+          builder: (context) => TakeTestConfirmPage(imageFile: _imageFile),
         ),
       );
     }
@@ -52,96 +71,17 @@ class TakeTestPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      bottomNavigationBar: Stack(
-        alignment: Alignment.bottomCenter,
-        clipBehavior: Clip.none,
-        children: [
-          SimpleShadow(
-            offset: const Offset(0, 4),
-            child: Container(
-              margin: EdgeInsets.only(bottom: 10),
-              height: 56,
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(15)),
-                color: Color(0xffD9D9D9),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    height: 15,
-                    width: 86,
-                    child: Center(
-                      child: Text(
-                        'Test',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: kPrimaryColor,
-                        ),
-                      ),
-                    ),
-                  ),
-                  NavBarElement(
-                    image: 'assets/photos/navbarinfo.png',
-                    text: 'Information',
-                    ontap: () {
-                      Navigator.pushNamed(context, InformationPage.id);
-                    },
-                  ),
-                  NavBarElement(
-                    image: 'assets/photos/navbarhome.png',
-                    text: 'Home',
-                    ontap: () {
-                      Navigator.pushNamed(context, HomePageV2.id);
-                    },
-                  ),
-                  NavBarElement(
-                    image: 'assets/photos/navbaraboutus.png',
-                    text: 'About Us',
-                  ),
-                  NavBarElement(
-                    image: 'assets/photos/navbardoctor.png',
-                    text: 'Doctors',
-                    ontap: () {
-                      Navigator.pushNamed(context, DoctorsPage.id);
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          Positioned(
-            right: screenWidth - 67,
-            top: -25,
-            child: Container(
-              height: 48,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Color(0xff17D3E5),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(6.0),
-                child: Image.asset('assets/photos/navbartest.png'),
-              ),
-            ),
-          ),
-        ],
-      ),
-
+      bottomNavigationBar: const HomeBottomNavBar(),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                Color(0xff56EACF),
-                Color(0xff194D59),
-              ], // Change colors as needed
+              colors: [Color(0xff56EACF), Color(0xff194D59)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -154,8 +94,10 @@ class TakeTestPage extends StatelessWidget {
             leading: IconButton(
               padding: const EdgeInsets.all(0),
               onPressed: () {
-                imageFile = null;
-                Navigator.pushReplacementNamed(context, HomePageV2.id);
+                setState(() {
+                  _imageFile = null;
+                });
+                Navigator.pop(context);
               },
               icon: Image.asset('assets/photos/dark_back_arrow.png'),
             ),
@@ -165,11 +107,11 @@ class TakeTestPage extends StatelessWidget {
       body: Center(
         child: Column(
           children: [
-            SizedBox(height: 200),
+            SizedBox(height: screenHeight * 0.25),
             Text(
               'Take test',
               style: TextStyle(
-                color: Color(0xff194D59),
+                color: const Color(0xff194D59),
                 fontSize: screenWidth * 0.08,
                 fontWeight: FontWeight.w700,
               ),
@@ -177,25 +119,26 @@ class TakeTestPage extends StatelessWidget {
             Text(
               'Choose Between',
               style: TextStyle(
-                color: Color(0xff194D59),
+                color: const Color(0xff194D59),
                 fontSize: screenWidth * 0.05,
                 fontWeight: FontWeight.w400,
               ),
             ),
-            SizedBox(height: 50),
+            SizedBox(height: screenHeight * 0.06),
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Padding(
                   padding: EdgeInsets.only(left: screenWidth * 0.09),
                   child: GestureDetector(
                     onTap: () {
-                      pickimagecamera(context);
+                      pickImageCamera(context);
                     },
                     child: Column(
                       children: [
-                        buildbox(screenWidth, 'assets/photos/take_photo.png'),
-                        SizedBox(height: 8),
-                        buildlabel(screenWidth, 'Take Photo'),
+                        buildBox(screenWidth, 'assets/photos/take_photo.png'),
+                        const SizedBox(height: 8),
+                        buildLabel(screenWidth, 'Take Photo'),
                       ],
                     ),
                   ),
@@ -204,13 +147,13 @@ class TakeTestPage extends StatelessWidget {
                   padding: EdgeInsets.only(left: screenWidth * 0.09),
                   child: GestureDetector(
                     onTap: () {
-                      pickimagegallery(context);
+                      pickImageGallery(context);
                     },
                     child: Column(
                       children: [
-                        buildbox(screenWidth, 'assets/photos/Choose_image.png'),
-                        SizedBox(height: 8),
-                        buildlabel(screenWidth, 'Choose Image'),
+                        buildBox(screenWidth, 'assets/photos/Choose_image.png'),
+                        const SizedBox(height: 8),
+                        buildLabel(screenWidth, 'Choose Image'),
                       ],
                     ),
                   ),
@@ -223,22 +166,22 @@ class TakeTestPage extends StatelessWidget {
     );
   }
 
-  Text buildlabel(double screenWidth, String text) {
+  Text buildLabel(double screenWidth, String text) {
     return Text(
       text,
       style: TextStyle(
-        color: Color(0xff194D59),
+        color: const Color(0xff194D59),
         fontSize: screenWidth * 0.04,
         fontWeight: FontWeight.w600,
       ),
     );
   }
 
-  Container buildbox(double screenWidth, String image) {
+  Container buildBox(double screenWidth, String image) {
     return Container(
       width: screenWidth * 0.363,
       height: screenWidth * 0.31,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Color(0xff194D59),
         borderRadius: BorderRadius.all(Radius.circular(15)),
       ),

@@ -1,6 +1,4 @@
-import 'package:canser_scan/doctors_page.dart';
 import 'package:canser_scan/helper/constants.dart';
-import 'package:canser_scan/home_page_v2.dart';
 import 'package:canser_scan/info_pages/actinic_keratosis.dart';
 import 'package:canser_scan/info_pages/basal_cell_carcinoma.dart';
 import 'package:canser_scan/info_pages/benign_keratosis.dart';
@@ -9,114 +7,67 @@ import 'package:canser_scan/info_pages/melanocytic_nevus.dart';
 import 'package:canser_scan/info_pages/melanoma.dart';
 import 'package:canser_scan/info_pages/skin_cancer.dart';
 import 'package:canser_scan/info_pages/vascular_lesion.dart';
-import 'package:canser_scan/test/take_test_page.dart';
+import 'package:canser_scan/navigation_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:simple_shadow/simple_shadow.dart';
+import 'package:provider/provider.dart';
+import 'package:canser_scan/widgets/bottom_nav_bar.dart';
 
-class InformationPage extends StatelessWidget {
+// Data model for a disease
+class Disease {
+  final String title;
+  final String subtitle;
+  final String destination;
+
+  const Disease({
+    required this.title,
+    required this.subtitle,
+    required this.destination,
+  });
+}
+
+// InformationPage Widget
+class InformationPage extends StatefulWidget {
   const InformationPage({super.key});
 
-  static String id = 'InformationPage';
+  static const String id = 'InformationPage';
 
   @override
+  State<InformationPage> createState() => _InformationPageState();
+}
+
+class _InformationPageState extends State<InformationPage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<NavigationProvider>(
+        context,
+        listen: false,
+      ).setSelectedIndex(1);
+    });
+  }
+
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
-      backgroundColor: Color(0xffE3F7F5),
-      bottomNavigationBar: Stack(
-        alignment: Alignment.bottomCenter,
-        clipBehavior: Clip.none,
-        children: [
-          SimpleShadow(
-            offset: const Offset(0, 4),
-            child: Container(
-              margin: EdgeInsets.only(bottom: 10),
-              height: 56,
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(15)),
-                color: Color(0xffD9D9D9),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  NavBarElement(
-                    image: 'assets/photos/navbartest.png',
-                    text: 'Test',
-                    ontap: () {
-                      Navigator.pushNamed(context, TakeTestPage.id);
-                    },
-                  ),
-                  SizedBox(
-                    height: 15,
-                    width: 86,
-                    child: Center(
-                      child: Text(
-                        'Information',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          color: kPrimaryColor,
-                        ),
-                      ),
-                    ),
-                  ),
-                  NavBarElement(
-                    image: 'assets/photos/navbarhome.png',
-                    text: 'Home',
-                    ontap: () {
-                      Navigator.pushNamed(context, HomePageV2.id);
-                    },
-                  ),
-
-                  NavBarElement(
-                    image: 'assets/photos/navbaraboutus.png',
-                    text: 'About Us',
-                  ),
-                  NavBarElement(
-                    image: 'assets/photos/navbardoctor.png',
-                    text: 'Doctors',
-                    ontap: () {
-                      Navigator.pushNamed(context, DoctorsPage.id);
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Positioned(
-            left: screenWidth / 3 - 33,
-            top: -25,
-            child: Container(
-              height: 48,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Color(0xff17D3E5),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Image.asset('assets/photos/navbarinfo.png'),
-              ),
-            ),
-          ),
-        ],
-      ),
-
+      backgroundColor: const Color(0xffE3F7F5),
+      bottomNavigationBar:
+          const HomeBottomNavBar(), // Use the optimized HomeBottomNavBar
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                Color(0xff56EACF),
-                Color(0xff194D59),
-              ], // Change colors as needed
+              colors: [Color(0xff56EACF), Color(0xff194D59)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
           ),
           child: AppBar(
             centerTitle: true,
-            title: Text(
+            title: const Text(
               'Information',
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -131,64 +82,69 @@ class InformationPage extends StatelessWidget {
             leading: IconButton(
               padding: const EdgeInsets.all(0),
               onPressed: () {
-                Navigator.pushReplacementNamed(context, HomePageV2.id);
+                Navigator.pop(
+                  context,
+                ); // Changed to pop instead of pushReplacementNamed
               },
               icon: Image.asset('assets/photos/dark_back_arrow.png'),
             ),
           ),
         ),
       ),
-      body: ListView(
-        children: [
-          diseaseCard(
+      body: ListView.builder(
+        itemCount: 8,
+        itemBuilder: (context, index) {
+          final diseases = [
+            Disease(
+              title: "What is skin cancer",
+              subtitle: "Info with details about skin cancer",
+              destination: SkinCancer.id,
+            ),
+            Disease(
+              title: "Benign Keratosis",
+              subtitle: "Benign skin lesion",
+              destination: BenignKeratosis.id,
+            ),
+            Disease(
+              title: "Vascular Lesion",
+              subtitle: "Benign skin lesion",
+              destination: VascularLesion.id,
+            ),
+            Disease(
+              title: "Melanoma",
+              subtitle: "Malignant skin lesion",
+              destination: Melanoma.id,
+            ),
+            Disease(
+              title: "Melanocytic Nevus",
+              subtitle: "Malignant skin lesion",
+              destination: MelanocyticNevus.id,
+            ),
+            Disease(
+              title: "Dermatofibroma",
+              subtitle: "Benign skin lesion",
+              destination: Dermatofibroma.id,
+            ),
+            Disease(
+              title: "Actinic Keratosis",
+              subtitle: "Benign skin lesion",
+              destination: ActinicKeratosis.id,
+            ),
+            Disease(
+              title: "Basal Cell Carcinoma",
+              subtitle: "Malignant skin lesion",
+              destination: BasalCellCarcinoma.id,
+            ),
+          ];
+          final disease = diseases[index];
+          return diseaseCard(
             context,
-            title: "What is skin cancer",
-            subtitle: "Info with details about skin cancer",
-            destination: SkinCancer.id,
-          ),
-          diseaseCard(
-            context,
-            title: "Benign Keratosis",
-            subtitle: "Benign skin lesion",
-            destination: BenignKeratosis.id,
-          ),
-          diseaseCard(
-            context,
-            title: "Vascular Lesion",
-            subtitle: "Benign skin lesion",
-            destination: VascularLesion.id,
-          ),
-          diseaseCard(
-            context,
-            title: "Melanoma",
-            subtitle: "Malignant skin lesion",
-            destination: Melanoma.id,
-          ),
-          diseaseCard(
-            context,
-            title: "Melanocytic Nevus",
-            subtitle: "Malignant skin lesion",
-            destination: MelanocyticNevus.id,
-          ),
-          diseaseCard(
-            context,
-            title: "Dermatofibroma",
-            subtitle: "Benign skin lesion",
-            destination: Dermatofibroma.id,
-          ),
-          diseaseCard(
-            context,
-            title: "Actinic Keratosis",
-            subtitle: "Benign skin lesion",
-            destination: ActinicKeratosis.id,
-          ),
-          diseaseCard(
-            context,
-            title: "Basal Cell Carcinoma",
-            subtitle: "Malignant skin lesion",
-            destination: BasalCellCarcinoma.id,
-          ),
-        ],
+            title: disease.title,
+            subtitle: disease.subtitle,
+            destination: disease.destination,
+            screenWidth: screenWidth,
+          );
+        },
       ),
     );
   }
@@ -197,7 +153,8 @@ class InformationPage extends StatelessWidget {
     BuildContext context, {
     required String title,
     required String subtitle,
-    required var destination,
+    required String destination, // Changed type to String for type safety
+    required double screenWidth,
   }) {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -205,9 +162,21 @@ class InformationPage extends StatelessWidget {
         leading: const Icon(Icons.info, color: kPrimaryColor),
         title: Text(
           title,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize:
+                screenWidth *
+                0.045, // Responsive font size (4.5% of screen width)
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        subtitle: Text(subtitle),
+        subtitle: Text(
+          subtitle,
+          style: TextStyle(
+            fontSize:
+                screenWidth *
+                0.035, // Responsive font size (3.5% of screen width)
+          ),
+        ),
         onTap: () {
           Navigator.pushNamed(context, destination);
         },

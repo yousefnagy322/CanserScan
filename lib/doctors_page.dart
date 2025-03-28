@@ -1,101 +1,57 @@
 import 'package:canser_scan/helper/constants.dart';
-import 'package:canser_scan/home_page_v2.dart';
-import 'package:canser_scan/info_pages/information_page.dart';
 import 'package:canser_scan/map_page.dart';
-import 'package:canser_scan/test/take_test_page.dart';
+import 'package:canser_scan/widgets/bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
-import 'package:simple_shadow/simple_shadow.dart';
+import 'navigation_provider.dart';
 
-class DoctorsPage extends StatelessWidget {
+// Data model for a doctor
+class Doctor {
+  final String image;
+  final String name;
+  final String location;
+  final double lat;
+  final double lng;
+
+  const Doctor({
+    required this.image,
+    required this.name,
+    required this.location,
+    required this.lat,
+    required this.lng,
+  });
+}
+
+// DoctorsPage Widget
+class DoctorsPage extends StatefulWidget {
   const DoctorsPage({super.key});
-  static String id = 'DoctorsPage';
+  static const String id = 'DoctorsPage';
 
   @override
+  State<DoctorsPage> createState() => _DoctorsPageState();
+}
+
+class _DoctorsPageState extends State<DoctorsPage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<NavigationProvider>(
+        context,
+        listen: false,
+      ).setSelectedIndex(4);
+    });
+  }
+
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
-      backgroundColor: Color(0xffFFFFFF),
-      bottomNavigationBar: Stack(
-        alignment: Alignment.bottomCenter,
-        clipBehavior: Clip.none,
-        children: [
-          SimpleShadow(
-            offset: const Offset(0, 4),
-            child: Container(
-              margin: EdgeInsets.only(bottom: 10),
-              height: 56,
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(15)),
-                color: Color(0xffD9D9D9),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  NavBarElement(
-                    image: 'assets/photos/navbartest.png',
-                    text: 'Test',
-                    ontap: () {
-                      Navigator.pushNamed(context, TakeTestPage.id);
-                    },
-                  ),
-                  NavBarElement(
-                    image: 'assets/photos/navbarinfo.png',
-                    text: 'Information',
-                    ontap: () {
-                      Navigator.pushNamed(context, InformationPage.id);
-                    },
-                  ),
-
-                  NavBarElement(
-                    image: 'assets/photos/navbarhome.png',
-                    text: 'Home',
-                    ontap: () {
-                      Navigator.pushNamed(context, HomePageV2.id);
-                    },
-                  ),
-                  NavBarElement(
-                    image: 'assets/photos/navbaraboutus.png',
-                    text: 'About Us',
-                  ),
-                  SizedBox(
-                    height: 15,
-                    width: 86,
-                    child: Center(
-                      child: Text(
-                        'Doctors',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: kPrimaryColor,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          Positioned(
-            left: screenWidth - 67,
-            top: -25,
-            child: Container(
-              height: 48,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Color(0xff17D3E5),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(6.0),
-                child: Image.asset('assets/photos/navbardoctor.png'),
-              ),
-            ),
-          ),
-        ],
-      ),
-
+      backgroundColor: const Color(0xffFFFFFF),
+      bottomNavigationBar:
+          const HomeBottomNavBar(), // Use the optimized HomeBottomNavBar
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Container(
@@ -109,7 +65,9 @@ class DoctorsPage extends StatelessWidget {
             leading: IconButton(
               padding: const EdgeInsets.all(0),
               onPressed: () {
-                Navigator.pushReplacementNamed(context, HomePageV2.id);
+                Navigator.pop(
+                  context,
+                ); // Changed to pop instead of pushReplacementNamed
               },
               icon: Image.asset('assets/photos/dark_back_arrow.png'),
             ),
@@ -128,108 +86,62 @@ class DoctorsPage extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                   fontSize: screenWidth * 0.123,
                 ),
-                colors: [const Color(0xff12748B), const Color(0xff051F25)],
+                colors: const [Color(0xff12748B), Color(0xff051F25)],
               ),
             ),
             Expanded(
-              child: ListView(
-                children: [
-                  doctorCard(
+              child: ListView.builder(
+                itemCount: 5,
+                itemBuilder: (context, index) {
+                  final doctors = [
+                    Doctor(
+                      image: 'assets/doctor_photo/Dr Mohmed Nadi.jpg',
+                      name: 'Dr: Mohmed Nadi',
+                      location: 'Bani sweif',
+                      lat: 29.06882555330429,
+                      lng: 31.100216595764856,
+                    ),
+                    Doctor(
+                      image: 'assets/doctor_photo/Dr Mario Abrahime.jpg',
+                      name: 'Dr: Mario Abrahime',
+                      location: 'Cairo',
+                      lat: 30.06073316874439,
+                      lng: 31.24660416741735,
+                    ),
+                    Doctor(
+                      image: 'assets/doctor_photo/Dr Youssef Ahmed.jpg',
+                      name: 'Dr: Youssef Ahmed',
+                      location: 'Cairo',
+                      lat: 30.031006164144912,
+                      lng: 31.203126928235857,
+                    ),
+                    Doctor(
+                      image: 'assets/doctor_photo/Dr Nadi Youssef.jpg',
+                      name: 'Dr: Nadi Youssef',
+                      location: 'Elshrouke',
+                      lat: 30.159547580564148,
+                      lng: 31.601435209234975,
+                    ),
+                    Doctor(
+                      image: 'assets/doctor_photo/Dr Marime Emad.jpg',
+                      name: 'Dr: Marime Emad',
+                      location: 'Banha',
+                      lat: 30.46660724434177,
+                      lng: 31.186129109143007,
+                    ),
+                  ];
+                  final doctor = doctors[index];
+                  return doctorCard(
                     context,
-                    image: 'assets/doctor_photo/doctor1.jpg',
-                    name: 'Dr: Mohmed Nadi',
-                    location: 'Bani sweif',
-                    onpressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) => MapPage(
-                                doctorLat: 29.06882555330429,
-                                doctorLng: 31.100216595764856,
-                              ),
-                        ),
-                      );
-                      print('go to page');
-                    },
-                  ),
-                  doctorCard(
-                    context,
-                    image: 'assets/doctor_photo/doctor2.jpg',
-                    name: 'Dr: Mario Abrahime',
-                    location: 'Cairo',
-                    onpressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) => MapPage(
-                                doctorLat: 30.06073316874439,
-                                doctorLng: 31.24660416741735,
-                              ),
-                        ),
-                      );
-                      print('go to page');
-                    },
-                  ),
-                  doctorCard(
-                    context,
-                    image: 'assets/doctor_photo/doctor3.jpg',
-                    name: 'Dr: Youssef Ahmed',
-                    location: 'Cairo',
-                    onpressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) => MapPage(
-                                doctorLat: 30.031006164144912,
-                                doctorLng: 31.203126928235857,
-                              ),
-                        ),
-                      );
-                      print('go to page');
-                    },
-                  ),
-                  doctorCard(
-                    context,
-                    image: 'assets/doctor_photo/doctor4.jpg',
-                    name: 'Dr: Nadi Youssef',
-                    location: 'Elshrouke',
-                    onpressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) => MapPage(
-                                doctorLat: 30.159547580564148,
-                                doctorLng: 31.601435209234975,
-                              ),
-                        ),
-                      );
-                      print('go to page');
-                    },
-                  ),
-                  doctorCard(
-                    context,
-                    image: 'assets/doctor_photo/doctor5.jpg',
-                    name: 'Dr: Marime Emad',
-                    location: 'Banha',
-                    onpressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) => MapPage(
-                                doctorLat: 30.46660724434177,
-                                doctorLng: 31.186129109143007,
-                              ),
-                        ),
-                      );
-                      print('go to page');
-                    },
-                  ),
-                ],
+                    image: doctor.image,
+                    name: doctor.name,
+                    location: doctor.location,
+                    doctorLat: doctor.lat,
+                    doctorLng: doctor.lng,
+                    screenWidth: screenWidth,
+                    screenHeight: screenHeight,
+                  );
+                },
               ),
             ),
           ],
@@ -243,11 +155,14 @@ class DoctorsPage extends StatelessWidget {
     required String image,
     required String name,
     required String location,
-    VoidCallback? onpressed,
+    required double doctorLat,
+    required double doctorLng,
+    required double screenWidth,
+    required double screenHeight,
   }) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
-      height: 80,
+      height: screenHeight * 0.1, // Responsive height (10% of screen height)
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -255,51 +170,72 @@ class DoctorsPage extends StatelessWidget {
             image,
             fit: BoxFit.cover,
             alignment: Alignment.topCenter,
-            height: 80,
-            width: 70,
+            height: screenHeight * 0.1, // Responsive height
+            width: screenWidth * 0.18, // Responsive width (18% of screen width)
           ),
-          SizedBox(width: 10),
-
+          const SizedBox(width: 10),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 name,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                style: TextStyle(
+                  fontSize: screenWidth * 0.045, // Responsive font size
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               Row(
                 children: [
-                  Image.asset('assets/photos/location.png', height: 16),
-                  SizedBox(width: 4),
+                  Image.asset(
+                    'assets/photos/location.png',
+                    height: screenWidth * 0.04, // Responsive icon size
+                  ),
+                  const SizedBox(width: 4),
                   Text(
                     location,
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
+                    style: TextStyle(
+                      fontSize: screenWidth * 0.038, // Responsive font size
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
                 ],
               ),
             ],
           ),
-          Spacer(flex: 1),
+          const Spacer(flex: 1),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: kPrimaryColor,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.all(8),
-              fixedSize: const Size(64, 32),
+              fixedSize: Size(
+                screenWidth * 0.16,
+                screenHeight * 0.04,
+              ), // Responsive button size
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-
-            onPressed: onpressed,
-
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder:
+                      (context) =>
+                          MapPage(doctorLat: doctorLat, doctorLng: doctorLng),
+                ),
+              );
+            },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
                   'Map',
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.03, // Responsive font size
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
                 Image.asset('assets/photos/mapicon.png'),
               ],

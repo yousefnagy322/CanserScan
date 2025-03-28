@@ -18,6 +18,8 @@ import 'package:canser_scan/info_pages/melanoma.dart';
 import 'package:canser_scan/info_pages/skin_cancer.dart';
 import 'package:canser_scan/info_pages/vascular_lesion.dart';
 import 'package:canser_scan/map_page.dart';
+import 'package:canser_scan/map_provider.dart';
+import 'package:canser_scan/navigation_provider.dart';
 import 'package:canser_scan/splash.dart';
 import 'package:canser_scan/test/take_test_confirm_page.dart';
 import 'package:canser_scan/test/take_test_page.dart';
@@ -28,6 +30,7 @@ import 'package:flutter/services.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'welcome_page.dart';
+import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,44 +46,50 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primaryColor: kPrimaryColor,
-        textSelectionTheme: TextSelectionThemeData(
-          cursorColor: const Color(0xFF26A69A),
-          selectionColor: const Color(0xFF7AC5C9),
-          selectionHandleColor: const Color(0xFF26A69A),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => NavigationProvider()),
+        ChangeNotifierProvider(create: (_) => MapProvider()),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primaryColor: kPrimaryColor,
+          textSelectionTheme: TextSelectionThemeData(
+            cursorColor: const Color(0xFF26A69A),
+            selectionColor: const Color(0xFF7AC5C9),
+            selectionHandleColor: const Color(0xFF26A69A),
+          ),
         ),
+        routes: {
+          WelcomePage.id: (context) => WelcomePage(),
+          LoginPage.id: (context) => LoginPage(),
+          RegisterPage.id: (context) => RegisterPage(),
+          ConfirmPage.id: (context) => ConfirmPage(),
+          HomePage.id: (context) => HomePage(),
+          HomePageV2.id: (context) => HomePageV2(),
+          AccountSettings.id: (context) => AccountSettings(),
+          TakeTestPage.id: (context) => TakeTestPage(),
+          TakeTestConfirmPage.id: (context) => TakeTestConfirmPage(),
+          TestResultNeg.id: (context) => TestResultNeg(),
+          TestResultPos.id: (context) => TestResultPos(),
+          InformationPage.id: (context) => InformationPage(),
+          SkinCancer.id: (context) => SkinCancer(),
+          BenignKeratosis.id: (context) => BenignKeratosis(),
+          VascularLesion.id: (context) => VascularLesion(),
+          Melanoma.id: (context) => Melanoma(),
+          MelanocyticNevus.id: (context) => MelanocyticNevus(),
+          Dermatofibroma.id: (context) => Dermatofibroma(),
+          ActinicKeratosis.id: (context) => ActinicKeratosis(),
+          BasalCellCarcinoma.id: (context) => BasalCellCarcinoma(),
+          ChatPage.id: (context) => ChatPage(),
+          SplashScreen.id: (context) => SplashScreen(),
+          DoctorsPage.id: (context) => DoctorsPage(),
+          MapPage.id: (context) => MapPage(),
+          HistoryPage.id: (context) => HistoryPage(),
+        },
+        initialRoute: SplashScreen.id,
       ),
-      routes: {
-        WelcomePage.id: (context) => WelcomePage(),
-        LoginPage.id: (context) => LoginPage(),
-        RegisterPage.id: (context) => RegisterPage(),
-        ConfirmPage.id: (context) => ConfirmPage(),
-        HomePage.id: (context) => HomePage(),
-        HomePageV2.id: (context) => HomePageV2(),
-        AccountSettings.id: (context) => AccountSettings(),
-        TakeTestPage.id: (context) => TakeTestPage(),
-        TakeTestConfirmPage.id: (context) => TakeTestConfirmPage(),
-        TestResultNeg.id: (context) => TestResultNeg(),
-        TestResultPos.id: (context) => TestResultPos(),
-        InformationPage.id: (context) => InformationPage(),
-        SkinCancer.id: (context) => SkinCancer(),
-        BenignKeratosis.id: (context) => BenignKeratosis(),
-        VascularLesion.id: (context) => VascularLesion(),
-        Melanoma.id: (context) => Melanoma(),
-        MelanocyticNevus.id: (context) => MelanocyticNevus(),
-        Dermatofibroma.id: (context) => Dermatofibroma(),
-        ActinicKeratosis.id: (context) => ActinicKeratosis(),
-        BasalCellCarcinoma.id: (context) => BasalCellCarcinoma(),
-        ChatPage.id: (context) => ChatPage(),
-        SplashScreen.id: (context) => SplashScreen(),
-        DoctorsPage.id: (context) => DoctorsPage(),
-        MapPage.id: (context) => MapPage(),
-        HistoryPage.id: (context) => HistoryPage(),
-      },
-      initialRoute: SplashScreen.id,
     );
   }
 }

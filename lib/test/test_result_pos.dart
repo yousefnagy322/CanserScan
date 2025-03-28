@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:canser_scan/doctors_page.dart';
 import 'package:canser_scan/helper/constants.dart';
 import 'package:canser_scan/info_pages/actinic_keratosis.dart';
