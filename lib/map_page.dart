@@ -9,10 +9,10 @@ import 'package:url_launcher/url_launcher.dart';
 
 class MapPage extends StatefulWidget {
   static String id = 'MapPage';
-  final double? doctorLat;
-  final double? doctorLng;
+  final double? doctorLatfdp;
+  final double? doctorLngfdp;
 
-  MapPage({this.doctorLat, this.doctorLng});
+  MapPage({this.doctorLatfdp, this.doctorLngfdp});
 
   @override
   MapPageState createState() => MapPageState();
@@ -21,18 +21,23 @@ class MapPage extends StatefulWidget {
 class MapPageState extends State<MapPage> {
   late GoogleMapController mapController;
   Location location = Location();
-  LatLng initialPosition = LatLng(29.3763, 31.1927);
+  LatLng initialPosition = LatLng(29.3763, 31.1927); // Default position
   Set<Marker> markers = {};
   List<Map<String, dynamic>> doctors = [];
   List<Map<String, dynamic>> filteredDoctors = [];
   TextEditingController searchController = TextEditingController();
   LatLng? userLatLng;
-  bool _isLoading = false; // Add loading state
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
+    // Always fetch user location to calculate distances and populate doctor list
     getUserLocation();
+    // If doctor coordinates are provided, set initial position to them
+    if (widget.doctorLatfdp != null && widget.doctorLngfdp != null) {
+      initialPosition = LatLng(widget.doctorLatfdp!, widget.doctorLngfdp!);
+    }
   }
 
   @override
@@ -44,7 +49,7 @@ class MapPageState extends State<MapPage> {
 
   Future<void> getUserLocation() async {
     setState(() {
-      _isLoading = true; // Show loading indicator
+      _isLoading = true;
     });
     try {
       bool serviceEnabled = await location.serviceEnabled();
@@ -74,41 +79,30 @@ class MapPageState extends State<MapPage> {
         currentLocation.latitude!,
         currentLocation.longitude!,
       );
-      fetchDermatologists();
-      setState(() {
-        initialPosition = userLatLng!;
+      fetchDermatologists(); // Fetch doctors based on user location
 
-        // Add a marker for the user's location
-        markers.removeWhere(
-          (marker) => marker.markerId.value == "user_location",
+      // Only move to user location if no doctor coordinates are provided
+      if (widget.doctorLatfdp == null || widget.doctorLngfdp == null) {
+        mapController.animateCamera(
+          CameraUpdate.newLatLngZoom(userLatLng!, 14),
         );
-      });
-
-      mapController.animateCamera(CameraUpdate.newLatLngZoom(userLatLng!, 14));
+      }
     } catch (e) {
       print("Error getting location: $e");
     } finally {
       setState(() {
-        _isLoading = false; // Hide loading indicator
+        _isLoading = false;
       });
     }
   }
 
   void fetchDermatologists() {
-    setState(() {
-      _isLoading = true; // Show loading indicator
-    });
     FirebaseFirestore.instance
         .collection('dermatologists')
         .snapshots()
         .listen(
           (snapshot) {
-            if (userLatLng == null) {
-              setState(() {
-                _isLoading = false;
-              });
-              return; // Ensure user location is available
-            }
+            if (userLatLng == null) return; // Wait for user location
 
             List<Map<String, dynamic>> tempDoctors = [];
             Set<Marker> newMarkers = {};
@@ -147,14 +141,13 @@ class MapPageState extends State<MapPage> {
               }
             }
 
-            // Sort doctors by distance from user
             tempDoctors.sort((a, b) => a['distance'].compareTo(b['distance']));
 
             setState(() {
               markers = newMarkers;
               doctors = tempDoctors;
               filteredDoctors = tempDoctors;
-              _isLoading = false; // Hide loading indicator
+              _isLoading = false;
             });
           },
           onError: (e) {
@@ -236,7 +229,6 @@ class MapPageState extends State<MapPage> {
       ),
       body: Stack(
         children: [
-          // Google Map
           Positioned.fill(
             child: GoogleMap(
               initialCameraPosition: CameraPosition(
@@ -244,31 +236,26 @@ class MapPageState extends State<MapPage> {
                 zoom: 14,
               ),
               myLocationEnabled: true,
-              myLocationButtonEnabled: false, // Disable default button
+              myLocationButtonEnabled: false,
               zoomControlsEnabled: false,
               onMapCreated: (GoogleMapController controller) {
                 mapController = controller;
-                if (widget.doctorLat != null && widget.doctorLng != null) {
+                if (widget.doctorLatfdp != null &&
+                    widget.doctorLngfdp != null) {
                   Future.delayed(const Duration(milliseconds: 500), () {
-                    moveToDoctor(widget.doctorLat!, widget.doctorLng!);
+                    moveToDoctor(widget.doctorLatfdp!, widget.doctorLngfdp!);
                   });
-                } else {
-                  getUserLocation();
                 }
               },
               markers: markers,
             ),
           ),
-
-          // Loading Indicator
           if (_isLoading)
             const Center(
               child: CircularProgressIndicator(color: kPrimaryColor),
             ),
-
-          // Search Field
           Positioned(
-            top: screenHeight * 0.02, // Responsive positioning
+            top: screenHeight * 0.02,
             left: screenWidth * 0.04,
             right: screenWidth * 0.04,
             child: Container(
@@ -300,10 +287,8 @@ class MapPageState extends State<MapPage> {
               ),
             ),
           ),
-
-          // Custom My Location Button
           Positioned(
-            top: screenHeight * 0.12, // Responsive positioning
+            top: screenHeight * 0.12,
             right: screenWidth * 0.04,
             child: FloatingActionButton(
               shape: const CircleBorder(),
@@ -315,104 +300,105 @@ class MapPageState extends State<MapPage> {
               child: const Icon(Icons.my_location),
             ),
           ),
-
-          // Horizontal Doctor List Overlay
           Positioned(
             left: 0,
             right: 0,
-            bottom: screenHeight * 0.02, // Responsive positioning
+            bottom: screenHeight * 0.02,
             child: Container(
-              height: screenHeight * 0.18, // Responsive height
+              height: screenHeight * 0.18,
               decoration: const BoxDecoration(
                 color: Colors.transparent,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
               ),
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: filteredDoctors.length,
-                itemBuilder: (context, index) {
-                  var doctor = filteredDoctors[index];
-                  return GestureDetector(
-                    onTap: () {
-                      moveToDoctor(doctor['latitude'], doctor['longitude']);
-                    },
-                    child: Container(
-                      width: screenWidth * 0.5, // Responsive width
-                      margin: EdgeInsets.all(
-                        screenWidth * 0.02,
-                      ), // Responsive margin
-                      padding: EdgeInsets.all(
-                        screenWidth * 0.02,
-                      ), // Responsive padding
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black26,
-                            blurRadius: 4,
-                            offset: Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            doctor['name'],
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          SizedBox(
-                            height: screenHeight * 0.01,
-                          ), // Responsive spacing
-                          Text(
-                            doctor['address'],
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize:
-                                  screenWidth * 0.03, // Responsive font size
-                              color: Colors.grey[700],
+              child:
+                  filteredDoctors.isEmpty
+                      ? const Center(
+                        child: Text(
+                          'No doctors available',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      )
+                      : ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: filteredDoctors.length,
+                        itemBuilder: (context, index) {
+                          var doctor = filteredDoctors[index];
+                          return GestureDetector(
+                            onTap: () {
+                              moveToDoctor(
+                                doctor['latitude'],
+                                doctor['longitude'],
+                              );
+                            },
+                            child: Container(
+                              width: screenWidth * 0.5,
+                              margin: EdgeInsets.all(screenWidth * 0.02),
+                              padding: EdgeInsets.all(screenWidth * 0.02),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Colors.black26,
+                                    blurRadius: 4,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    doctor['name'],
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  SizedBox(height: screenHeight * 0.01),
+                                  Text(
+                                    doctor['address'],
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: screenWidth * 0.03,
+                                      color: Colors.grey[700],
+                                    ),
+                                  ),
+                                  SizedBox(height: screenHeight * 0.01),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        '${(doctor['distance'] / 1000).toStringAsFixed(2)} km away',
+                                        style: TextStyle(
+                                          fontSize: screenWidth * 0.03,
+                                          color: Colors.teal,
+                                        ),
+                                      ),
+                                      IconButton(
+                                        icon: const Icon(
+                                          Icons.directions,
+                                          color: kPrimaryColor,
+                                        ),
+                                        onPressed: () {
+                                          _launchGoogleMaps(
+                                            doctor['latitude'],
+                                            doctor['longitude'],
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          SizedBox(
-                            height: screenHeight * 0.01,
-                          ), // Responsive spacing
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                '${(doctor['distance'] / 1000).toStringAsFixed(2)} km away', // Convert meters to km
-                                style: TextStyle(
-                                  fontSize:
-                                      screenWidth *
-                                      0.03, // Responsive font size
-                                  color: Colors.teal,
-                                ),
-                              ),
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.directions,
-                                  color: kPrimaryColor,
-                                ),
-                                onPressed: () {
-                                  _launchGoogleMaps(
-                                    doctor['latitude'],
-                                    doctor['longitude'],
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        ],
+                          );
+                        },
                       ),
-                    ),
-                  );
-                },
-              ),
             ),
           ),
         ],

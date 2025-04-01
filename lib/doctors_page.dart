@@ -1,29 +1,42 @@
 import 'package:canser_scan/helper/constants.dart';
-import 'package:canser_scan/map_page.dart';
-import 'package:canser_scan/widgets/bottom_nav_bar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
+import 'map_page.dart';
 import 'navigation_provider.dart';
+import 'widgets/bottom_nav_bar.dart';
 
-// Data model for a doctor
 class Doctor {
   final String image;
   final String name;
-  final String location;
+  final String governorate;
+  final String region;
   final double lat;
   final double lng;
 
-  const Doctor({
+  Doctor({
     required this.image,
     required this.name,
-    required this.location,
+    required this.governorate,
+    required this.region,
     required this.lat,
     required this.lng,
   });
+
+  factory Doctor.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    return Doctor(
+      image: data['image'] ?? '',
+      name: data['name'] ?? '',
+      governorate: data['governorate'] ?? '',
+      region: data['region'] ?? '',
+      lat: data['latitude'],
+      lng: data['longitude'],
+    );
+  }
 }
 
-// DoctorsPage Widget
 class DoctorsPage extends StatefulWidget {
   const DoctorsPage({super.key});
   static const String id = 'DoctorsPage';
@@ -33,6 +46,10 @@ class DoctorsPage extends StatefulWidget {
 }
 
 class _DoctorsPageState extends State<DoctorsPage> {
+  String selectedGovernorate = 'All';
+  String selectedRegion = 'All';
+  List<String> regions = ['All'];
+
   @override
   void initState() {
     super.initState();
@@ -44,102 +61,146 @@ class _DoctorsPageState extends State<DoctorsPage> {
     });
   }
 
+  void updateRegions(List<Doctor> doctors) {
+    final filteredRegions =
+        doctors
+            .where(
+              (doc) =>
+                  selectedGovernorate == 'All' ||
+                  doc.governorate == selectedGovernorate,
+            )
+            .map((doc) => doc.region)
+            .toSet()
+            .toList();
+
+    if (regions.length != filteredRegions.length + 1) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {
+          regions = ['All', ...filteredRegions];
+          selectedRegion = 'All';
+        });
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: const Color(0xffFFFFFF),
-      bottomNavigationBar:
-          const HomeBottomNavBar(), // Use the optimized HomeBottomNavBar
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: Container(
-          decoration: const BoxDecoration(color: Color(0xffFFFFFF)),
-          child: AppBar(
-            centerTitle: true,
-            scrolledUnderElevation: 0,
-            toolbarHeight: 40,
-            leadingWidth: 90,
-            backgroundColor: Colors.transparent,
-            leading: IconButton(
-              padding: const EdgeInsets.all(0),
-              onPressed: () {
-                Navigator.pop(
-                  context,
-                ); // Changed to pop instead of pushReplacementNamed
-              },
-              icon: Image.asset('assets/photos/dark_back_arrow.png'),
-            ),
+      backgroundColor: Colors.white,
+      bottomNavigationBar: const HomeBottomNavBar(),
+      appBar: AppBar(
+        title: GradientText(
+          'Doctors',
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: screenWidth * 0.08,
           ),
+          colors: const [Color(0xff12748B), Color(0xff051F25)],
         ),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 18.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Center(
-              child: GradientText(
-                'Doctors',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: screenWidth * 0.123,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: DropdownButton<String>(
+                    value: selectedGovernorate,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedGovernorate = value!;
+                        selectedRegion = 'All';
+                      });
+                    },
+                    items:
+                        [
+                              'All',
+                              'Cairo',
+                              'Giza',
+                              'Alexandria',
+                            ] // Add more governorates
+                            .map(
+                              (gov) => DropdownMenuItem(
+                                value: gov,
+                                child: Text(gov),
+                              ),
+                            )
+                            .toList(),
+                  ),
                 ),
-                colors: const [Color(0xff12748B), Color(0xff051F25)],
-              ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: DropdownButton<String>(
+                    value: selectedRegion,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedRegion = value!;
+                      });
+                    },
+                    items:
+                        regions
+                            .map(
+                              (reg) => DropdownMenuItem(
+                                value: reg,
+                                child: Text(reg),
+                              ),
+                            )
+                            .toList(),
+                  ),
+                ),
+              ],
             ),
             Expanded(
-              child: ListView.builder(
-                itemCount: 5,
-                itemBuilder: (context, index) {
-                  final doctors = [
-                    Doctor(
-                      image: 'assets/doctor_photo/Dr Mohmed Nadi.jpg',
-                      name: 'Dr: Mohmed Nadi',
-                      location: 'Bani sweif',
-                      lat: 29.06882555330429,
-                      lng: 31.100216595764856,
-                    ),
-                    Doctor(
-                      image: 'assets/doctor_photo/Dr Mario Abrahime.jpg',
-                      name: 'Dr: Mario Abrahime',
-                      location: 'Cairo',
-                      lat: 30.06073316874439,
-                      lng: 31.24660416741735,
-                    ),
-                    Doctor(
-                      image: 'assets/doctor_photo/Dr Youssef Ahmed.jpg',
-                      name: 'Dr: Youssef Ahmed',
-                      location: 'Cairo',
-                      lat: 30.031006164144912,
-                      lng: 31.203126928235857,
-                    ),
-                    Doctor(
-                      image: 'assets/doctor_photo/Dr Nadi Youssef.jpg',
-                      name: 'Dr: Nadi Youssef',
-                      location: 'Elshrouke',
-                      lat: 30.159547580564148,
-                      lng: 31.601435209234975,
-                    ),
-                    Doctor(
-                      image: 'assets/doctor_photo/Dr Marime Emad.jpg',
-                      name: 'Dr: Marime Emad',
-                      location: 'Banha',
-                      lat: 30.46660724434177,
-                      lng: 31.186129109143007,
-                    ),
-                  ];
-                  final doctor = doctors[index];
-                  return doctorCard(
-                    context,
-                    image: doctor.image,
-                    name: doctor.name,
-                    location: doctor.location,
-                    doctorLat: doctor.lat,
-                    doctorLng: doctor.lng,
-                    screenWidth: screenWidth,
-                    screenHeight: screenHeight,
+              child: StreamBuilder<QuerySnapshot>(
+                stream:
+                    FirebaseFirestore.instance
+                        .collection('dermatologists')
+                        .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return const Center(child: Text('No doctors found'));
+                  }
+                  final doctors =
+                      snapshot.data!.docs
+                          .map((doc) => Doctor.fromFirestore(doc))
+                          .toList();
+
+                  updateRegions(doctors);
+
+                  final filteredDoctors =
+                      doctors
+                          .where(
+                            (doctor) =>
+                                (selectedGovernorate == 'All' ||
+                                    doctor.governorate ==
+                                        selectedGovernorate) &&
+                                (selectedRegion == 'All' ||
+                                    doctor.region == selectedRegion),
+                          )
+                          .toList();
+
+                  return ListView.builder(
+                    itemCount: filteredDoctors.length,
+                    itemBuilder: (context, index) {
+                      final doctor = filteredDoctors[index];
+                      return doctorCard(
+                        context,
+                        doctor,
+                        screenWidth,
+                        screenHeight,
+                      );
+                    },
                   );
                 },
               ),
@@ -151,27 +212,23 @@ class _DoctorsPageState extends State<DoctorsPage> {
   }
 
   Widget doctorCard(
-    BuildContext context, {
-    required String image,
-    required String name,
-    required String location,
-    required double doctorLat,
-    required double doctorLng,
-    required double screenWidth,
-    required double screenHeight,
-  }) {
+    BuildContext context,
+    Doctor doctor,
+    double screenWidth,
+    double screenHeight,
+  ) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
-      height: screenHeight * 0.1, // Responsive height (10% of screen height)
+      height: screenHeight * 0.1,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Image.asset(
-            image,
+          Image.network(
+            doctor.image,
             fit: BoxFit.cover,
             alignment: Alignment.topCenter,
-            height: screenHeight * 0.1, // Responsive height
-            width: screenWidth * 0.18, // Responsive width (18% of screen width)
+            height: screenHeight * 0.1,
+            width: screenWidth * 0.18,
           ),
           const SizedBox(width: 10),
           Column(
@@ -179,9 +236,9 @@ class _DoctorsPageState extends State<DoctorsPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                name,
+                doctor.name,
                 style: TextStyle(
-                  fontSize: screenWidth * 0.045, // Responsive font size
+                  fontSize: screenWidth * 0.045,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -193,9 +250,9 @@ class _DoctorsPageState extends State<DoctorsPage> {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    location,
+                    '${doctor.region}, ${doctor.governorate}',
                     style: TextStyle(
-                      fontSize: screenWidth * 0.038, // Responsive font size
+                      fontSize: screenWidth * 0.038,
                       fontWeight: FontWeight.w400,
                     ),
                   ),
@@ -203,7 +260,7 @@ class _DoctorsPageState extends State<DoctorsPage> {
               ),
             ],
           ),
-          const Spacer(flex: 1),
+          const Spacer(),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: kPrimaryColor,
@@ -218,12 +275,16 @@ class _DoctorsPageState extends State<DoctorsPage> {
               ),
             ),
             onPressed: () {
+              print(doctor.lat);
+              print(doctor.lng);
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder:
-                      (context) =>
-                          MapPage(doctorLat: doctorLat, doctorLng: doctorLng),
+                      (context) => MapPage(
+                        doctorLatfdp: doctor.lat,
+                        doctorLngfdp: doctor.lng,
+                      ),
                 ),
               );
             },
