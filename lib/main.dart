@@ -3,6 +3,7 @@ import 'package:canser_scan/Login-Register/confirm_page.dart';
 import 'package:canser_scan/Login-Register/login_page.dart';
 import 'package:canser_scan/Login-Register/register_page.dart';
 import 'package:canser_scan/account_settings.dart';
+import 'package:canser_scan/add_doctor_page.dart';
 import 'package:canser_scan/doctors_page.dart';
 import 'package:canser_scan/helper/constants.dart';
 import 'package:canser_scan/history_page.dart';
@@ -87,6 +88,7 @@ class MyApp extends StatelessWidget {
           DoctorsPage.id: (context) => DoctorsPage(),
           MapPage.id: (context) => MapPage(),
           HistoryPage.id: (context) => HistoryPage(),
+          AddDoctorPage.id: (context) => AddDoctorPage(),
         },
         initialRoute: SplashScreen.id,
       ),

@@ -87,20 +87,11 @@ class _TakeTestPageState extends State<TakeTestPage> {
             ),
           ),
           child: AppBar(
+            automaticallyImplyLeading: false,
             scrolledUnderElevation: 0,
             toolbarHeight: 40,
             leadingWidth: 90,
             backgroundColor: Colors.transparent,
-            leading: IconButton(
-              padding: const EdgeInsets.all(0),
-              onPressed: () {
-                setState(() {
-                  _imageFile = null;
-                });
-                Navigator.pop(context);
-              },
-              icon: Image.asset('assets/photos/dark_back_arrow.png'),
-            ),
           ),
         ),
       ),

@@ -66,6 +66,7 @@ class _InformationPageState extends State<InformationPage> {
             ),
           ),
           child: AppBar(
+            automaticallyImplyLeading: false,
             centerTitle: true,
             title: const Text(
               'Information',
@@ -79,15 +80,15 @@ class _InformationPageState extends State<InformationPage> {
             toolbarHeight: 40,
             leadingWidth: 90,
             backgroundColor: Colors.transparent,
-            leading: IconButton(
-              padding: const EdgeInsets.all(0),
-              onPressed: () {
-                Navigator.pop(
-                  context,
-                ); // Changed to pop instead of pushReplacementNamed
-              },
-              icon: Image.asset('assets/photos/dark_back_arrow.png'),
-            ),
+            //   leading: IconButton(
+            //     padding: const EdgeInsets.all(0),
+            //     onPressed: () {
+            //       Navigator.pop(
+            //         context,
+            //       ); // Changed to pop instead of pushReplacementNamed
+            //     },
+            //     icon: Image.asset('assets/photos/dark_back_arrow.png'),
+            //   ),
           ),
         ),
       ),

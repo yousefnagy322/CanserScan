@@ -3,39 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
-import 'map_page.dart';
+import 'package:cached_network_image/cached_network_image.dart'; // Import cached_network_image
 import 'navigation_provider.dart';
 import 'widgets/bottom_nav_bar.dart';
-
-class Doctor {
-  final String image;
-  final String name;
-  final String governorate;
-  final String region;
-  final double lat;
-  final double lng;
-
-  Doctor({
-    required this.image,
-    required this.name,
-    required this.governorate,
-    required this.region,
-    required this.lat,
-    required this.lng,
-  });
-
-  factory Doctor.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
-    return Doctor(
-      image: data['image'] ?? '',
-      name: data['name'] ?? '',
-      governorate: data['governorate'] ?? '',
-      region: data['region'] ?? '',
-      lat: data['latitude'],
-      lng: data['longitude'],
-    );
-  }
-}
+import 'doctor_details_page.dart';
+import 'models/doctor.dart';
 
 class DoctorsPage extends StatefulWidget {
   const DoctorsPage({super.key});
@@ -50,9 +22,7 @@ class _DoctorsPageState extends State<DoctorsPage> {
   String selectedRegion = 'All';
   String searchQuery = '';
   List<String> regions = ['All'];
-  List<String> governorates = [
-    'All',
-  ]; // Initially just 'All', will be updated from Firestore
+  List<String> governorates = ['All'];
   List<Doctor> allDoctors = [];
 
   @override
@@ -64,11 +34,9 @@ class _DoctorsPageState extends State<DoctorsPage> {
         listen: false,
       ).setSelectedIndex(4);
     });
-    // Fetch governorates when the page initializes
     _fetchGovernorates();
   }
 
-  // Fetch unique governorates from the dermatologists collection
   Future<void> _fetchGovernorates() async {
     try {
       final snapshot =
@@ -87,7 +55,6 @@ class _DoctorsPageState extends State<DoctorsPage> {
       });
     } catch (e) {
       print('Error fetching governorates: $e');
-      // Fallback to hardcoded list if fetching fails
       setState(() {
         governorates = ['All', 'Cairo', 'Giza', 'Alexandria'];
       });
@@ -131,18 +98,32 @@ class _DoctorsPageState extends State<DoctorsPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       bottomNavigationBar: const HomeBottomNavBar(),
-      appBar: AppBar(
-        title: GradientText(
-          'Doctors',
-          style: TextStyle(
-            fontWeight: FontWeight.w700,
-            fontSize: screenWidth * 0.08,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: AppBar(
+          automaticallyImplyLeading: false,
+          centerTitle: true,
+          title: GradientText(
+            'Doctors',
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: screenWidth * 0.08,
+            ),
+            colors: const [Color(0xff12748B), Color(0xff051F25)],
           ),
-          colors: const [Color(0xff12748B), Color(0xff051F25)],
+          bottom: PreferredSize(
+            preferredSize: Size.fromHeight(1.0),
+            child: Divider(
+              height: 1,
+              thickness: 1,
+              color: kPrimaryColor, // Customize color
+            ),
+          ),
+          scrolledUnderElevation: 0,
+          toolbarHeight: 40,
+          leadingWidth: 90,
+          backgroundColor: Colors.transparent,
         ),
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -184,7 +165,7 @@ class _DoctorsPageState extends State<DoctorsPage> {
                       const SizedBox(height: 8),
                       customDropdown(
                         value: selectedGovernorate,
-                        items: governorates, // Use dynamic list here
+                        items: governorates,
                         onChanged: (value) {
                           setState(() {
                             selectedGovernorate = value!;
@@ -268,11 +249,23 @@ class _DoctorsPageState extends State<DoctorsPage> {
                     itemCount: filteredDoctors.length,
                     itemBuilder: (context, index) {
                       final doctor = filteredDoctors[index];
-                      return doctorCard(
-                        context,
-                        doctor,
-                        screenWidth,
-                        screenHeight,
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) =>
+                                      DoctorDetailsPage(doctor: doctor),
+                            ),
+                          );
+                        },
+                        child: doctorCard(
+                          context,
+                          doctor,
+                          screenWidth,
+                          screenHeight,
+                        ),
                       );
                     },
                   );
@@ -342,6 +335,7 @@ class _DoctorsPageState extends State<DoctorsPage> {
     double screenHeight,
   ) {
     return Card(
+      color: Colors.grey[100],
       elevation: 2,
       margin: const EdgeInsets.symmetric(vertical: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -351,13 +345,21 @@ class _DoctorsPageState extends State<DoctorsPage> {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                doctor.image,
+              child: CachedNetworkImage(
+                imageUrl: doctor.image,
                 fit: BoxFit.cover,
+                alignment: Alignment.topCenter,
                 height: screenHeight * 0.1,
                 width: screenWidth * 0.18,
-                errorBuilder:
-                    (context, error, stackTrace) => Container(
+                placeholder:
+                    (context, url) => Container(
+                      height: screenHeight * 0.1,
+                      width: screenWidth * 0.18,
+                      color: Colors.grey[300],
+                      child: const Center(child: CircularProgressIndicator()),
+                    ),
+                errorWidget:
+                    (context, url, error) => Container(
                       height: screenHeight * 0.1,
                       width: screenWidth * 0.18,
                       color: Colors.grey[300],
@@ -382,10 +384,9 @@ class _DoctorsPageState extends State<DoctorsPage> {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(
-                        Icons.location_on,
-                        size: screenWidth * 0.04,
-                        color: Colors.grey[600],
+                      Image.asset(
+                        'assets/photos/location.png',
+                        height: screenWidth * 0.04, // Responsive icon size
                       ),
                       const SizedBox(width: 4),
                       Flexible(
@@ -394,51 +395,11 @@ class _DoctorsPageState extends State<DoctorsPage> {
                           style: TextStyle(
                             fontSize: screenWidth * 0.038,
                             fontWeight: FontWeight.w400,
-                            color: Colors.grey[600],
                           ),
                         ),
                       ),
                     ],
                   ),
-                ],
-              ),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: kPrimaryColor,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => MapPage(
-                          doctorLatfdp: doctor.lat,
-                          doctorLngfdp: doctor.lng,
-                        ),
-                  ),
-                );
-              },
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Map',
-                    style: TextStyle(
-                      fontSize: screenWidth * 0.03,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  Image.asset('assets/photos/mapicon.png', height: 16),
                 ],
               ),
             ),

@@ -1,6 +1,7 @@
 import 'package:canser_scan/Chatbot/chat_page.dart';
 import 'package:canser_scan/Login-Register/login_page.dart';
 import 'package:canser_scan/account_settings.dart';
+import 'package:canser_scan/add_doctor_page.dart';
 import 'package:canser_scan/helper/constants.dart';
 import 'package:canser_scan/history_page.dart';
 import 'package:canser_scan/map_page.dart';
@@ -115,6 +116,14 @@ class HomeDrawer extends StatelessWidget {
             ontap: () {
               FirebaseAuth.instance.signOut();
               Navigator.pushReplacementNamed(context, LoginPage.id);
+            },
+          ),
+          buildDrawerCategory(
+            screenWidth,
+            'Add Doctor',
+            'assets/photos/logout.png',
+            ontap: () {
+              Navigator.pushReplacementNamed(context, AddDoctorPage.id);
             },
           ),
         ],
