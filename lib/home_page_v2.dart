@@ -14,21 +14,6 @@ import 'package:simple_gradient_text/simple_gradient_text.dart';
 import 'package:intl/intl.dart';
 import 'navigation_provider.dart';
 
-// Data model for navigation bar items
-class NavBarItem {
-  final String icon;
-  final String label;
-  final String? route;
-  final bool isActive;
-
-  const NavBarItem({
-    required this.icon,
-    required this.label,
-    this.route,
-    this.isActive = false,
-  });
-}
-
 class HomePageV2 extends StatefulWidget {
   const HomePageV2({super.key});
   static const String id = "HomePageV2";

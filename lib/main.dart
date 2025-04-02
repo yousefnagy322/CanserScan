@@ -19,7 +19,7 @@ import 'package:canser_scan/info_pages/melanoma.dart';
 import 'package:canser_scan/info_pages/skin_cancer.dart';
 import 'package:canser_scan/info_pages/vascular_lesion.dart';
 import 'package:canser_scan/map_page.dart';
-import 'package:canser_scan/map_provider.dart';
+
 import 'package:canser_scan/navigation_provider.dart';
 import 'package:canser_scan/splash.dart';
 import 'package:canser_scan/test/take_test_confirm_page.dart';
@@ -48,10 +48,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => NavigationProvider()),
-        ChangeNotifierProvider(create: (_) => MapProvider()),
-      ],
+      providers: [ChangeNotifierProvider(create: (_) => NavigationProvider())],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
