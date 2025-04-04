@@ -22,8 +22,30 @@ class HistoryPageState extends State<HistoryPage> {
         .collection('users')
         .doc(userId)
         .collection('Test_Results')
-        .orderBy('timestamp', descending: true) // Sort by date
+        .orderBy('timestamp', descending: true)
         .snapshots();
+  }
+
+  Future<void> deleteTestResult(String docId) async {
+    String userId = _auth.currentUser!.uid;
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('Test_Results')
+        .doc(docId)
+        .delete();
+  }
+
+  Future<void> deleteAllTestResults() async {
+    String userId = _auth.currentUser!.uid;
+    var collection = FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('Test_Results');
+    var snapshots = await collection.get();
+    for (var doc in snapshots.docs) {
+      await doc.reference.delete();
+    }
   }
 
   @override
@@ -34,10 +56,7 @@ class HistoryPageState extends State<HistoryPage> {
         child: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                Color(0xff56EACF),
-                Color(0xff194D59),
-              ], // Change colors as needed
+              colors: [Color(0xff56EACF), Color(0xff194D59)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -63,10 +82,109 @@ class HistoryPageState extends State<HistoryPage> {
               },
               icon: Image.asset('assets/photos/dark_back_arrow.png'),
             ),
+            actions: [
+              IconButton(
+                icon: Icon(Icons.delete_forever, color: Colors.white),
+                onPressed: () async {
+                  bool? confirm = await showDialog(
+                    context: context,
+                    builder:
+                        (context) => AlertDialog(
+                          backgroundColor: Colors.transparent,
+                          contentPadding: EdgeInsets.zero,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          content: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [Color(0xff56EACF), Color(0xff194D59)],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            padding: EdgeInsets.all(20),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'Confirm Delete All',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 10),
+                                Text(
+                                  'Are you sure you want to delete all test results? This action cannot be undone.',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 14,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                SizedBox(height: 20),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    ElevatedButton(
+                                      onPressed:
+                                          () => Navigator.pop(context, false),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.white,
+                                        foregroundColor: Color(0xff194D59),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            5,
+                                          ),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        'Cancel',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed:
+                                          () => Navigator.pop(context, true),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.red,
+                                        foregroundColor: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            5,
+                                          ),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        'Delete All',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                  );
+                  if (confirm == true) {
+                    await deleteAllTestResults();
+                  }
+                },
+              ),
+            ],
           ),
         ),
       ),
-
       body: StreamBuilder<QuerySnapshot>(
         stream: getTestResults(),
         builder: (context, snapshot) {
@@ -84,6 +202,7 @@ class HistoryPageState extends State<HistoryPage> {
             itemCount: results.length,
             itemBuilder: (context, index) {
               var data = results[index].data() as Map<String, dynamic>;
+              String docId = results[index].id;
               String result = data['Result'] ?? "Unknown";
               String prediction = data['prediction'] ?? "Unknown";
               int confidence = data['confidence'] ?? "Unknown";
@@ -104,55 +223,174 @@ class HistoryPageState extends State<HistoryPage> {
                   color: kPrimaryColor,
                   borderRadius: BorderRadius.all(Radius.circular(5)),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Stack(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              'Test result : ',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700,
-                              ),
+                            Row(
+                              children: [
+                                Text(
+                                  'Test result : ',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                Text(
+                                  result,
+                                  style: TextStyle(
+                                    color:
+                                        result == 'Positive'
+                                            ? Colors.red
+                                            : Colors.green,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
                             ),
                             Text(
-                              result,
-                              style: TextStyle(
-                                color:
-                                    result == 'Positive'
-                                        ? Colors.red
-                                        : Colors.green,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                              ),
+                              formattedDate,
+                              style: TextStyle(color: Colors.white70),
                             ),
                           ],
                         ),
                         Text(
-                          formattedDate,
-                          style: TextStyle(color: Colors.white70),
+                          'Cancer type : $prediction',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        Text(
+                          'confidence : $confidence%',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ],
                     ),
-                    Text(
-                      'Cancer type : $prediction',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    Text(
-                      'confidence : $confidence%',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
+                    Positioned(
+                      right: 0,
+                      bottom: 0,
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.delete,
+                          color: Colors.white70,
+                          size: 20,
+                        ),
+                        onPressed: () async {
+                          bool? confirm = await showDialog(
+                            context: context,
+                            builder:
+                                (context) => AlertDialog(
+                                  backgroundColor: Colors.transparent,
+                                  contentPadding: EdgeInsets.zero,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  content: Container(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          Color(0xff56EACF),
+                                          Color(0xff194D59),
+                                        ],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                      ),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    padding: EdgeInsets.all(20),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          'Confirm Delete',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        SizedBox(height: 10),
+                                        Text(
+                                          'Are you sure you want to delete this test result?',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 14,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        SizedBox(height: 20),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            ElevatedButton(
+                                              onPressed:
+                                                  () => Navigator.pop(
+                                                    context,
+                                                    false,
+                                                  ),
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.white,
+                                                foregroundColor: Color(
+                                                  0xff194D59,
+                                                ),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(5),
+                                                ),
+                                              ),
+                                              child: Text(
+                                                'Cancel',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                            ElevatedButton(
+                                              onPressed:
+                                                  () => Navigator.pop(
+                                                    context,
+                                                    true,
+                                                  ),
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.red,
+                                                foregroundColor: Colors.white,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(5),
+                                                ),
+                                              ),
+                                              child: Text(
+                                                'Delete',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                          );
+                          if (confirm == true) {
+                            await deleteTestResult(docId);
+                          }
+                        },
                       ),
                     ),
                   ],

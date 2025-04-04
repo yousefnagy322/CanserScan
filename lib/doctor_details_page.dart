@@ -326,7 +326,7 @@ class DoctorDetailsPage extends StatelessWidget {
                                       style: TextStyle(
                                         fontSize: screenWidth * 0.04,
                                         fontWeight: FontWeight.w400,
-                                        color: Colors.grey[600],
+                                        color: Colors.black,
                                       ),
                                     ),
                                   ],

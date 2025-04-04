@@ -1,9 +1,12 @@
 import 'package:canser_scan/helper/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
-import 'package:cached_network_image/cached_network_image.dart'; // Import cached_network_image
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:location/location.dart';
+import 'package:geolocator/geolocator.dart';
 import 'navigation_provider.dart';
 import 'widgets/bottom_nav_bar.dart';
 import 'doctor_details_page.dart';
@@ -20,10 +23,22 @@ class DoctorsPage extends StatefulWidget {
 class _DoctorsPageState extends State<DoctorsPage> {
   String selectedGovernorate = 'All';
   String selectedRegion = 'All';
+  String selectedSpecialty = 'All';
+  String selectedSort = 'Default';
   String searchQuery = '';
   List<String> regions = ['All'];
   List<String> governorates = ['All'];
+  List<String> specialties = ['All'];
+  List<String> sortOptions = [
+    'Default',
+    'Nearest',
+    'Name (A-Z)',
+    'Name (Z-A)',
+    'Rating',
+  ];
   List<Doctor> allDoctors = [];
+  Location location = Location();
+  LatLng? userLatLng;
 
   @override
   void initState() {
@@ -35,6 +50,8 @@ class _DoctorsPageState extends State<DoctorsPage> {
       ).setSelectedIndex(4);
     });
     _fetchGovernorates();
+    _fetchSpecialties();
+    _getUserLocation();
   }
 
   Future<void> _fetchGovernorates() async {
@@ -58,6 +75,59 @@ class _DoctorsPageState extends State<DoctorsPage> {
       setState(() {
         governorates = ['All', 'Cairo', 'Giza', 'Alexandria'];
       });
+    }
+  }
+
+  Future<void> _fetchSpecialties() async {
+    try {
+      final snapshot =
+          await FirebaseFirestore.instance.collection('dermatologists').get();
+      final uniqueSpecialties =
+          snapshot.docs
+              .map(
+                (doc) =>
+                    (doc.data() as Map<String, dynamic>)['specialty']
+                        as String? ??
+                    'Unknown',
+              )
+              .toSet()
+              .toList();
+      setState(() {
+        specialties = ['All', ...uniqueSpecialties];
+      });
+    } catch (e) {
+      print('Error fetching specialties: $e');
+      setState(() {
+        specialties = ['All', 'Dermatology', 'Oncology'];
+      });
+    }
+  }
+
+  Future<void> _getUserLocation() async {
+    if (userLatLng != null) return;
+
+    try {
+      bool serviceEnabled = await location.serviceEnabled();
+      if (!serviceEnabled) {
+        serviceEnabled = await location.requestService();
+        if (!serviceEnabled) return;
+      }
+
+      PermissionStatus permissionGranted = await location.hasPermission();
+      if (permissionGranted == PermissionStatus.denied) {
+        permissionGranted = await location.requestPermission();
+        if (permissionGranted != PermissionStatus.granted) return;
+      }
+
+      var currentLocation = await location.getLocation();
+      setState(() {
+        userLatLng = LatLng(
+          currentLocation.latitude!,
+          currentLocation.longitude!,
+        );
+      });
+    } catch (e) {
+      print("Error getting location: $e");
     }
   }
 
@@ -88,6 +158,16 @@ class _DoctorsPageState extends State<DoctorsPage> {
       if (list1[i] != list2[i]) return false;
     }
     return true;
+  }
+
+  void _resetFilters() {
+    setState(() {
+      selectedGovernorate = 'All';
+      selectedRegion = 'All';
+      selectedSpecialty = 'All';
+      selectedSort = 'Default';
+      searchQuery = '';
+    });
   }
 
   @override
@@ -130,37 +210,46 @@ class _DoctorsPageState extends State<DoctorsPage> {
         child: Column(
           children: [
             TextField(
-              onChanged: (value) {
-                setState(() {
-                  searchQuery = value.toLowerCase();
-                });
-              },
+              onChanged:
+                  (value) => setState(() => searchQuery = value.toLowerCase()),
               decoration: InputDecoration(
                 hintText: 'Search doctors by name...',
-                prefixIcon: const Icon(Icons.search),
+                prefixIcon: Icon(Icons.search, color: kPrimaryColor),
                 filled: true,
                 fillColor: Colors.grey[100],
                 contentPadding: const EdgeInsets.symmetric(vertical: 0),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
+                  borderSide: BorderSide(color: kPrimaryColor, width: 1),
                 ),
               ),
             ),
             const SizedBox(height: 16),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
+                  flex: 1,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Governorate',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black87,
-                        ),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.location_on,
+                            size: 16,
+                            color: kPrimaryColor,
+                          ),
+                          const SizedBox(width: 4),
+                          const Text(
+                            'Governorate',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 8),
                       customDropdown(
@@ -175,34 +264,115 @@ class _DoctorsPageState extends State<DoctorsPage> {
                         },
                         hint: 'Select Governorate',
                       ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.medical_services,
+                            size: 16,
+                            color: kPrimaryColor,
+                          ),
+                          const SizedBox(width: 4),
+                          const Text(
+                            'Specialty',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      customDropdown(
+                        value: selectedSpecialty,
+                        items: specialties,
+                        onChanged:
+                            (value) =>
+                                setState(() => selectedSpecialty = value!),
+                        hint: 'Select Specialty',
+                      ),
                     ],
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
+                  flex: 1,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Region',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black87,
-                        ),
+                      Row(
+                        children: [
+                          Icon(Icons.map, size: 16, color: kPrimaryColor),
+                          const SizedBox(width: 4),
+                          const Text(
+                            'Region',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 8),
                       customDropdown(
                         value: selectedRegion,
                         items: regions,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedRegion = value!;
-                          });
-                        },
+                        onChanged:
+                            (value) => setState(() => selectedRegion = value!),
                         hint: 'Select Region',
                       ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Icon(Icons.sort, size: 16, color: kPrimaryColor),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Sort${selectedSort != 'Default' ? ': $selectedSort' : ''}',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      customDropdown(
+                        value: selectedSort,
+                        items: sortOptions,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedSort = value!;
+                          });
+                        },
+                        hint: 'Select Sort Option',
+                      ),
                     ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: _resetFilters,
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.grey[100],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      side: BorderSide(color: kPrimaryColor, width: 1.5),
+                    ),
+                  ),
+                  child: Text(
+                    'Reset Filters',
+                    style: TextStyle(
+                      color: kPrimaryColor,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
@@ -228,10 +398,9 @@ class _DoctorsPageState extends State<DoctorsPage> {
                       snapshot.data!.docs
                           .map((doc) => Doctor.fromFirestore(doc))
                           .toList();
-
                   updateRegions(allDoctors);
 
-                  final filteredDoctors =
+                  var filteredDoctors =
                       allDoctors
                           .where(
                             (doctor) =>
@@ -240,12 +409,40 @@ class _DoctorsPageState extends State<DoctorsPage> {
                                         selectedGovernorate) &&
                                 (selectedRegion == 'All' ||
                                     doctor.region == selectedRegion) &&
+                                (selectedSpecialty == 'All' ||
+                                    doctor.specialty == selectedSpecialty) &&
                                 (searchQuery.isEmpty ||
                                     doctor.name.toLowerCase().contains(
                                       searchQuery,
                                     )),
                           )
                           .toList();
+
+                  if (selectedSort == 'Nearest' && userLatLng != null) {
+                    filteredDoctors.sort(
+                      (a, b) => Geolocator.distanceBetween(
+                        userLatLng!.latitude,
+                        userLatLng!.longitude,
+                        a.lat,
+                        a.lng,
+                      ).compareTo(
+                        Geolocator.distanceBetween(
+                          userLatLng!.latitude,
+                          userLatLng!.longitude,
+                          b.lat,
+                          b.lng,
+                        ),
+                      ),
+                    );
+                  } else if (selectedSort == 'Name (A-Z)') {
+                    filteredDoctors.sort((a, b) => a.name.compareTo(b.name));
+                  } else if (selectedSort == 'Name (Z-A)') {
+                    filteredDoctors.sort((a, b) => b.name.compareTo(a.name));
+                  } else if (selectedSort == 'Rating') {
+                    filteredDoctors.sort(
+                      (a, b) => b.rating.compareTo(a.rating),
+                    );
+                  }
 
                   return ListView.builder(
                     itemCount: filteredDoctors.length,
@@ -291,7 +488,7 @@ class _DoctorsPageState extends State<DoctorsPage> {
       decoration: BoxDecoration(
         color: Colors.grey[100],
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[300]!, width: 1),
+        border: Border.all(width: 1.5, color: Colors.grey[300]!),
       ),
       child: DropdownButton<String>(
         value: value,
@@ -313,19 +510,33 @@ class _DoctorsPageState extends State<DoctorsPage> {
                         vertical: 8.0,
                         horizontal: 12.0,
                       ),
-                      child: Text(
-                        item,
-                        style: const TextStyle(
-                          color: Colors.black87,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              item,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color:
+                                    item == value
+                                        ? Color(0xff12748B)
+                                        : Colors.black87,
+                                fontWeight:
+                                    item == value
+                                        ? FontWeight.bold
+                                        : FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                          if (item == value)
+                            Icon(Icons.check, size: 16, color: kPrimaryColor),
+                        ],
                       ),
                     ),
                   ),
                 )
                 .toList(),
-        hint: Text(hint),
+        hint: Text(hint, style: TextStyle(color: Colors.grey[600])),
       ),
     );
   }
@@ -341,73 +552,126 @@ class _DoctorsPageState extends State<DoctorsPage> {
       elevation: 2,
       margin: const EdgeInsets.symmetric(vertical: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: CachedNetworkImage(
-                imageUrl: doctor.image,
-                fit: BoxFit.cover,
-                alignment: Alignment.topCenter,
-                height: screenHeight * 0.1,
-                width: screenWidth * 0.18,
-                placeholder:
-                    (context, url) => Container(
-                      height: screenHeight * 0.1,
-                      width: screenWidth * 0.18,
-                      color: Colors.grey[300],
-                      child: const Center(
-                        child: CircularProgressIndicator(color: kPrimaryColor),
-                      ),
-                    ),
-                errorWidget:
-                    (context, url, error) => Container(
-                      height: screenHeight * 0.1,
-                      width: screenWidth * 0.18,
-                      color: Colors.grey[300],
-                      child: const Icon(Icons.person),
-                    ),
-              ),
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DoctorDetailsPage(doctor: doctor),
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    doctor.name,
-                    style: TextStyle(
-                      fontSize: screenWidth * 0.045,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Image.asset(
-                        'assets/photos/location.png',
-                        height: screenWidth * 0.04, // Responsive icon size
-                      ),
-                      const SizedBox(width: 4),
-                      Flexible(
-                        child: Text(
-                          '${doctor.region}, ${doctor.governorate}',
-                          style: TextStyle(
-                            fontSize: screenWidth * 0.038,
-                            fontWeight: FontWeight.w400,
+          );
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            gradient: LinearGradient(
+              colors: [Colors.transparent, Color(0xff56EACF).withOpacity(0.1)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: CachedNetworkImage(
+                    imageUrl: doctor.image,
+                    fit: BoxFit.cover,
+                    alignment: Alignment.topCenter,
+                    height: screenHeight * 0.1,
+                    width: screenWidth * 0.18,
+                    placeholder:
+                        (context, url) => Container(
+                          height: screenHeight * 0.1,
+                          width: screenWidth * 0.18,
+                          color: Colors.grey[300],
+                          child: const Center(
+                            child: CircularProgressIndicator(
+                              color: kPrimaryColor,
+                            ),
                           ),
                         ),
+                    errorWidget:
+                        (context, url, error) => Container(
+                          height: screenHeight * 0.1,
+                          width: screenWidth * 0.18,
+                          color: Colors.grey[300],
+                          child: const Icon(Icons.person),
+                        ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        doctor.name,
+                        style: TextStyle(
+                          fontSize: screenWidth * 0.045,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Image.asset(
+                            'assets/photos/location.png',
+                            height: screenWidth * 0.04,
+                          ),
+                          const SizedBox(width: 4),
+                          Flexible(
+                            child: Text(
+                              '${doctor.region}, ${doctor.governorate}',
+                              style: TextStyle(
+                                fontSize: screenWidth * 0.038,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Color(0xff56EACF).withOpacity(0.8),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              doctor.specialty,
+                              style: TextStyle(
+                                fontSize: screenWidth * 0.035,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            '★ ${doctor.rating.toStringAsFixed(1)}',
+                            style: TextStyle(
+                              fontSize: screenWidth * 0.035,
+                              color: Colors.amber[700],
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
