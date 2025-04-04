@@ -7,6 +7,8 @@ import 'package:intl/intl.dart';
 
 class HistoryPage extends StatefulWidget {
   static String id = 'HistoryPage';
+
+  const HistoryPage({super.key});
   @override
   HistoryPageState createState() => HistoryPageState();
 }
@@ -89,7 +91,7 @@ class HistoryPageState extends State<HistoryPage> {
 
               String formattedDate =
                   timestamp != null
-                      ? DateFormat('dd-MM-yyyy').format(timestamp!.toDate())
+                      ? DateFormat('dd-MM-yyyy').format(timestamp.toDate())
                       : 'Unknown Date';
 
               return Container(
@@ -119,7 +121,7 @@ class HistoryPageState extends State<HistoryPage> {
                               ),
                             ),
                             Text(
-                              '$result',
+                              result,
                               style: TextStyle(
                                 color:
                                     result == 'Positive'
@@ -132,7 +134,7 @@ class HistoryPageState extends State<HistoryPage> {
                           ],
                         ),
                         Text(
-                          '$formattedDate',
+                          formattedDate,
                           style: TextStyle(color: Colors.white70),
                         ),
                       ],

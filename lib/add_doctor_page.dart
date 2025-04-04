@@ -1,8 +1,6 @@
-import 'package:canser_scan/helper/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
-import 'models/doctor.dart';
 
 class AddDoctorPage extends StatefulWidget {
   const AddDoctorPage({super.key});
@@ -187,6 +185,9 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
                   validator: (value) => _validateRating(value),
                 ),
                 const SizedBox(height: 24),
+
+                ElevatedButton(onPressed: () {}, child: Text('run code')),
+
                 Center(
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(

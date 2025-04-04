@@ -2,6 +2,7 @@ import 'package:canser_scan/helper/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
 import 'package:cached_network_image/cached_network_image.dart'; // Import cached_network_image
+import 'package:url_launcher/url_launcher.dart';
 import 'map_page.dart';
 import 'models/doctor.dart';
 
@@ -14,6 +15,18 @@ class DoctorDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
+
+    void _launchGoogleMaps(double lat, double lng) async {
+      final url =
+          'https://www.google.com/maps/dir/?api=1&destination=$lat,$lng';
+      if (await canLaunch(url)) {
+        await launch(url);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not launch Google Maps')),
+        );
+      }
+    }
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -79,7 +92,9 @@ class DoctorDetailsPage extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(16),
                               ),
                               child: const Center(
-                                child: CircularProgressIndicator(),
+                                child: CircularProgressIndicator(
+                                  color: kPrimaryColor,
+                                ),
                               ),
                             ),
                         errorWidget:
@@ -102,6 +117,7 @@ class DoctorDetailsPage extends StatelessWidget {
                   const SizedBox(height: 24),
                   // Specialty
                   Card(
+                    color: Colors.grey[100],
                     elevation: 2,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -134,7 +150,7 @@ class DoctorDetailsPage extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: screenWidth * 0.04,
                                     fontWeight: FontWeight.w400,
-                                    color: Colors.grey[600],
+                                    color: Colors.black,
                                   ),
                                 ),
                               ],
@@ -147,6 +163,7 @@ class DoctorDetailsPage extends StatelessWidget {
                   const SizedBox(height: 16),
                   // Location
                   Card(
+                    color: Colors.grey[100],
                     elevation: 2,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -179,7 +196,7 @@ class DoctorDetailsPage extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: screenWidth * 0.04,
                                     fontWeight: FontWeight.w400,
-                                    color: Colors.grey[600],
+                                    color: Colors.black,
                                   ),
                                 ),
                               ],
@@ -192,6 +209,7 @@ class DoctorDetailsPage extends StatelessWidget {
                   const SizedBox(height: 16),
                   // Contact Info
                   Card(
+                    color: Colors.grey[100],
                     elevation: 2,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -224,7 +242,7 @@ class DoctorDetailsPage extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: screenWidth * 0.04,
                                     fontWeight: FontWeight.w400,
-                                    color: Colors.grey[600],
+                                    color: Colors.black,
                                   ),
                                 ),
                               ],
@@ -237,6 +255,7 @@ class DoctorDetailsPage extends StatelessWidget {
                   const SizedBox(height: 16),
                   // Clinic Name and Working Hours
                   Card(
+                    color: Colors.grey[100],
                     elevation: 2,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -272,7 +291,7 @@ class DoctorDetailsPage extends StatelessWidget {
                                       style: TextStyle(
                                         fontSize: screenWidth * 0.04,
                                         fontWeight: FontWeight.w400,
-                                        color: Colors.grey[600],
+                                        color: Colors.black,
                                       ),
                                     ),
                                   ],
@@ -322,6 +341,7 @@ class DoctorDetailsPage extends StatelessWidget {
                   const SizedBox(height: 16),
                   // Bio and Rating
                   Card(
+                    color: Colors.grey[100],
                     elevation: 2,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -345,7 +365,7 @@ class DoctorDetailsPage extends StatelessWidget {
                             style: TextStyle(
                               fontSize: screenWidth * 0.04,
                               fontWeight: FontWeight.w400,
-                              color: Colors.grey[600],
+                              color: Colors.black,
                             ),
                           ),
                           const SizedBox(height: 12),
@@ -373,47 +393,92 @@ class DoctorDetailsPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
                   // Map Button
-                  Center(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xff12748B),
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 14,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 4,
-                      ),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder:
-                                (context) => MapPage(
-                                  doctorLatfdp: doctor.lat,
-                                  doctorLngfdp: doctor.lng,
-                                ),
-                          ),
-                        );
-                      },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'View on Map',
-                            style: TextStyle(
-                              fontSize: screenWidth * 0.045,
-                              fontWeight: FontWeight.w700,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Center(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xff12748B),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 14,
                             ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            elevation: 4,
                           ),
-                          const SizedBox(width: 10),
-                          Image.asset('assets/photos/mapicon.png', height: 24),
-                        ],
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) => MapPage(
+                                      doctorLatfdp: doctor.lat,
+                                      doctorLngfdp: doctor.lng,
+                                    ),
+                              ),
+                            );
+                          },
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'View on Map',
+                                style: TextStyle(
+                                  fontSize: screenWidth * 0.045,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Image.asset(
+                                'assets/photos/mapicon.png',
+                                height: 24,
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
+                      Center(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xff12748B),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 14,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            elevation: 4,
+                          ),
+                          onPressed: () {
+                            _launchGoogleMaps(doctor.lat, doctor.lng);
+                          },
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'View Route',
+                                style: TextStyle(
+                                  fontSize: screenWidth * 0.045,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Icon(
+                                Icons.route_outlined,
+                                size: 24,
+                                color: Colors.white,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 16),
                 ],

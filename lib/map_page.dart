@@ -1,5 +1,4 @@
 import 'package:canser_scan/helper/constants.dart';
-import 'package:canser_scan/home_page_v2.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -9,8 +8,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 class MapPage extends StatefulWidget {
   static String id = 'MapPage';
-  final double? doctorLatfdp;
-  final double? doctorLngfdp;
+  double? doctorLatfdp;
+  double? doctorLngfdp;
 
   MapPage({this.doctorLatfdp, this.doctorLngfdp});
 
@@ -124,8 +123,14 @@ class MapPageState extends State<MapPage> {
                     position: LatLng(data['latitude'], data['longitude']),
                     infoWindow: InfoWindow(
                       title: data['name'],
-                      snippet: data['address'] ?? 'No address available',
+                      snippet:
+                          '${data['governorate']}, ${data['region']}' ??
+                          'No address available',
                     ),
+                    onTap: () {
+                      widget.doctorLatfdp = data['latitude'];
+                      widget.doctorLngfdp = data['longitude'];
+                    },
                   ),
                 );
 
@@ -134,7 +139,9 @@ class MapPageState extends State<MapPage> {
                   'name': data['name'],
                   'latitude': data['latitude'],
                   'longitude': data['longitude'],
-                  'address': data['address'] ?? 'No address available',
+                  'address':
+                      '${data['governorate']}, ${data['region']}' ??
+                      'No address available',
                   'distance': distance,
                 };
                 tempDoctors.add(doctorData);
@@ -220,7 +227,7 @@ class MapPageState extends State<MapPage> {
             leading: IconButton(
               padding: const EdgeInsets.all(0),
               onPressed: () {
-                Navigator.pushReplacementNamed(context, HomePageV2.id);
+                Navigator.pop(context);
               },
               icon: Image.asset('assets/photos/dark_back_arrow.png'),
             ),
@@ -291,15 +298,56 @@ class MapPageState extends State<MapPage> {
             top: screenHeight * 0.12,
             right: screenWidth * 0.04,
             child: FloatingActionButton(
+              heroTag: 'mylocation',
               shape: const CircleBorder(),
               backgroundColor: Colors.white,
               foregroundColor: kPrimaryColor,
               onPressed: () async {
-                await getUserLocation();
+                moveToDoctor(userLatLng!.latitude, userLatLng!.longitude);
               },
               child: const Icon(Icons.my_location),
             ),
           ),
+          Positioned(
+            top: screenHeight * 0.20,
+            right: screenWidth * 0.04,
+            child: FloatingActionButton(
+              shape: const CircleBorder(),
+              backgroundColor: Colors.white,
+              foregroundColor: kPrimaryColor,
+              onPressed: () async {
+                if (widget.doctorLatfdp != null &&
+                    widget.doctorLngfdp != null) {
+                  _launchGoogleMaps(widget.doctorLatfdp!, widget.doctorLngfdp!);
+                }
+              },
+              child: const Icon(Icons.route_outlined),
+            ),
+          ),
+          _isLoading
+              ? const Center(
+                child: CircularProgressIndicator(color: kPrimaryColor),
+              )
+              : Positioned(
+                left: 15,
+                bottom: screenHeight * 0.195,
+                child: Container(
+                  padding: const EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.white,
+                  ),
+
+                  child: Text(
+                    'Nearest Doctors',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ),
           Positioned(
             left: 0,
             right: 0,
@@ -375,8 +423,9 @@ class MapPageState extends State<MapPage> {
                                       Text(
                                         '${(doctor['distance'] / 1000).toStringAsFixed(2)} km away',
                                         style: TextStyle(
-                                          fontSize: screenWidth * 0.03,
-                                          color: Colors.teal,
+                                          fontSize: screenWidth * 0.033,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.teal[700],
                                         ),
                                       ),
                                       IconButton(

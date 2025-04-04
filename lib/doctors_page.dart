@@ -216,7 +216,9 @@ class _DoctorsPageState extends State<DoctorsPage> {
                         .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const Center(
+                      child: CircularProgressIndicator(color: kPrimaryColor),
+                    );
                   }
                   if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                     return const Center(child: Text('No doctors found'));
@@ -356,7 +358,9 @@ class _DoctorsPageState extends State<DoctorsPage> {
                       height: screenHeight * 0.1,
                       width: screenWidth * 0.18,
                       color: Colors.grey[300],
-                      child: const Center(child: CircularProgressIndicator()),
+                      child: const Center(
+                        child: CircularProgressIndicator(color: kPrimaryColor),
+                      ),
                     ),
                 errorWidget:
                     (context, url, error) => Container(

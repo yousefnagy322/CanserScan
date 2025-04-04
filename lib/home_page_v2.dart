@@ -2,16 +2,22 @@ import 'package:canser_scan/Chatbot/chat_page.dart';
 import 'package:canser_scan/Login-Register/login_page.dart';
 import 'package:canser_scan/account_settings.dart';
 import 'package:canser_scan/add_doctor_page.dart';
+import 'package:canser_scan/doctor_details_page.dart';
 import 'package:canser_scan/helper/constants.dart';
 import 'package:canser_scan/history_page.dart';
 import 'package:canser_scan/map_page.dart';
+import 'package:canser_scan/models/doctor.dart';
 import 'package:canser_scan/widgets/bottom_nav_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
 import 'package:intl/intl.dart';
+import 'package:location/location.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'navigation_provider.dart';
 
 class HomePageV2 extends StatefulWidget {
@@ -23,6 +29,11 @@ class HomePageV2 extends StatefulWidget {
 }
 
 class _HomePageV2State extends State<HomePageV2> {
+  Location location = Location();
+  LatLng? userLatLng;
+  List<Doctor> nearestDoctors = [];
+  bool _isLoading = true;
+
   @override
   void initState() {
     super.initState();
@@ -32,20 +43,68 @@ class _HomePageV2State extends State<HomePageV2> {
         listen: false,
       ).setSelectedIndex(2);
     });
+    _getUserLocation(); // Fetch location once and use cached Firestore data
   }
 
+  Future<void> _getUserLocation() async {
+    if (userLatLng != null) return; // Skip if already fetched
+
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      bool serviceEnabled = await location.serviceEnabled();
+      if (!serviceEnabled) {
+        serviceEnabled = await location.requestService();
+        if (!serviceEnabled) {
+          setState(() {
+            _isLoading = false;
+          });
+          return;
+        }
+      }
+
+      PermissionStatus permissionGranted = await location.hasPermission();
+      if (permissionGranted == PermissionStatus.denied) {
+        permissionGranted = await location.requestPermission();
+        if (permissionGranted != PermissionStatus.granted) {
+          setState(() {
+            _isLoading = false;
+          });
+          return;
+        }
+      }
+
+      var currentLocation = await location.getLocation();
+      setState(() {
+        userLatLng = LatLng(
+          currentLocation.latitude!,
+          currentLocation.longitude!,
+        );
+        _isLoading =
+            false; // Loading ends after location fetch, Firestore uses cache
+      });
+    } catch (e) {
+      print("Error getting location: $e");
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final screenWidth = size.width;
     final screenHeight = size.height;
     final User? user = FirebaseAuth.instance.currentUser;
 
-    return const Scaffold(
-      backgroundColor: Color(0xffFFFFFF),
-      drawer: HomeDrawer(),
-      bottomNavigationBar: HomeBottomNavBar(),
-      appBar: HomeAppBar(),
-      body: HomeBody(),
+    return Scaffold(
+      backgroundColor: const Color(0xffFFFFFF),
+      drawer: const HomeDrawer(),
+      bottomNavigationBar: const HomeBottomNavBar(),
+      appBar: const HomeAppBar(),
+      body: HomeBody(userLatLng: userLatLng, isLoading: _isLoading),
     );
   }
 }
@@ -213,7 +272,14 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
 
 // Body Widget
 class HomeBody extends StatelessWidget {
-  const HomeBody({super.key});
+  final LatLng? userLatLng;
+  final bool isLoading;
+
+  const HomeBody({
+    super.key,
+    required this.userLatLng,
+    required this.isLoading,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -224,7 +290,6 @@ class HomeBody extends StatelessWidget {
 
     return Stack(
       children: [
-        // Main content with padding
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
@@ -302,7 +367,7 @@ class HomeBody extends StatelessWidget {
               ),
               const SizedBox(height: 48),
               const Text(
-                'Doctors',
+                'Nearest Doctors',
                 style: TextStyle(
                   color: Color(0xff3674B5),
                   fontSize: 22,
@@ -311,55 +376,91 @@ class HomeBody extends StatelessWidget {
               ),
               SizedBox(
                 height: 95,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  shrinkWrap: true,
-                  physics: const ClampingScrollPhysics(),
-                  itemCount: 5,
-                  itemBuilder: (context, index) {
-                    final doctors = [
-                      {
-                        'image': 'assets/doctor_photo/Dr Mohmed Nadi.jpg',
-                        'name': 'Dr: Mohmed',
-                        'location': 'Bani sweif',
-                      },
-                      {
-                        'image': 'assets/doctor_photo/Dr Mario Abrahime.jpg',
-                        'name': 'Dr: Mario',
-                        'location': 'Cairo',
-                      },
-                      {
-                        'image': 'assets/doctor_photo/Dr Youssef Ahmed.jpg',
-                        'name': 'Dr: Youssef',
-                        'location': 'Cairo',
-                      },
-                      {
-                        'image': 'assets/doctor_photo/Dr Nadi Youssef.jpg',
-                        'name': 'Dr: Nadi',
-                        'location': 'Elshrouke',
-                      },
-                      {
-                        'image': 'assets/doctor_photo/Dr Marime Emad.jpg',
-                        'name': 'Dr: Marime',
-                        'location': 'Banha',
-                      },
-                    ];
-                    return doctorCard(
-                      context,
-                      image: doctors[index]['image']!,
-                      name: doctors[index]['name']!,
-                      location: doctors[index]['location']!,
-                    );
-                  },
-                ),
+                child:
+                    isLoading
+                        ? const Center(
+                          child: CircularProgressIndicator(
+                            color: kPrimaryColor,
+                          ),
+                        )
+                        : userLatLng == null
+                        ? const Center(child: Text('Location unavailable'))
+                        : StreamBuilder<QuerySnapshot>(
+                          stream:
+                              FirebaseFirestore.instance
+                                  .collection('dermatologists')
+                                  .snapshots(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return const Center(
+                                child: Text('No doctors found nearby'),
+                              );
+                            }
+
+                            final List<Doctor> tempDoctors =
+                                snapshot.data!.docs
+                                    .map((doc) => Doctor.fromFirestore(doc))
+                                    .where(
+                                      (doctor) =>
+                                          doctor.lat != 0.0 &&
+                                          doctor.lng != 0.0,
+                                    )
+                                    .toList();
+
+                            tempDoctors.sort(
+                              (a, b) => Geolocator.distanceBetween(
+                                userLatLng!.latitude,
+                                userLatLng!.longitude,
+                                a.lat,
+                                a.lng,
+                              ).compareTo(
+                                Geolocator.distanceBetween(
+                                  userLatLng!.latitude,
+                                  userLatLng!.longitude,
+                                  b.lat,
+                                  b.lng,
+                                ),
+                              ),
+                            );
+
+                            final nearestDoctors = tempDoctors.take(4).toList();
+
+                            return ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              shrinkWrap: true,
+                              physics: const ClampingScrollPhysics(),
+                              itemCount: nearestDoctors.length,
+                              itemBuilder: (context, index) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (context) => DoctorDetailsPage(
+                                              doctor: nearestDoctors[index],
+                                            ),
+                                      ),
+                                    );
+                                  },
+                                  child: doctorCard(
+                                    context,
+                                    image: nearestDoctors[index].image,
+                                    name: nearestDoctors[index].name,
+                                    location: nearestDoctors[index].governorate,
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        ),
               ),
             ],
           ),
         ),
-        // Buttons without padding to touch the edge
         Positioned(
           bottom: screenHeight * 0.06,
-          right: 0, // No padding on the right
+          right: 0,
           child: GestureDetector(
             onTap: () => Navigator.pushNamed(context, MapPage.id),
             child: Container(
@@ -381,7 +482,7 @@ class HomeBody extends StatelessWidget {
         ),
         Positioned(
           bottom: screenHeight * 0.12,
-          right: 0, // No padding on the right
+          right: 0,
           child: GestureDetector(
             onTap: () => Navigator.pushNamed(context, ChatPage.id),
             child: Container(
@@ -505,12 +606,31 @@ class HomeBody extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Image.asset(
-            image,
-            fit: BoxFit.cover,
-            alignment: Alignment.topCenter,
-            height: 60,
-            width: 71,
+          ClipRRect(
+            borderRadius: BorderRadius.circular(0),
+            child: CachedNetworkImage(
+              imageUrl: image,
+              fit: BoxFit.cover,
+              alignment: Alignment.topCenter,
+              height: 60,
+              width: 71,
+              placeholder:
+                  (context, url) => Container(
+                    height: 60,
+                    width: 71,
+                    color: Colors.grey[300],
+                    child: const Center(
+                      child: CircularProgressIndicator(color: kPrimaryColor),
+                    ),
+                  ),
+              errorWidget:
+                  (context, url, error) => Image.asset(
+                    'assets/doctor_photo/default_doctor.jpg',
+                    fit: BoxFit.cover,
+                    height: 60,
+                    width: 71,
+                  ),
+            ),
           ),
           Container(
             height: 35,
@@ -523,6 +643,7 @@ class HomeBody extends StatelessWidget {
               children: [
                 Text(
                   name,
+                  maxLines: 1,
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
@@ -532,11 +653,14 @@ class HomeBody extends StatelessWidget {
                   children: [
                     Image.asset('assets/photos/location.png', height: 10),
                     const SizedBox(width: 4),
-                    Text(
-                      location,
-                      style: const TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w400,
+                    Flexible(
+                      child: Text(
+                        location,
+                        style: const TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w400,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],

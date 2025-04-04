@@ -4,8 +4,6 @@ import 'package:canser_scan/Login-Register/email_verfiy.dart';
 import r'package:canser_scan/Login-Register/register_page.dart';
 import 'package:canser_scan/helper/constants.dart';
 import 'package:canser_scan/helper/show_snack_bar.dart';
-import 'package:canser_scan/map_page.dart';
-import 'package:canser_scan/splash.dart';
 import 'package:canser_scan/widgets/custom_label.dart';
 import 'package:canser_scan/widgets/cutom_text_filed.dart';
 import 'package:canser_scan/widgets/main_custom_button.dart';
@@ -147,6 +145,18 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
+
+                  // ElevatedButton(
+                  //   onPressed: () {
+                  //     Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //         builder: (context) => AddSampleDoctorsPage(),
+                  //       ),
+                  //     );
+                  //   },
+                  //   child: Text('add doc'),
+                  // ),
 
                   // ElevatedButton(
                   //   onPressed: () {
