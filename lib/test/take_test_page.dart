@@ -87,6 +87,15 @@ class _TakeTestPageState extends State<TakeTestPage> {
             ),
           ),
           child: AppBar(
+            centerTitle: true,
+            title: const Text(
+              'Take test',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             automaticallyImplyLeading: false,
             scrolledUnderElevation: 0,
             toolbarHeight: 40,
@@ -115,38 +124,32 @@ class _TakeTestPageState extends State<TakeTestPage> {
                 fontWeight: FontWeight.w400,
               ),
             ),
-            SizedBox(height: screenHeight * 0.06),
+            SizedBox(height: screenHeight * 0.04),
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Padding(
-                  padding: EdgeInsets.only(left: screenWidth * 0.09),
-                  child: GestureDetector(
-                    onTap: () {
-                      pickImageCamera(context);
-                    },
-                    child: Column(
-                      children: [
-                        buildBox(screenWidth, 'assets/photos/take_photo.png'),
-                        const SizedBox(height: 8),
-                        buildLabel(screenWidth, 'Take Photo'),
-                      ],
-                    ),
+                GestureDetector(
+                  onTap: () {
+                    pickImageCamera(context);
+                  },
+                  child: Column(
+                    children: [
+                      buildBox(screenWidth, 'assets/photos/take_photo.png'),
+                      const SizedBox(height: 8),
+                      buildLabel(screenWidth, 'Take Photo'),
+                    ],
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(left: screenWidth * 0.09),
-                  child: GestureDetector(
-                    onTap: () {
-                      pickImageGallery(context);
-                    },
-                    child: Column(
-                      children: [
-                        buildBox(screenWidth, 'assets/photos/Choose_image.png'),
-                        const SizedBox(height: 8),
-                        buildLabel(screenWidth, 'Choose Image'),
-                      ],
-                    ),
+                GestureDetector(
+                  onTap: () {
+                    pickImageGallery(context);
+                  },
+                  child: Column(
+                    children: [
+                      buildBox(screenWidth, 'assets/photos/Choose_image.png'),
+                      const SizedBox(height: 8),
+                      buildLabel(screenWidth, 'Choose Image'),
+                    ],
                   ),
                 ),
               ],

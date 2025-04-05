@@ -8,11 +8,13 @@ class BuildTextField extends StatelessWidget {
     this.onChanged,
     this.hintText,
     this.obscureText = false,
+    this.keyboardType,
   });
   final double screenWidth;
   Function(String)? onChanged;
   final String? hintText;
   bool obscureText = false;
+  TextInputType? keyboardType;
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +28,7 @@ class BuildTextField extends StatelessWidget {
           return null;
         },
         onChanged: onChanged,
+        keyboardType: keyboardType,
         style: TextStyle(color: Colors.white),
         obscureText: obscureText,
         decoration: InputDecoration(

@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:canser_scan/Login-Register/email_verfiy.dart';
+import 'package:canser_scan/Login-Register/forgot_password_page.dart';
 import r'package:canser_scan/Login-Register/register_page.dart';
 import 'package:canser_scan/helper/constants.dart';
 import 'package:canser_scan/helper/show_snack_bar.dart';
@@ -58,6 +59,7 @@ class _LoginPageState extends State<LoginPage> {
                   const BuildLabel(label: 'Email'),
                   const SizedBox(height: 8),
                   BuildTextField(
+                    keyboardType: TextInputType.emailAddress,
                     onChanged: (data) {
                       email = data;
                     },
@@ -68,6 +70,7 @@ class _LoginPageState extends State<LoginPage> {
                   const BuildLabel(label: 'Password'),
                   const SizedBox(height: 8),
                   BuildTextField(
+                    keyboardType: TextInputType.visiblePassword,
                     onChanged: (data) {
                       password = data;
                     },
@@ -76,14 +79,19 @@ class _LoginPageState extends State<LoginPage> {
                     hintText: 'Enter your password',
                   ),
                   const SizedBox(height: 16),
-                  const Text(
-                    'Forget your password..?',
-                    style: TextStyle(
-                      decoration: TextDecoration.underline,
-                      decorationColor: Colors.white70,
-                      color: Colors.white70,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
+                  GestureDetector(
+                    onTap:
+                        () =>
+                            Navigator.pushNamed(context, ForgotPasswordPage.id),
+                    child: const Text(
+                      'Forget your password..?',
+                      style: TextStyle(
+                        decoration: TextDecoration.underline,
+                        decorationColor: Colors.white70,
+                        color: Colors.white70,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 16),

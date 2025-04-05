@@ -1,3 +1,4 @@
+import 'package:canser_scan/about_us_page.dart';
 import 'package:canser_scan/doctors_page.dart';
 import 'package:canser_scan/helper/constants.dart';
 import 'package:canser_scan/home_page_v2.dart';
@@ -41,7 +42,11 @@ class HomeBottomNavBar extends StatelessWidget {
       route: HomePageV2.id,
       isActive: true,
     ),
-    NavBarItem(icon: 'assets/photos/navbaraboutus.png', label: 'About Us'),
+    NavBarItem(
+      icon: 'assets/photos/navbaraboutus.png',
+      label: 'About Us',
+      route: AboutUsPage.id,
+    ),
     NavBarItem(
       icon: 'assets/photos/navbardoctor.png',
       label: 'Doctors',

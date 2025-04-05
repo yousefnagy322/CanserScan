@@ -1,7 +1,9 @@
 import 'package:canser_scan/Chatbot/chat_page.dart';
 import 'package:canser_scan/Login-Register/confirm_page.dart';
+import 'package:canser_scan/Login-Register/forgot_password_page.dart';
 import 'package:canser_scan/Login-Register/login_page.dart';
 import 'package:canser_scan/Login-Register/register_page.dart';
+import 'package:canser_scan/about_us_page.dart';
 import 'package:canser_scan/account_settings.dart';
 import 'package:canser_scan/add_doctor_page.dart';
 import 'package:canser_scan/doctors_page.dart';
@@ -86,6 +88,8 @@ class MyApp extends StatelessWidget {
           MapPage.id: (context) => MapPage(),
           HistoryPage.id: (context) => HistoryPage(),
           AddDoctorPage.id: (context) => AddDoctorPage(),
+          ForgotPasswordPage.id: (context) => ForgotPasswordPage(),
+          AboutUsPage.id: (context) => const AboutUsPage(),
         },
         initialRoute: SplashScreen.id,
       ),

@@ -39,6 +39,7 @@ class _DoctorsPageState extends State<DoctorsPage> {
   List<Doctor> allDoctors = [];
   Location location = Location();
   LatLng? userLatLng;
+  bool _showFilters = false; // State variable to control filter visibility
 
   @override
   void initState() {
@@ -170,6 +171,12 @@ class _DoctorsPageState extends State<DoctorsPage> {
     });
   }
 
+  void _toggleFilters() {
+    setState(() {
+      _showFilters = !_showFilters;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -193,11 +200,7 @@ class _DoctorsPageState extends State<DoctorsPage> {
           ),
           bottom: PreferredSize(
             preferredSize: Size.fromHeight(1.0),
-            child: Divider(
-              height: 1,
-              thickness: 1,
-              color: kPrimaryColor, // Customize color
-            ),
+            child: Divider(height: 1, thickness: 1, color: kPrimaryColor),
           ),
           scrolledUnderElevation: 0,
           toolbarHeight: 40,
@@ -209,175 +212,203 @@ class _DoctorsPageState extends State<DoctorsPage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            TextField(
-              onChanged:
-                  (value) => setState(() => searchQuery = value.toLowerCase()),
-              decoration: InputDecoration(
-                hintText: 'Search doctors by name...',
-                prefixIcon: Icon(Icons.search, color: kPrimaryColor),
-                filled: true,
-                fillColor: Colors.grey[100],
-                contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: kPrimaryColor, width: 1),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    onChanged:
+                        (value) =>
+                            setState(() => searchQuery = value.toLowerCase()),
+                    decoration: InputDecoration(
+                      hintText: 'Search doctors by name...',
+                      prefixIcon: Icon(Icons.search, color: kPrimaryColor),
+                      filled: true,
+                      fillColor: Colors.grey[100],
+                      contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: kPrimaryColor, width: 1),
+                      ),
+                    ),
+                  ),
                 ),
+                const SizedBox(width: 8),
+                IconButton(
+                  icon: Icon(
+                    _showFilters ? Icons.filter_alt_off : Icons.filter_alt,
+                    color: kPrimaryColor,
+                  ),
+                  onPressed: _toggleFilters,
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Visibility(
+              visible: _showFilters,
+              child: Column(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.location_on,
+                                  size: 16,
+                                  color: kPrimaryColor,
+                                ),
+                                const SizedBox(width: 4),
+                                const Text(
+                                  'Governorate',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            customDropdown(
+                              value: selectedGovernorate,
+                              items: governorates,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedGovernorate = value!;
+                                  selectedRegion = 'All';
+                                  updateRegions(allDoctors);
+                                });
+                              },
+                              hint: 'Select Governorate',
+                            ),
+                            const SizedBox(height: 16),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.medical_services,
+                                  size: 16,
+                                  color: kPrimaryColor,
+                                ),
+                                const SizedBox(width: 4),
+                                const Text(
+                                  'Specialty',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            customDropdown(
+                              value: selectedSpecialty,
+                              items: specialties,
+                              onChanged:
+                                  (value) => setState(
+                                    () => selectedSpecialty = value!,
+                                  ),
+                              hint: 'Select Specialty',
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        flex: 1,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(Icons.map, size: 16, color: kPrimaryColor),
+                                const SizedBox(width: 4),
+                                const Text(
+                                  'Region',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            customDropdown(
+                              value: selectedRegion,
+                              items: regions,
+                              onChanged:
+                                  (value) =>
+                                      setState(() => selectedRegion = value!),
+                              hint: 'Select Region',
+                            ),
+                            const SizedBox(height: 16),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.sort,
+                                  size: 16,
+                                  color: kPrimaryColor,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'Sort${selectedSort != 'Default' ? ': $selectedSort' : ''}',
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            customDropdown(
+                              value: selectedSort,
+                              items: sortOptions,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedSort = value!;
+                                });
+                              },
+                              hint: 'Select Sort Option',
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: _resetFilters,
+                        style: TextButton.styleFrom(
+                          backgroundColor: Colors.grey[100],
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            side: BorderSide(color: kPrimaryColor, width: 1.5),
+                          ),
+                        ),
+                        child: Text(
+                          'Reset Filters',
+                          style: TextStyle(
+                            color: kPrimaryColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                ],
               ),
             ),
-            const SizedBox(height: 16),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.location_on,
-                            size: 16,
-                            color: kPrimaryColor,
-                          ),
-                          const SizedBox(width: 4),
-                          const Text(
-                            'Governorate',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black87,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      customDropdown(
-                        value: selectedGovernorate,
-                        items: governorates,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedGovernorate = value!;
-                            selectedRegion = 'All';
-                            updateRegions(allDoctors);
-                          });
-                        },
-                        hint: 'Select Governorate',
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.medical_services,
-                            size: 16,
-                            color: kPrimaryColor,
-                          ),
-                          const SizedBox(width: 4),
-                          const Text(
-                            'Specialty',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black87,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      customDropdown(
-                        value: selectedSpecialty,
-                        items: specialties,
-                        onChanged:
-                            (value) =>
-                                setState(() => selectedSpecialty = value!),
-                        hint: 'Select Specialty',
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  flex: 1,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.map, size: 16, color: kPrimaryColor),
-                          const SizedBox(width: 4),
-                          const Text(
-                            'Region',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black87,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      customDropdown(
-                        value: selectedRegion,
-                        items: regions,
-                        onChanged:
-                            (value) => setState(() => selectedRegion = value!),
-                        hint: 'Select Region',
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Icon(Icons.sort, size: 16, color: kPrimaryColor),
-                          const SizedBox(width: 4),
-                          Text(
-                            'Sort${selectedSort != 'Default' ? ': $selectedSort' : ''}',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black87,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      customDropdown(
-                        value: selectedSort,
-                        items: sortOptions,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedSort = value!;
-                          });
-                        },
-                        hint: 'Select Sort Option',
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(
-                  onPressed: _resetFilters,
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.grey[100],
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      side: BorderSide(color: kPrimaryColor, width: 1.5),
-                    ),
-                  ),
-                  child: Text(
-                    'Reset Filters',
-                    style: TextStyle(
-                      color: kPrimaryColor,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
                 stream:
