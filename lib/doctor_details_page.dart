@@ -402,7 +402,7 @@ class DoctorDetailsPage extends StatelessWidget {
                             backgroundColor: const Color(0xff12748B),
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
+                              horizontal: 15,
                               vertical: 14,
                             ),
                             shape: RoundedRectangleBorder(
@@ -432,7 +432,7 @@ class DoctorDetailsPage extends StatelessWidget {
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
-                              const SizedBox(width: 10),
+                              const SizedBox(width: 5),
                               Image.asset(
                                 'assets/photos/mapicon.png',
                                 height: 24,
@@ -447,7 +447,7 @@ class DoctorDetailsPage extends StatelessWidget {
                             backgroundColor: const Color(0xff12748B),
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
+                              horizontal: 15,
                               vertical: 14,
                             ),
                             shape: RoundedRectangleBorder(
@@ -468,7 +468,7 @@ class DoctorDetailsPage extends StatelessWidget {
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
-                              const SizedBox(width: 10),
+                              const SizedBox(width: 5),
                               Icon(
                                 Icons.route_outlined,
                                 size: 24,

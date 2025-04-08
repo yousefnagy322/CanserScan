@@ -6,7 +6,7 @@ Future<String> getUserData(String filed) async {
   String uid = FirebaseAuth.instance.currentUser!.uid;
   DocumentSnapshot userDoc =
       await FirebaseFirestore.instance.collection('users').doc(uid).get();
-  return userDoc[filed];
+  return userDoc[filed] ?? 'Unknown';
 }
 
 Widget buildUserData({

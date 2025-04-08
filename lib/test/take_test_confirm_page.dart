@@ -230,6 +230,7 @@ class _TakeTestConfirmPageState extends State<TakeTestConfirmPage> {
 
     Map<String, dynamic> testData = {
       'Result': result,
+      'prediction': 'No Cancer',
       'confidence': confidencePercentageModel,
       'timestamp': FieldValue.serverTimestamp(),
     };

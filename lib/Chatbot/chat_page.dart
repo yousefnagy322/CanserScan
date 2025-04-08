@@ -137,6 +137,10 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ],
           ),
+          bottom: PreferredSize(
+            preferredSize: Size.fromHeight(1.0),
+            child: Divider(height: 1, thickness: 1, color: kPrimaryColor),
+          ),
           scrolledUnderElevation: 0,
           toolbarHeight: 40,
           leadingWidth: 90,

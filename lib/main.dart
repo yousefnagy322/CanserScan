@@ -40,11 +40,11 @@ Future<void> main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   // Lock screen orientation to portrait mode
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
   // This widget is the root of your application.
   @override

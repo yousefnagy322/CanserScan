@@ -76,6 +76,7 @@ class RegisterPageState extends State<RegisterPage> {
 
                   const BuildLabel(label: 'First name'),
                   BuildTextField(
+                    keyboardType: TextInputType.name,
                     screenWidth: screenWidth * 0.8,
                     onChanged: (data) {
                       firstName = data;
@@ -85,6 +86,7 @@ class RegisterPageState extends State<RegisterPage> {
                   const SizedBox(height: 26),
                   const BuildLabel(label: "Second name"),
                   BuildTextField(
+                    keyboardType: TextInputType.name,
                     screenWidth: screenWidth * 0.8,
                     onChanged: (data) {
                       secondName = data;
@@ -100,16 +102,18 @@ class RegisterPageState extends State<RegisterPage> {
                   const SizedBox(height: 26),
                   const BuildLabel(label: "Email"),
                   BuildTextField(
+                    keyboardType: TextInputType.emailAddress,
                     onChanged: (data) {
                       email = data;
                     },
                     screenWidth: screenWidth,
-                    hintText: "Enter your email or phone number..",
+                    hintText: "Enter your email",
                   ),
 
                   const SizedBox(height: 26),
                   const BuildLabel(label: "Password"),
                   BuildTextField(
+                    keyboardType: TextInputType.visiblePassword,
                     onChanged: (data) {
                       password = data;
                     },
@@ -179,9 +183,12 @@ class RegisterPageState extends State<RegisterPage> {
     String uid = user.user!.uid;
 
     await FirebaseFirestore.instance.collection('users').doc(uid).set({
-      'First name': firstName,
+      'First name': firstName!.replaceFirst(
+        firstName!,
+        firstName![0].toUpperCase() + firstName!.substring(1),
+      ),
       'Second name': secondName,
-      'Gender': gender,
+      'Gender': gender ?? 'unknown',
       'Email': email,
       'Password': password,
       'uid': uid,

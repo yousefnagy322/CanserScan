@@ -182,327 +182,344 @@ class _DoctorsPageState extends State<DoctorsPage> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      bottomNavigationBar: const HomeBottomNavBar(),
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: AppBar(
-          automaticallyImplyLeading: false,
-          centerTitle: true,
-          title: GradientText(
-            'Doctors',
-            style: TextStyle(
-              fontWeight: FontWeight.w700,
-              fontSize: screenWidth * 0.08,
+    return WillPopScope(
+      onWillPop: () async {
+        // Update the selectedIndex to the previous page's index
+        Provider.of<NavigationProvider>(context, listen: false).popIndex();
+        return true; // Allow the pop to proceed
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        bottomNavigationBar: const HomeBottomNavBar(),
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(kToolbarHeight),
+          child: AppBar(
+            automaticallyImplyLeading: false,
+            centerTitle: true,
+            title: GradientText(
+              'Doctors',
+              style: TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: screenWidth * 0.08,
+              ),
+              colors: const [Color(0xff12748B), Color(0xff051F25)],
             ),
-            colors: const [Color(0xff12748B), Color(0xff051F25)],
+            bottom: PreferredSize(
+              preferredSize: Size.fromHeight(1.0),
+              child: Divider(height: 1, thickness: 1, color: kPrimaryColor),
+            ),
+            scrolledUnderElevation: 0,
+            toolbarHeight: 40,
+            leadingWidth: 90,
+            backgroundColor: Colors.transparent,
           ),
-          bottom: PreferredSize(
-            preferredSize: Size.fromHeight(1.0),
-            child: Divider(height: 1, thickness: 1, color: kPrimaryColor),
-          ),
-          scrolledUnderElevation: 0,
-          toolbarHeight: 40,
-          leadingWidth: 90,
-          backgroundColor: Colors.transparent,
         ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    onChanged:
-                        (value) =>
-                            setState(() => searchQuery = value.toLowerCase()),
-                    decoration: InputDecoration(
-                      hintText: 'Search doctors by name...',
-                      prefixIcon: Icon(Icons.search, color: kPrimaryColor),
-                      filled: true,
-                      fillColor: Colors.grey[100],
-                      contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: kPrimaryColor, width: 1),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      onChanged:
+                          (value) =>
+                              setState(() => searchQuery = value.toLowerCase()),
+                      decoration: InputDecoration(
+                        hintText: 'Search doctors by name...',
+                        prefixIcon: Icon(Icons.search, color: kPrimaryColor),
+                        filled: true,
+                        fillColor: Colors.grey[100],
+                        contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: kPrimaryColor,
+                            width: 1,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                IconButton(
-                  icon: Icon(
-                    _showFilters ? Icons.filter_alt_off : Icons.filter_alt,
-                    color: kPrimaryColor,
+                  const SizedBox(width: 8),
+                  IconButton(
+                    icon: Icon(
+                      _showFilters ? Icons.filter_alt_off : Icons.filter_alt,
+                      color: kPrimaryColor,
+                    ),
+                    onPressed: _toggleFilters,
                   ),
-                  onPressed: _toggleFilters,
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Visibility(
-              visible: _showFilters,
-              child: Column(
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.location_on,
-                                  size: 16,
-                                  color: kPrimaryColor,
-                                ),
-                                const SizedBox(width: 4),
-                                const Text(
-                                  'Governorate',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            customDropdown(
-                              value: selectedGovernorate,
-                              items: governorates,
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedGovernorate = value!;
-                                  selectedRegion = 'All';
-                                  updateRegions(allDoctors);
-                                });
-                              },
-                              hint: 'Select Governorate',
-                            ),
-                            const SizedBox(height: 16),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.medical_services,
-                                  size: 16,
-                                  color: kPrimaryColor,
-                                ),
-                                const SizedBox(width: 4),
-                                const Text(
-                                  'Specialty',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            customDropdown(
-                              value: selectedSpecialty,
-                              items: specialties,
-                              onChanged:
-                                  (value) => setState(
-                                    () => selectedSpecialty = value!,
-                                  ),
-                              hint: 'Select Specialty',
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        flex: 1,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(Icons.map, size: 16, color: kPrimaryColor),
-                                const SizedBox(width: 4),
-                                const Text(
-                                  'Region',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            customDropdown(
-                              value: selectedRegion,
-                              items: regions,
-                              onChanged:
-                                  (value) =>
-                                      setState(() => selectedRegion = value!),
-                              hint: 'Select Region',
-                            ),
-                            const SizedBox(height: 16),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.sort,
-                                  size: 16,
-                                  color: kPrimaryColor,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  'Sort${selectedSort != 'Default' ? ': $selectedSort' : ''}',
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            customDropdown(
-                              value: selectedSort,
-                              items: sortOptions,
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedSort = value!;
-                                });
-                              },
-                              hint: 'Select Sort Option',
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: _resetFilters,
-                        style: TextButton.styleFrom(
-                          backgroundColor: Colors.grey[100],
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            side: BorderSide(color: kPrimaryColor, width: 1.5),
-                          ),
-                        ),
-                        child: Text(
-                          'Reset Filters',
-                          style: TextStyle(
-                            color: kPrimaryColor,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
                 ],
               ),
-            ),
-            Expanded(
-              child: StreamBuilder<QuerySnapshot>(
-                stream:
-                    FirebaseFirestore.instance
-                        .collection('dermatologists')
-                        .snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(color: kPrimaryColor),
-                    );
-                  }
-                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                    return const Center(child: Text('No doctors found'));
-                  }
+              const SizedBox(height: 16),
+              Visibility(
+                visible: _showFilters,
+                child: Column(
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.location_on,
+                                    size: 16,
+                                    color: kPrimaryColor,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  const Text(
+                                    'Governorate',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              customDropdown(
+                                value: selectedGovernorate,
+                                items: governorates,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedGovernorate = value!;
+                                    selectedRegion = 'All';
+                                    updateRegions(allDoctors);
+                                  });
+                                },
+                                hint: 'Select Governorate',
+                              ),
+                              const SizedBox(height: 16),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.medical_services,
+                                    size: 16,
+                                    color: kPrimaryColor,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  const Text(
+                                    'Specialty',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              customDropdown(
+                                value: selectedSpecialty,
+                                items: specialties,
+                                onChanged:
+                                    (value) => setState(
+                                      () => selectedSpecialty = value!,
+                                    ),
+                                hint: 'Select Specialty',
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          flex: 1,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.map,
+                                    size: 16,
+                                    color: kPrimaryColor,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  const Text(
+                                    'Region',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              customDropdown(
+                                value: selectedRegion,
+                                items: regions,
+                                onChanged:
+                                    (value) =>
+                                        setState(() => selectedRegion = value!),
+                                hint: 'Select Region',
+                              ),
+                              const SizedBox(height: 16),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.sort,
+                                    size: 16,
+                                    color: kPrimaryColor,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    'Sort${selectedSort != 'Default' ? ': $selectedSort' : ''}',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              customDropdown(
+                                value: selectedSort,
+                                items: sortOptions,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedSort = value!;
+                                  });
+                                },
+                                hint: 'Select Sort Option',
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: _resetFilters,
+                          style: TextButton.styleFrom(
+                            backgroundColor: Colors.grey[100],
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              side: BorderSide(
+                                color: kPrimaryColor,
+                                width: 1.5,
+                              ),
+                            ),
+                          ),
+                          child: Text(
+                            'Reset Filters',
+                            style: TextStyle(
+                              color: kPrimaryColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: StreamBuilder<QuerySnapshot>(
+                  stream:
+                      FirebaseFirestore.instance
+                          .collection('dermatologists')
+                          .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(color: kPrimaryColor),
+                      );
+                    }
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return const Center(child: Text('No doctors found'));
+                    }
 
-                  allDoctors =
-                      snapshot.data!.docs
-                          .map((doc) => Doctor.fromFirestore(doc))
-                          .toList();
-                  updateRegions(allDoctors);
+                    allDoctors =
+                        snapshot.data!.docs
+                            .map((doc) => Doctor.fromFirestore(doc))
+                            .toList();
+                    updateRegions(allDoctors);
 
-                  var filteredDoctors =
-                      allDoctors
-                          .where(
-                            (doctor) =>
-                                (selectedGovernorate == 'All' ||
-                                    doctor.governorate ==
-                                        selectedGovernorate) &&
-                                (selectedRegion == 'All' ||
-                                    doctor.region == selectedRegion) &&
-                                (selectedSpecialty == 'All' ||
-                                    doctor.specialty == selectedSpecialty) &&
-                                (searchQuery.isEmpty ||
-                                    doctor.name.toLowerCase().contains(
-                                      searchQuery,
-                                    )),
-                          )
-                          .toList();
+                    var filteredDoctors =
+                        allDoctors
+                            .where(
+                              (doctor) =>
+                                  (selectedGovernorate == 'All' ||
+                                      doctor.governorate ==
+                                          selectedGovernorate) &&
+                                  (selectedRegion == 'All' ||
+                                      doctor.region == selectedRegion) &&
+                                  (selectedSpecialty == 'All' ||
+                                      doctor.specialty == selectedSpecialty) &&
+                                  (searchQuery.isEmpty ||
+                                      doctor.name.toLowerCase().contains(
+                                        searchQuery,
+                                      )),
+                            )
+                            .toList();
 
-                  if (selectedSort == 'Nearest' && userLatLng != null) {
-                    filteredDoctors.sort(
-                      (a, b) => Geolocator.distanceBetween(
-                        userLatLng!.latitude,
-                        userLatLng!.longitude,
-                        a.lat,
-                        a.lng,
-                      ).compareTo(
-                        Geolocator.distanceBetween(
+                    if (selectedSort == 'Nearest' && userLatLng != null) {
+                      filteredDoctors.sort(
+                        (a, b) => Geolocator.distanceBetween(
                           userLatLng!.latitude,
                           userLatLng!.longitude,
-                          b.lat,
-                          b.lng,
-                        ),
-                      ),
-                    );
-                  } else if (selectedSort == 'Name (A-Z)') {
-                    filteredDoctors.sort((a, b) => a.name.compareTo(b.name));
-                  } else if (selectedSort == 'Name (Z-A)') {
-                    filteredDoctors.sort((a, b) => b.name.compareTo(a.name));
-                  } else if (selectedSort == 'Rating') {
-                    filteredDoctors.sort(
-                      (a, b) => b.rating.compareTo(a.rating),
-                    );
-                  }
-
-                  return ListView.builder(
-                    itemCount: filteredDoctors.length,
-                    itemBuilder: (context, index) {
-                      final doctor = filteredDoctors[index];
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (context) =>
-                                      DoctorDetailsPage(doctor: doctor),
-                            ),
-                          );
-                        },
-                        child: doctorCard(
-                          context,
-                          doctor,
-                          screenWidth,
-                          screenHeight,
+                          a.lat,
+                          a.lng,
+                        ).compareTo(
+                          Geolocator.distanceBetween(
+                            userLatLng!.latitude,
+                            userLatLng!.longitude,
+                            b.lat,
+                            b.lng,
+                          ),
                         ),
                       );
-                    },
-                  );
-                },
+                    } else if (selectedSort == 'Name (A-Z)') {
+                      filteredDoctors.sort((a, b) => a.name.compareTo(b.name));
+                    } else if (selectedSort == 'Name (Z-A)') {
+                      filteredDoctors.sort((a, b) => b.name.compareTo(a.name));
+                    } else if (selectedSort == 'Rating') {
+                      filteredDoctors.sort(
+                        (a, b) => b.rating.compareTo(a.rating),
+                      );
+                    }
+
+                    return ListView.builder(
+                      itemCount: filteredDoctors.length,
+                      itemBuilder: (context, index) {
+                        final doctor = filteredDoctors[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) =>
+                                        DoctorDetailsPage(doctor: doctor),
+                              ),
+                            );
+                          },
+                          child: doctorCard(
+                            context,
+                            doctor,
+                            screenWidth,
+                            screenHeight,
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

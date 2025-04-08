@@ -4,6 +4,7 @@ import 'package:canser_scan/account_settings.dart';
 import 'package:canser_scan/add_doctor_page.dart';
 import 'package:canser_scan/doctor_details_page.dart';
 import 'package:canser_scan/helper/constants.dart';
+import 'package:canser_scan/helper/get_user_build.dart';
 import 'package:canser_scan/history_page.dart';
 import 'package:canser_scan/map_page.dart';
 import 'package:canser_scan/models/doctor.dart';
@@ -28,7 +29,7 @@ class HomePageV2 extends StatefulWidget {
   State<HomePageV2> createState() => _HomePageV2State();
 }
 
-class _HomePageV2State extends State<HomePageV2> {
+class _HomePageV2State extends State<HomePageV2> with RouteAware {
   Location location = Location();
   LatLng? userLatLng;
   List<Doctor> nearestDoctors = [];
@@ -43,11 +44,33 @@ class _HomePageV2State extends State<HomePageV2> {
         listen: false,
       ).setSelectedIndex(2);
     });
-    _getUserLocation(); // Fetch location once and use cached Firestore data
+    _getUserLocation();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Subscribe to route changes
+    final ModalRoute? route = ModalRoute.of(context);
+    if (route != null) {
+      routeObserver.subscribe(this, route as PageRoute);
+    }
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    // Called when this page is re-entered after a pop (e.g., back from InformationPage)
+    Provider.of<NavigationProvider>(context, listen: false).setSelectedIndex(2);
   }
 
   Future<void> _getUserLocation() async {
-    if (userLatLng != null) return; // Skip if already fetched
+    if (userLatLng != null) return;
 
     setState(() {
       _isLoading = true;
@@ -81,8 +104,7 @@ class _HomePageV2State extends State<HomePageV2> {
           currentLocation.latitude!,
           currentLocation.longitude!,
         );
-        _isLoading =
-            false; // Loading ends after location fetch, Firestore uses cache
+        _isLoading = false;
       });
     } catch (e) {
       print("Error getting location: $e");
@@ -108,6 +130,9 @@ class _HomePageV2State extends State<HomePageV2> {
     );
   }
 }
+
+// Add this at the top of your file or in a separate file
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
 // Drawer Widget
 class HomeDrawer extends StatelessWidget {
@@ -218,13 +243,20 @@ class HomeDrawer extends StatelessWidget {
       future: getUserData(field),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text(
+          return Text(
             'Loading...',
-            style: TextStyle(color: Colors.black),
+            style: TextStyle(
+              color: color,
+              fontSize: fontSize,
+              fontWeight: fontWeight,
+            ),
           );
         }
         return Text(
-          snapshot.data ?? 'Unknown',
+          snapshot.data!.replaceFirst(
+            snapshot.data!,
+            snapshot.data![0].toUpperCase() + snapshot.data!.substring(1),
+          ),
           style: TextStyle(
             color: color,
             fontSize: fontSize,
@@ -252,17 +284,53 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       scrolledUnderElevation: 0,
       toolbarHeight: 40,
-      leadingWidth: 90,
+      leadingWidth: 150,
       backgroundColor: Colors.transparent,
-      leading: Builder(
-        builder: (context) {
-          return IconButton(
-            padding: const EdgeInsets.all(0),
-            onPressed: () => Scaffold.of(context).openDrawer(),
-            icon: Image.asset('assets/photos/homev2_drawer.png'),
-          );
-        },
+
+      leading: Padding(
+        padding: const EdgeInsets.only(left: 20),
+        child: FutureBuilder<String>(
+          future: getUserData('First name'),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Text(
+                'Loading...',
+                style: TextStyle(
+                  color: kPrimaryColor,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                ),
+              );
+            }
+            return Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Hi ${snapshot.data!.replaceFirst(snapshot.data!, snapshot.data![0].toUpperCase() + snapshot.data!.substring(1))}', // Use 'snapshot.data',
+                style: TextStyle(
+                  color: kPrimaryColor,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            );
+          },
+        ),
       ),
+      actions: [
+        Align(
+          alignment: Alignment.centerRight,
+          child: Builder(
+            builder: (context) {
+              return IconButton(
+                padding: const EdgeInsets.all(0),
+                onPressed: () => Scaffold.of(context).openDrawer(),
+                icon: Image.asset('assets/photos/homev2_drawer.png'),
+              );
+            },
+          ),
+        ),
+        const SizedBox(width: 15),
+      ],
     );
   }
 
@@ -600,9 +668,11 @@ class HomeBody extends StatelessWidget {
     required String name,
     required String location,
   }) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenhight = MediaQuery.of(context).size.height;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10),
-      height: 80,
+      height: screenhight * 0.2,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -612,12 +682,12 @@ class HomeBody extends StatelessWidget {
               imageUrl: image,
               fit: BoxFit.cover,
               alignment: Alignment.topCenter,
-              height: 60,
-              width: 71,
+              height: screenhight * 0.064,
+              width: screenWidth * 0.173,
               placeholder:
                   (context, url) => Container(
-                    height: 60,
-                    width: 71,
+                    height: screenhight * 0.064,
+                    width: screenWidth * 0.173,
                     color: Colors.grey[300],
                     child: const Center(
                       child: CircularProgressIndicator(color: kPrimaryColor),
@@ -627,14 +697,14 @@ class HomeBody extends StatelessWidget {
                   (context, url, error) => Image.asset(
                     'assets/doctor_photo/default_doctor.jpg',
                     fit: BoxFit.cover,
-                    height: 60,
-                    width: 71,
+                    height: screenhight * 0.064,
+                    width: screenWidth * 0.173,
                   ),
             ),
           ),
           Container(
-            height: 35,
-            width: 71,
+            height: screenhight * 0.0361,
+            width: screenWidth * 0.173,
             decoration: BoxDecoration(
               border: Border.all(color: const Color(0xffD9D9D9), width: 1),
             ),
@@ -651,7 +721,10 @@ class HomeBody extends StatelessWidget {
                 ),
                 Row(
                   children: [
-                    Image.asset('assets/photos/location.png', height: 10),
+                    Image.asset(
+                      'assets/photos/location.png',
+                      height: screenhight * 0.012,
+                    ),
                     const SizedBox(width: 4),
                     Flexible(
                       child: Text(

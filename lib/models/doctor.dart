@@ -32,7 +32,7 @@ class Doctor {
   factory Doctor.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     return Doctor(
-      image: data['image'] ?? '',
+      image: data['image'] ?? 'assets/doctor_photo/default doctor.jpg',
       name: data['name'] ?? '',
       governorate: data['governorate'] ?? '',
       region: data['region'] ?? '',

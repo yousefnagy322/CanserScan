@@ -33,173 +33,162 @@ class _AboutUsPageState extends State<AboutUsPage> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-      backgroundColor: const Color(
-        0xffE3F7F5,
-      ), // Matching InformationPage background
-      bottomNavigationBar: const HomeBottomNavBar(),
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xff56EACF), Color(0xff194D59)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-          child: AppBar(
-            automaticallyImplyLeading: false,
-            centerTitle: true,
-            title: const Text(
-              'About Us',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
+    return WillPopScope(
+      onWillPop: () async {
+        // Update the selectedIndex to the previous page's index
+        Provider.of<NavigationProvider>(context, listen: false).popIndex();
+        return true; // Allow the pop to proceed
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        bottomNavigationBar: const HomeBottomNavBar(),
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(kToolbarHeight),
+          child: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xff56EACF), Color(0xff194D59)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
             ),
-            scrolledUnderElevation: 0,
-            toolbarHeight: 40,
-            leadingWidth: 90,
-            backgroundColor: Colors.transparent,
-            leading: IconButton(
-              padding: const EdgeInsets.all(0),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: Image.asset('assets/photos/dark_back_arrow.png'),
+            child: AppBar(
+              automaticallyImplyLeading: false,
+              centerTitle: true,
+              title: const Text(
+                'About Us',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              scrolledUnderElevation: 0,
+              toolbarHeight: 40,
+              leadingWidth: 90,
+              backgroundColor: Colors.transparent,
             ),
           ),
         ),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'About Us',
-                style: TextStyle(
-                  color: const Color(0xff3674B5),
-                  fontSize: screenWidth * 0.06,
-                  fontWeight: FontWeight.w700,
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Text(
+                    'About Us',
+                    style: TextStyle(
+                      color: const Color(0xff3674B5),
+                      fontSize: screenWidth * 0.06,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Lorem ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book',
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontSize: screenWidth * 0.04,
-                  fontWeight: FontWeight.w400,
+                const SizedBox(height: 16),
+                Text(
+                  'CancerScan is dedicated to empowering early skin cancer detection through advanced technology and expert care. Our app connects users with trusted dermatologists and provides reliable tools to monitor skin health. We’re committed to making a difference, one scan at a time.',
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontSize: screenWidth * 0.04,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'Contact Us:',
-                style: TextStyle(
-                  color: const Color(0xff3674B5),
-                  fontSize: screenWidth * 0.05,
-                  fontWeight: FontWeight.w700,
+                const SizedBox(height: 24),
+                Text(
+                  'Contact Us:',
+                  style: TextStyle(
+                    color: const Color(0xff3674B5),
+                    fontSize: screenWidth * 0.05,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 12),
-              _buildContactRow(
-                icon: Icons.phone,
-                text: '+20 0120 231',
-                onTap: () async {
-                  final Uri phoneUri = Uri(scheme: 'tel', path: '+200120231');
-                  if (await canLaunchUrl(phoneUri)) {
-                    await launchUrl(phoneUri);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Cannot launch phone dialer'),
-                      ),
+                const SizedBox(height: 12),
+                _buildContactRow(
+                  icon: Icons.phone,
+                  text: '+20 0120 231',
+                  onTap: () async {
+                    final Uri phoneUri = Uri(scheme: 'tel', path: '+200120231');
+                    if (await canLaunchUrl(phoneUri)) {
+                      await launchUrl(phoneUri);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Cannot launch phone dialer'),
+                        ),
+                      );
+                    }
+                  },
+                ),
+                const SizedBox(height: 8),
+                _buildContactRow(
+                  icon: Icons.facebook,
+                  text: 'cancerScan@facebook.com',
+                  onTap: () async {
+                    final Uri fbUri = Uri.parse('https://www.facebook.com');
+                    if (await canLaunchUrl(fbUri)) {
+                      await launchUrl(fbUri);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Cannot launch Facebook')),
+                      );
+                    }
+                  },
+                ),
+                const SizedBox(height: 8),
+                _buildContactRow(
+                  icon: Icons.email,
+                  text: 'cancerScan@gmail.com',
+                  onTap: () async {
+                    final Uri emailUri = Uri(
+                      scheme: 'mailto',
+                      path: 'cancerScan@gmail.com',
+                      queryParameters: {
+                        'subject': 'Inquiry from CancerScan App',
+                      },
                     );
-                  }
-                },
-              ),
-              const SizedBox(height: 8),
-              _buildContactRow(
-                icon: Icons.facebook,
-                text: 'cancerScan@facebook.com',
-                onTap: () async {
-                  final Uri fbUri = Uri.parse('https://www.facebook.com');
-                  if (await canLaunchUrl(fbUri)) {
-                    await launchUrl(fbUri);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Cannot launch Facebook')),
-                    );
-                  }
-                },
-              ),
-              const SizedBox(height: 8),
-              _buildContactRow(
-                icon: Icons.email,
-                text: 'cancerScan@gmail.com',
-                onTap: () async {
-                  final Uri emailUri = Uri(
-                    scheme: 'mailto',
-                    path: 'cancerScan@gmail.com',
-                    queryParameters: {'subject': 'Inquiry from CancerScan App'},
-                  );
-                  if (await canLaunchUrl(emailUri)) {
-                    await launchUrl(emailUri);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Cannot launch email client'),
-                      ),
-                    );
-                  }
-                },
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'Some reviews:',
-                style: TextStyle(
-                  color: const Color(0xff3674B5),
-                  fontSize: screenWidth * 0.05,
-                  fontWeight: FontWeight.w700,
+                    if (await canLaunchUrl(emailUri)) {
+                      await launchUrl(emailUri);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Cannot launch email client'),
+                        ),
+                      );
+                    }
+                  },
                 ),
-              ),
-              const SizedBox(height: 12),
-              _buildReviewRow(
-                screenWidth: screenWidth,
-                name: 'Fady nadi',
-                rating: 5,
-              ),
-              _buildReviewRow(
-                screenWidth: screenWidth,
-                name: 'Morad ma',
-                rating: 5,
-              ),
-              _buildReviewRow(
-                screenWidth: screenWidth,
-                name: 'Morad ma',
-                rating: 5,
-              ),
-              _buildReviewRow(
-                screenWidth: screenWidth,
-                name: 'Shady ahmed',
-                rating: 5,
-              ),
-              _buildReviewRow(
-                screenWidth: screenWidth,
-                name: 'Shady ahmed',
-                rating: 5,
-              ),
-              _buildReviewRow(
-                screenWidth: screenWidth,
-                name: 'Morad ma',
-                rating: 5,
-              ),
-              const SizedBox(height: 20),
-            ],
+                const SizedBox(height: 24),
+                Text(
+                  'Some reviews:',
+                  style: TextStyle(
+                    color: const Color(0xff3674B5),
+                    fontSize: screenWidth * 0.05,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                _buildReviewRow(
+                  screenWidth: screenWidth,
+                  name: 'Fady nadi',
+                  rating: 5,
+                ),
+
+                _buildReviewRow(
+                  screenWidth: screenWidth,
+                  name: 'Shady ahmed',
+                  rating: 5,
+                ),
+
+                _buildReviewRow(
+                  screenWidth: screenWidth,
+                  name: 'Morad ma',
+                  rating: 4,
+                ),
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),

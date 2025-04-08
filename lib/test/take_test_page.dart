@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:canser_scan/widgets/bottom_nav_bar.dart';
 
-// TakeTestPage Widget (already a StatefulWidget)
 class TakeTestPage extends StatefulWidget {
   const TakeTestPage({super.key});
   static const String id = 'TakeTestPage';
@@ -74,87 +73,94 @@ class _TakeTestPageState extends State<TakeTestPage> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-      bottomNavigationBar: const HomeBottomNavBar(),
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xff56EACF), Color(0xff194D59)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-          child: AppBar(
-            centerTitle: true,
-            title: const Text(
-              'Take test',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
+    return WillPopScope(
+      onWillPop: () async {
+        // Update the selectedIndex to the previous page's index
+        Provider.of<NavigationProvider>(context, listen: false).popIndex();
+        return true; // Allow the pop to proceed
+      },
+      child: Scaffold(
+        bottomNavigationBar: const HomeBottomNavBar(),
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(kToolbarHeight),
+          child: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xff56EACF), Color(0xff194D59)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
             ),
-            automaticallyImplyLeading: false,
-            scrolledUnderElevation: 0,
-            toolbarHeight: 40,
-            leadingWidth: 90,
-            backgroundColor: Colors.transparent,
+            child: AppBar(
+              centerTitle: true,
+              title: const Text(
+                'Take test',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              automaticallyImplyLeading: false,
+              scrolledUnderElevation: 0,
+              toolbarHeight: 40,
+              leadingWidth: 90,
+              backgroundColor: Colors.transparent,
+            ),
           ),
         ),
-      ),
-      body: Center(
-        child: Column(
-          children: [
-            SizedBox(height: screenHeight * 0.25),
-            Text(
-              'Take test',
-              style: TextStyle(
-                color: const Color(0xff194D59),
-                fontSize: screenWidth * 0.08,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            Text(
-              'Choose Between',
-              style: TextStyle(
-                color: const Color(0xff194D59),
-                fontSize: screenWidth * 0.05,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-            SizedBox(height: screenHeight * 0.04),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    pickImageCamera(context);
-                  },
-                  child: Column(
-                    children: [
-                      buildBox(screenWidth, 'assets/photos/take_photo.png'),
-                      const SizedBox(height: 8),
-                      buildLabel(screenWidth, 'Take Photo'),
-                    ],
-                  ),
+        body: Center(
+          child: Column(
+            children: [
+              SizedBox(height: screenHeight * 0.25),
+              Text(
+                'Take test',
+                style: TextStyle(
+                  color: const Color(0xff194D59),
+                  fontSize: screenWidth * 0.08,
+                  fontWeight: FontWeight.w700,
                 ),
-                GestureDetector(
-                  onTap: () {
-                    pickImageGallery(context);
-                  },
-                  child: Column(
-                    children: [
-                      buildBox(screenWidth, 'assets/photos/Choose_image.png'),
-                      const SizedBox(height: 8),
-                      buildLabel(screenWidth, 'Choose Image'),
-                    ],
-                  ),
+              ),
+              Text(
+                'Choose Between',
+                style: TextStyle(
+                  color: const Color(0xff194D59),
+                  fontSize: screenWidth * 0.05,
+                  fontWeight: FontWeight.w400,
                 ),
-              ],
-            ),
-          ],
+              ),
+              SizedBox(height: screenHeight * 0.04),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      pickImageCamera(context);
+                    },
+                    child: Column(
+                      children: [
+                        buildBox(screenWidth, 'assets/photos/take_photo.png'),
+                        const SizedBox(height: 8),
+                        buildLabel(screenWidth, 'Take Photo'),
+                      ],
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      pickImageGallery(context);
+                    },
+                    child: Column(
+                      children: [
+                        buildBox(screenWidth, 'assets/photos/Choose_image.png'),
+                        const SizedBox(height: 8),
+                        buildLabel(screenWidth, 'Choose Image'),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

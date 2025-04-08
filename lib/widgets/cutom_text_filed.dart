@@ -27,6 +27,7 @@ class BuildTextField extends StatelessWidget {
           }
           return null;
         },
+
         onChanged: onChanged,
         keyboardType: keyboardType,
         style: TextStyle(color: Colors.white),
