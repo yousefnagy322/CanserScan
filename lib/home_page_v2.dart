@@ -2,6 +2,7 @@ import 'package:canser_scan/Chatbot/chat_page.dart';
 import 'package:canser_scan/Login-Register/login_page.dart';
 import 'package:canser_scan/account_settings.dart';
 import 'package:canser_scan/add_doctor_page.dart';
+import 'package:canser_scan/app_language_page.dart';
 import 'package:canser_scan/doctor_details_page.dart';
 import 'package:canser_scan/helper/constants.dart';
 import 'package:canser_scan/helper/get_user_build.dart';
@@ -177,6 +178,7 @@ class HomeDrawer extends StatelessWidget {
             screenWidth,
             'Language',
             'assets/photos/language.png',
+            ontap: () => Navigator.pushNamed(context, AppLanguagePage.id),
           ),
           buildDrawerCategory(
             screenWidth,
@@ -384,16 +386,17 @@ class HomeBody extends StatelessWidget {
                   fontWeight: FontWeight.w400,
                 ),
               ),
-              StreamBuilder<DocumentSnapshot>(
+              StreamBuilder<QuerySnapshot>(
                 stream:
                     FirebaseFirestore.instance
                         .collection('users')
                         .doc(user?.uid)
-                        .collection('Latest_Test_Results')
-                        .doc('Latest')
+                        .collection('Test_Results')
+                        .orderBy('timestamp', descending: true)
+                        .limit(1)
                         .snapshots(),
                 builder: (context, snapshot) {
-                  if (!snapshot.hasData || snapshot.data?.data() == null) {
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                     return Container(
                       alignment: Alignment.center,
                       padding: const EdgeInsets.all(11),
@@ -413,7 +416,8 @@ class HomeBody extends StatelessWidget {
                       ),
                     );
                   }
-                  var data = snapshot.data!.data() as Map<String, dynamic>;
+                  var data =
+                      snapshot.data!.docs.first.data() as Map<String, dynamic>;
                   final result = data['Result'] ?? '';
                   final prediction = data['prediction'] ?? 'No Cancer';
                   final confidence = (data['confidence'] ?? 0).toDouble();
@@ -443,7 +447,7 @@ class HomeBody extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                height: 95,
+                height: screenHeight * 0.105,
                 child:
                     isLoading
                         ? const Center(
@@ -670,6 +674,7 @@ class HomeBody extends StatelessWidget {
   }) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenhight = MediaQuery.of(context).size.height;
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10),
       height: screenhight * 0.2,
@@ -703,7 +708,7 @@ class HomeBody extends StatelessWidget {
             ),
           ),
           Container(
-            height: screenhight * 0.0361,
+            height: screenhight * 0.037,
             width: screenWidth * 0.173,
             decoration: BoxDecoration(
               border: Border.all(color: const Color(0xffD9D9D9), width: 1),
@@ -712,25 +717,29 @@ class HomeBody extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
+                  textAlign: TextAlign.center,
                   name,
                   maxLines: 1,
-                  style: const TextStyle(
-                    fontSize: 12,
+                  style: TextStyle(
+                    fontSize: screenhight * 0.0126,
                     fontWeight: FontWeight.w400,
                   ),
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.asset(
                       'assets/photos/location.png',
-                      height: screenhight * 0.012,
+                      height: screenhight * 0.011,
                     ),
                     const SizedBox(width: 4),
                     Flexible(
                       child: Text(
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
                         location,
-                        style: const TextStyle(
-                          fontSize: 10,
+                        style: TextStyle(
+                          fontSize: screenhight * 0.0117,
                           fontWeight: FontWeight.w400,
                         ),
                         overflow: TextOverflow.ellipsis,

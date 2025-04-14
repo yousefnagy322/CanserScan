@@ -6,6 +6,7 @@ import 'package:canser_scan/Login-Register/register_page.dart';
 import 'package:canser_scan/about_us_page.dart';
 import 'package:canser_scan/account_settings.dart';
 import 'package:canser_scan/add_doctor_page.dart';
+import 'package:canser_scan/app_language_page.dart';
 import 'package:canser_scan/doctors_page.dart';
 import 'package:canser_scan/helper/constants.dart';
 import 'package:canser_scan/history_page.dart';
@@ -90,6 +91,7 @@ class MyApp extends StatelessWidget {
           AddDoctorPage.id: (context) => AddDoctorPage(),
           ForgotPasswordPage.id: (context) => ForgotPasswordPage(),
           AboutUsPage.id: (context) => const AboutUsPage(),
+          AppLanguagePage.id: (context) => const AppLanguagePage(),
         },
         initialRoute: SplashScreen.id,
       ),

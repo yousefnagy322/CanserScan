@@ -57,6 +57,8 @@ dependencies:
   provider: ^6.1.2
   url_launcher: ^6.3.1
   cached_network_image: ^3.4.1
+  permission_handler: ^11.4.0
+  auto_size_text: ^3.0.0
 
 
 dev_dependencies:
