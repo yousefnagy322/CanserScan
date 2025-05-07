@@ -140,7 +140,7 @@ class RegisterPageState extends State<RegisterPage> {
                             try {
                               await registeruser();
                               await sendVerificationEmail();
-                              showSnackBar(context, 'suucess');
+
                               Navigator.pushReplacementNamed(
                                 context,
                                 ConfirmPage.id,

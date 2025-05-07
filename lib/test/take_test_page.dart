@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:canser_scan/helper/constants.dart';
 import 'package:canser_scan/navigation_provider.dart';
 import 'package:canser_scan/test/take_test_confirm_page.dart';
 import 'package:image_picker/image_picker.dart';
@@ -80,25 +81,21 @@ class _TakeTestPageState extends State<TakeTestPage> {
         return true; // Allow the pop to proceed
       },
       child: Scaffold(
+        backgroundColor: Colors.white,
         bottomNavigationBar: const HomeBottomNavBar(),
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(kToolbarHeight),
           child: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xff56EACF), Color(0xff194D59)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
+            decoration: const BoxDecoration(color: kPrimaryColor),
             child: AppBar(
               centerTitle: true,
-              title: const Text(
-                'Take test',
+              title: Text(
+                'Take Test',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w700,
+                  fontSize: screenWidth * 0.08,
                 ),
               ),
               automaticallyImplyLeading: false,
@@ -113,19 +110,12 @@ class _TakeTestPageState extends State<TakeTestPage> {
           child: Column(
             children: [
               SizedBox(height: screenHeight * 0.25),
-              Text(
-                'Take test',
-                style: TextStyle(
-                  color: const Color(0xff194D59),
-                  fontSize: screenWidth * 0.08,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
+
               Text(
                 'Choose Between',
                 style: TextStyle(
                   color: const Color(0xff194D59),
-                  fontSize: screenWidth * 0.05,
+                  fontSize: screenWidth * 0.06,
                   fontWeight: FontWeight.w400,
                 ),
               ),

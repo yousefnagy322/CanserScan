@@ -1,3 +1,4 @@
+import 'package:canser_scan/helper/constants.dart';
 import 'package:canser_scan/info_pages/information_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -30,29 +31,24 @@ class _SkinCancerState extends State<SkinCancer> {
 
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Color(0xffE3F7F5),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Color(0xff56EACF),
-                Color(0xff194D59),
-              ], // Change colors as needed
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
+          decoration: const BoxDecoration(color: kPrimaryColor),
           child: AppBar(
+            titleSpacing: 0,
             centerTitle: true,
             title: Text(
               'Skin Cancer',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w700,
+                fontSize: screenWidth * 0.08,
               ),
             ),
             scrolledUnderElevation: 0,
@@ -64,7 +60,10 @@ class _SkinCancerState extends State<SkinCancer> {
               onPressed: () {
                 Navigator.pushReplacementNamed(context, InformationPage.id);
               },
-              icon: Image.asset('assets/photos/dark_back_arrow.png'),
+              icon: Image.asset(
+                'assets/photos/dark_back_arrow.png',
+                color: Colors.white,
+              ),
             ),
           ),
         ),
@@ -72,7 +71,8 @@ class _SkinCancerState extends State<SkinCancer> {
       body: Column(
         children: [
           SizedBox(
-            height: 300,
+            width: double.infinity,
+            height: screenHeight * 0.324,
             child: Image.asset(
               'assets/photos/skin_cancer_info.jpg',
               fit: BoxFit.fill,

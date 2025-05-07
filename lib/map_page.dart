@@ -1,4 +1,6 @@
+import 'package:canser_scan/doctor_details_page.dart';
 import 'package:canser_scan/helper/constants.dart';
+import 'package:canser_scan/models/doctor.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -66,9 +68,11 @@ class MapPageState extends State<MapPage> {
       if (permissionGranted == PermissionStatus.denied) {
         permissionGranted = await location.requestPermission();
         if (permissionGranted != PermissionStatus.granted) {
-          setState(() {
+          setState() {
             _isLoading = false;
-          });
+          }
+
+          ;
           return;
         }
       }
@@ -136,9 +140,19 @@ class MapPageState extends State<MapPage> {
 
                 Map<String, dynamic> doctorData = {
                   'id': doc.id,
-                  'name': data['name'],
-                  'latitude': data['latitude'],
-                  'longitude': data['longitude'],
+                  'name': data['name'] ?? '',
+                  'latitude': data['latitude'] ?? 0.0,
+                  'longitude': data['longitude'] ?? 0.0,
+                  'governorate': data['governorate'] ?? '',
+                  'region': data['region'] ?? '',
+                  'image':
+                      data['image'] ?? 'assets/doctor_photo/default_doctor.jpg',
+                  'specialty': data['specialty'] ?? 'Not specified',
+                  'contact': data['contact'] ?? 'Not available',
+                  'clinicName': data['clinicName'] ?? 'Not specified',
+                  'workingHours': data['workingHours'] ?? 'Not specified',
+                  'bio': data['bio'] ?? 'No bio available',
+                  'rating': (data['rating'] ?? 0.0).toDouble(),
                   'address':
                       '${data['governorate']}, ${data['region']}' ??
                       'No address available',
@@ -151,9 +165,9 @@ class MapPageState extends State<MapPage> {
             tempDoctors.sort((a, b) => a['distance'].compareTo(b['distance']));
 
             setState(() {
-              markers = newMarkers;
               doctors = tempDoctors;
               filteredDoctors = tempDoctors;
+              markers = newMarkers;
               _isLoading = false;
             });
           },
@@ -203,21 +217,16 @@ class MapPageState extends State<MapPage> {
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xff56EACF), Color(0xff194D59)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
+          decoration: const BoxDecoration(color: kPrimaryColor),
           child: AppBar(
             centerTitle: true,
-            title: const Text(
-              'Find Dermatologist',
+            title: Text(
+              'Find Doctor',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w700,
+                fontSize: screenWidth * 0.08,
               ),
             ),
             scrolledUnderElevation: 0,
@@ -229,7 +238,10 @@ class MapPageState extends State<MapPage> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              icon: Image.asset('assets/photos/dark_back_arrow.png'),
+              icon: Image.asset(
+                'assets/photos/dark_back_arrow.png',
+                color: Colors.white,
+              ),
             ),
           ),
         ),
@@ -303,7 +315,9 @@ class MapPageState extends State<MapPage> {
               backgroundColor: Colors.white,
               foregroundColor: kPrimaryColor,
               onPressed: () async {
-                moveToDoctor(userLatLng!.latitude, userLatLng!.longitude);
+                if (userLatLng != null) {
+                  moveToDoctor(userLatLng!.latitude, userLatLng!.longitude);
+                }
               },
               child: const Icon(Icons.my_location),
             ),
@@ -337,7 +351,6 @@ class MapPageState extends State<MapPage> {
                     borderRadius: BorderRadius.circular(10),
                     color: Colors.white,
                   ),
-
                   child: Text(
                     'Nearest Doctors',
                     style: TextStyle(
@@ -370,12 +383,27 @@ class MapPageState extends State<MapPage> {
                         scrollDirection: Axis.horizontal,
                         itemCount: filteredDoctors.length,
                         itemBuilder: (context, index) {
-                          var doctor = filteredDoctors[index];
+                          var doctorData = filteredDoctors[index];
+                          // Convert map to Doctor object
+                          Doctor doctor = Doctor(
+                            image: doctorData['image'],
+                            name: doctorData['name'],
+                            governorate: doctorData['governorate'],
+                            region: doctorData['region'],
+                            lat: doctorData['latitude'],
+                            lng: doctorData['longitude'],
+                            specialty: doctorData['specialty'],
+                            contact: doctorData['contact'],
+                            clinicName: doctorData['clinicName'],
+                            workingHours: doctorData['workingHours'],
+                            bio: doctorData['bio'],
+                            rating: doctorData['rating'],
+                          );
                           return GestureDetector(
                             onTap: () {
                               moveToDoctor(
-                                doctor['latitude'],
-                                doctor['longitude'],
+                                doctorData['latitude'],
+                                doctorData['longitude'],
                               );
                             },
                             child: Container(
@@ -397,17 +425,45 @@ class MapPageState extends State<MapPage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    doctor['name'],
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Flexible(
+                                        child: Text(
+                                          doctorData['name'],
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          maxLines: 1,
+                                        ),
+                                      ),
+
+                                      // New button with same onTap as home page doctor card
+                                      IconButton(
+                                        icon: const Icon(
+                                          Icons.info,
+                                          color: kPrimaryColor,
+                                        ),
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder:
+                                                  (context) =>
+                                                      DoctorDetailsPage(
+                                                        doctor: doctor,
+                                                      ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ],
                                   ),
-                                  SizedBox(height: screenHeight * 0.01),
+                                  SizedBox(height: 0),
                                   Text(
-                                    doctor['address'],
+                                    doctorData['address'],
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
@@ -415,13 +471,13 @@ class MapPageState extends State<MapPage> {
                                       color: Colors.grey[700],
                                     ),
                                   ),
-                                  SizedBox(height: screenHeight * 0.01),
+                                  SizedBox(height: 0),
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        '${(doctor['distance'] / 1000).toStringAsFixed(2)} km away',
+                                        '${(doctorData['distance'] / 1000).toStringAsFixed(2)} km away',
                                         style: TextStyle(
                                           fontSize: screenWidth * 0.033,
                                           fontWeight: FontWeight.w500,
@@ -435,8 +491,8 @@ class MapPageState extends State<MapPage> {
                                         ),
                                         onPressed: () {
                                           _launchGoogleMaps(
-                                            doctor['latitude'],
-                                            doctor['longitude'],
+                                            doctorData['latitude'],
+                                            doctorData['longitude'],
                                           );
                                         },
                                       ),

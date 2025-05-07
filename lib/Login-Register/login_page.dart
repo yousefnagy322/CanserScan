@@ -156,12 +156,7 @@ class _LoginPageState extends State<LoginPage> {
 
                   // ElevatedButton(
                   //   onPressed: () {
-                  //     Navigator.push(
-                  //       context,
-                  //       MaterialPageRoute(
-                  //         builder: (context) => AddSampleDoctorsPage(),
-                  //       ),
-                  //     );
+                  //     showSnackBar(context, 'test');
                   //   },
                   //   child: Text('add doc'),
                   // ),

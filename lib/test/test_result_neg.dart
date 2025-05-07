@@ -9,21 +9,25 @@ class TestResultNeg extends StatelessWidget {
   static String id = 'TestResultNeg';
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Color(0xff56EACF),
-                Color(0xff194D59),
-              ], // Change colors as needed
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
+          decoration: const BoxDecoration(color: kPrimaryColor),
           child: AppBar(
+            titleSpacing: 0,
+            centerTitle: true,
+            title: Text(
+              'Test Result',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+                fontSize: screenWidth * 0.08,
+              ),
+            ),
             scrolledUnderElevation: 0,
             toolbarHeight: 40,
             leadingWidth: 90,
@@ -33,7 +37,10 @@ class TestResultNeg extends StatelessWidget {
               onPressed: () {
                 Navigator.pop(context);
               },
-              icon: Image.asset('assets/photos/dark_back_arrow.png'),
+              icon: Image.asset(
+                'assets/photos/dark_back_arrow.png',
+                color: Colors.white,
+              ),
             ),
           ),
         ),
@@ -42,14 +49,7 @@ class TestResultNeg extends StatelessWidget {
         child: Column(
           children: [
             SizedBox(height: 100),
-            Text(
-              'Test Result',
-              style: TextStyle(
-                color: kPrimaryColor,
-                fontSize: 32,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
+
             SizedBox(height: 30),
             Text(
               'Negative',

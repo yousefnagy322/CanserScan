@@ -45,22 +45,17 @@ class _AboutUsPageState extends State<AboutUsPage> {
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(kToolbarHeight),
           child: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xff56EACF), Color(0xff194D59)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
+            decoration: const BoxDecoration(color: kPrimaryColor),
             child: AppBar(
               automaticallyImplyLeading: false,
               centerTitle: true,
-              title: const Text(
-                'About Us',
+              title: Text(
+                'About us',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w700,
+                  fontSize: screenWidth * 0.08,
                 ),
               ),
               scrolledUnderElevation: 0,
@@ -76,16 +71,6 @@ class _AboutUsPageState extends State<AboutUsPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Center(
-                  child: Text(
-                    'About Us',
-                    style: TextStyle(
-                      color: const Color(0xff3674B5),
-                      fontSize: screenWidth * 0.06,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
                 const SizedBox(height: 16),
                 Text(
                   'CancerScan is dedicated to empowering early skin cancer detection through advanced technology and expert care. Our app connects users with trusted dermatologists and provides reliable tools to monitor skin health. We’re committed to making a difference, one scan at a time.',
@@ -185,6 +170,11 @@ class _AboutUsPageState extends State<AboutUsPage> {
                   screenWidth: screenWidth,
                   name: 'Morad ma',
                   rating: 4,
+                ),
+                _buildReviewRow(
+                  screenWidth: screenWidth,
+                  name: 'Sandy William',
+                  rating: 5,
                 ),
                 const SizedBox(height: 20),
               ],

@@ -2,6 +2,7 @@ import 'package:canser_scan/helper/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ai_toolkit/flutter_ai_toolkit.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 // Define the GeminiProvider as a top-level constant
 const String geminiApiKey =
@@ -98,7 +99,13 @@ class ChatPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(appBar: ChatAppBar(), body: ChatBody());
+    return GestureDetector(
+      onTap: () {
+        // Dismiss keyboard when tapping outside
+        FocusScope.of(context).unfocus();
+      },
+      child: const Scaffold(appBar: ChatAppBar(), body: ChatBody()),
+    );
   }
 }
 
@@ -116,9 +123,10 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
           title: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Image.asset('assets/photos/bluebot.png'),
+              SvgPicture.asset('assets/photos/bluebot.svg'),
               const SizedBox(width: 10),
               const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Chatbot',
@@ -137,7 +145,7 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ],
           ),
-          bottom: PreferredSize(
+          bottom: const PreferredSize(
             preferredSize: Size.fromHeight(1.0),
             child: Divider(height: 1, thickness: 1, color: kPrimaryColor),
           ),
@@ -148,11 +156,13 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
           leading: IconButton(
             padding: const EdgeInsets.all(0),
             onPressed: () {
-              Navigator.pop(
-                context,
-              ); // Changed to pop instead of pushReplacementNamed
+              // Close keyboard and navigate back
+              FocusScope.of(context).unfocus();
+              Navigator.pop(context);
             },
-            icon: Image.asset('assets/photos/dark_back_arrow.png'),
+            icon: const Image(
+              image: AssetImage('assets/photos/dark_back_arrow.png'),
+            ),
           ),
         ),
       ),

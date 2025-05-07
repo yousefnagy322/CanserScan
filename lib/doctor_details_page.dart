@@ -32,39 +32,38 @@ class DoctorDetailsPage extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: AppBar(
-          centerTitle: true,
-          title: GradientText(
-            doctor.name,
-            style: TextStyle(
-              fontWeight: FontWeight.w700,
-              fontSize: screenWidth * 0.08,
+        child: Container(
+          decoration: const BoxDecoration(color: kPrimaryColor),
+          child: AppBar(
+            titleSpacing: 0,
+            centerTitle: true,
+            title: Text(
+              doctor.name,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+                fontSize: screenWidth * 0.08,
+              ),
             ),
-            colors: const [Color(0xff12748B), Color(0xff051F25)],
-          ),
-          scrolledUnderElevation: 0,
-          bottom: PreferredSize(
-            preferredSize: Size.fromHeight(1.0),
-            child: Divider(
-              height: 1,
-              thickness: 1,
-              color: kPrimaryColor, // Customize color
+            scrolledUnderElevation: 0,
+            toolbarHeight: 40,
+            leadingWidth: 90,
+            backgroundColor: Colors.transparent,
+            leading: IconButton(
+              padding: const EdgeInsets.all(0),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Image.asset(
+                'assets/photos/dark_back_arrow.png',
+                color: Colors.white,
+              ),
             ),
-          ),
-          toolbarHeight: 40,
-          leadingWidth: 90,
-          backgroundColor: Colors.transparent,
-          leading: IconButton(
-            padding: const EdgeInsets.all(0),
-            onPressed: () {
-              Navigator.pop(
-                context,
-              ); // Changed to pop instead of pushReplacementNamed
-            },
-            icon: Image.asset('assets/photos/dark_back_arrow.png'),
           ),
         ),
       ),
+
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(

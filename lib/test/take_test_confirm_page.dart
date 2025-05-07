@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:canser_scan/helper/constants.dart';
 import 'package:canser_scan/test/take_test_page.dart';
 import 'package:canser_scan/test/test_result_neg.dart';
 import 'package:canser_scan/test/test_result_pos.dart';
@@ -45,20 +46,23 @@ class _TakeTestConfirmPageState extends State<TakeTestConfirmPage> {
       progressIndicator: CircularProgressIndicator(color: Colors.white),
 
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(kToolbarHeight),
           child: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Color(0xff56EACF),
-                  Color(0xff194D59),
-                ], // Change colors as needed
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
+            decoration: const BoxDecoration(color: kPrimaryColor),
             child: AppBar(
+              titleSpacing: 0,
+              centerTitle: true,
+              title: Text(
+                'Confirm Image',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: screenWidth * 0.08,
+                ),
+              ),
               scrolledUnderElevation: 0,
               toolbarHeight: 40,
               leadingWidth: 90,
@@ -69,24 +73,18 @@ class _TakeTestConfirmPageState extends State<TakeTestConfirmPage> {
                   widget.imageFile = null;
                   Navigator.pushReplacementNamed(context, TakeTestPage.id);
                 },
-                icon: Image.asset('assets/photos/dark_back_arrow.png'),
+                icon: Image.asset(
+                  'assets/photos/dark_back_arrow.png',
+                  color: Colors.white,
+                ),
               ),
             ),
           ),
         ),
         body: Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: 200),
-              Text(
-                'Take test',
-                style: TextStyle(
-                  color: Color(0xff194D59),
-                  fontSize: screenWidth * 0.08,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              SizedBox(height: 50),
               Center(
                 child: Column(
                   children: [
@@ -149,13 +147,14 @@ class _TakeTestConfirmPageState extends State<TakeTestConfirmPage> {
                         fixedSize: Size(screenWidth * 0.6, 45),
                       ),
                       child: Text(
-                        'Test',
+                        'Start Test',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
+                    SizedBox(height: 20),
                   ],
                 ),
               ),

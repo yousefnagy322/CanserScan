@@ -50,25 +50,22 @@ class HistoryPageState extends State<HistoryPage> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xff56EACF), Color(0xff194D59)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
+          decoration: const BoxDecoration(color: kPrimaryColor),
           child: AppBar(
+            titleSpacing: 0,
             centerTitle: true,
             title: Text(
               'History',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w700,
+                fontSize: screenWidth * 0.08,
               ),
             ),
             scrolledUnderElevation: 0,
@@ -80,7 +77,10 @@ class HistoryPageState extends State<HistoryPage> {
               onPressed: () {
                 Navigator.pushReplacementNamed(context, HomePageV2.id);
               },
-              icon: Image.asset('assets/photos/dark_back_arrow.png'),
+              icon: Image.asset(
+                'assets/photos/dark_back_arrow.png',
+                color: Colors.white,
+              ),
             ),
             actions: [
               IconButton(

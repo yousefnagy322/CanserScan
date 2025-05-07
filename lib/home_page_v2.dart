@@ -1,7 +1,6 @@
 import 'package:canser_scan/Chatbot/chat_page.dart';
 import 'package:canser_scan/Login-Register/login_page.dart';
 import 'package:canser_scan/account_settings.dart';
-import 'package:canser_scan/add_doctor_page.dart';
 import 'package:canser_scan/app_language_page.dart';
 import 'package:canser_scan/doctor_details_page.dart';
 import 'package:canser_scan/helper/constants.dart';
@@ -146,58 +145,53 @@ class HomeDrawer extends StatelessWidget {
     return Drawer(
       backgroundColor: const Color(0xffFFFFFF),
       width: screenWidth * 0.5,
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.only(top: 58),
-            height: 180,
-            child: Row(
-              children: [
-                const SizedBox(width: 20),
-                Image.asset(
-                  'assets/photos/drawer_person.png',
-                  height: screenWidth * 0.1,
-                  width: screenWidth * 0.1,
-                ),
-                buildUserData(
-                  field: 'First name',
-                  color: Colors.black,
-                  fontSize: screenWidth * 0.04,
-                  fontWeight: FontWeight.w700,
-                ),
-              ],
+      child: Padding(
+        padding: const EdgeInsets.only(left: 25),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.only(top: 58),
+              height: 180,
+              child: Row(
+                children: [
+                  const SizedBox(width: 0),
+                  Image.asset(
+                    'assets/photos/drawer_person.png',
+                    height: screenWidth * 0.1,
+                    width: screenWidth * 0.1,
+                  ),
+                  buildUserData(
+                    field: 'First name',
+                    color: Colors.black,
+                    fontSize: screenWidth * 0.04,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ],
+              ),
             ),
-          ),
-          buildDrawerCategory(
-            screenWidth,
-            'settings',
-            'assets/photos/settings.png',
-            ontap: () => Navigator.pushNamed(context, AccountSettings.id),
-          ),
-          buildDrawerCategory(
-            screenWidth,
-            'Language',
-            'assets/photos/language.png',
-            ontap: () => Navigator.pushNamed(context, AppLanguagePage.id),
-          ),
-          buildDrawerCategory(
-            screenWidth,
-            'Log Out',
-            'assets/photos/logout.png',
-            ontap: () {
-              FirebaseAuth.instance.signOut();
-              Navigator.pushReplacementNamed(context, LoginPage.id);
-            },
-          ),
-          buildDrawerCategory(
-            screenWidth,
-            'Add Doctor',
-            'assets/photos/logout.png',
-            ontap: () {
-              Navigator.pushReplacementNamed(context, AddDoctorPage.id);
-            },
-          ),
-        ],
+            buildDrawerCategory(
+              screenWidth,
+              'settings',
+              'assets/photos/settings.png',
+              ontap: () => Navigator.pushNamed(context, AccountSettings.id),
+            ),
+            buildDrawerCategory(
+              screenWidth,
+              'Language',
+              'assets/photos/language.png',
+              ontap: () => Navigator.pushNamed(context, AppLanguagePage.id),
+            ),
+            buildDrawerCategory(
+              screenWidth,
+              'Log Out',
+              'assets/photos/logout.png',
+              ontap: () {
+                FirebaseAuth.instance.signOut();
+                Navigator.pushReplacementNamed(context, LoginPage.id);
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -366,6 +360,7 @@ class HomeBody extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: screenHeight * 0.05),
+
               Center(
                 child: GradientText(
                   'CancerScan',
@@ -373,13 +368,40 @@ class HomeBody extends StatelessWidget {
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: screenWidth * 0.123,
+                    height: 1,
                   ),
                   colors: const [Color(0xff12748B), Color(0xff051F25)],
                 ),
               ),
-              const SizedBox(height: 46),
+              Center(
+                child: Text(
+                  'Skin Cancer Detector',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Color(0xff3674B5).withOpacity(0.8),
+                    fontWeight: FontWeight.w700,
+                    fontSize: screenWidth * 0.040,
+                    height: 1,
+                  ),
+                ),
+              ),
+
+              // Center(
+              //   child: GradientText(
+              //     'Skin Cancer Detector',
+              //     textAlign: TextAlign.center,
+              //     style: TextStyle(
+              //       fontWeight: FontWeight.w700,
+              //       fontSize: screenWidth * 0.045,
+              //       height: 1,
+              //     ),
+              //     colors: const [Color(0xff12748B), Color(0xff051F25)],
+              //     gradientDirection: GradientDirection.rtl,
+              //   ),
+              // ),
+              SizedBox(height: screenHeight * 0.05),
               const Text(
-                'Recently',
+                'Latest Test',
                 style: TextStyle(
                   color: Color(0xff3674B5),
                   fontSize: 22,
@@ -437,17 +459,18 @@ class HomeBody extends StatelessWidget {
                   );
                 },
               ),
-              const SizedBox(height: 48),
+              SizedBox(height: screenHeight * 0.05),
               const Text(
                 'Nearest Doctors',
                 style: TextStyle(
                   color: Color(0xff3674B5),
                   fontSize: 22,
                   fontWeight: FontWeight.w400,
+                  height: 1,
                 ),
               ),
               SizedBox(
-                height: screenHeight * 0.105,
+                height: screenHeight * 0.110,
                 child:
                     isLoading
                         ? const Center(
@@ -589,7 +612,7 @@ class HomeBody extends StatelessWidget {
     return Container(
       alignment: Alignment.topLeft,
       padding: const EdgeInsets.all(11),
-      height: screenHeight * 0.2,
+      height: screenHeight * 0.18,
       width: double.infinity,
       decoration: const BoxDecoration(
         color: kPrimaryColor,
@@ -606,7 +629,7 @@ class HomeBody extends StatelessWidget {
                   const Text(
                     'Test result : ',
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 15,
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
                     ),
@@ -615,7 +638,7 @@ class HomeBody extends StatelessWidget {
                     result,
                     style: TextStyle(
                       color: result == 'Positive' ? Colors.red : Colors.green,
-                      fontSize: 14,
+                      fontSize: 15,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -623,14 +646,14 @@ class HomeBody extends StatelessWidget {
               ),
               Text(
                 formattedDate,
-                style: const TextStyle(color: Colors.white70),
+                style: const TextStyle(color: Colors.white70, fontSize: 14),
               ),
             ],
           ),
           Text(
             'Cancer type : $prediction',
             style: const TextStyle(
-              fontSize: 14,
+              fontSize: 15,
               color: Colors.white,
               fontWeight: FontWeight.w700,
             ),
@@ -638,7 +661,7 @@ class HomeBody extends StatelessWidget {
           Text(
             'confidence : $confidence%',
             style: const TextStyle(
-              fontSize: 14,
+              fontSize: 15,
               color: Colors.white,
               fontWeight: FontWeight.w700,
             ),
@@ -657,7 +680,7 @@ class HomeBody extends StatelessWidget {
               ),
               child: const Text(
                 'Show all',
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
               ),
             ),
           ),
@@ -673,11 +696,11 @@ class HomeBody extends StatelessWidget {
     required String location,
   }) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double screenhight = MediaQuery.of(context).size.height;
+    double screenHeight = MediaQuery.of(context).size.height;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10),
-      height: screenhight * 0.2,
+      height: screenHeight * 0.105, // Match SizedBox height
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -687,11 +710,11 @@ class HomeBody extends StatelessWidget {
               imageUrl: image,
               fit: BoxFit.cover,
               alignment: Alignment.topCenter,
-              height: screenhight * 0.064,
+              height: screenHeight * 0.064, // Reduced from 0.064
               width: screenWidth * 0.173,
               placeholder:
                   (context, url) => Container(
-                    height: screenhight * 0.064,
+                    height: screenHeight * 0.055,
                     width: screenWidth * 0.173,
                     color: Colors.grey[300],
                     child: const Center(
@@ -702,13 +725,13 @@ class HomeBody extends StatelessWidget {
                   (context, url, error) => Image.asset(
                     'assets/doctor_photo/default_doctor.jpg',
                     fit: BoxFit.cover,
-                    height: screenhight * 0.064,
+                    height: screenHeight * 0.055,
                     width: screenWidth * 0.173,
                   ),
             ),
           ),
           Container(
-            height: screenhight * 0.037,
+            height: screenHeight * 0.04, // Reduced from 0.05
             width: screenWidth * 0.173,
             decoration: BoxDecoration(
               border: Border.all(color: const Color(0xffD9D9D9), width: 1),
@@ -716,30 +739,32 @@ class HomeBody extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  textAlign: TextAlign.center,
-                  name,
-                  maxLines: 1,
-                  style: TextStyle(
-                    fontSize: screenhight * 0.0126,
-                    fontWeight: FontWeight.w400,
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    textAlign: TextAlign.left,
+                    name.split(' ').take(2).join(' '), // "Dr. Ahmed"
+                    maxLines: 1,
+                    style: TextStyle(
+                      color: kPrimaryColor,
+                      fontSize: screenHeight * 0.0133,
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
                 ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Image.asset(
-                      'assets/photos/location.png',
-                      height: screenhight * 0.011,
-                    ),
-                    const SizedBox(width: 4),
-                    Flexible(
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
                       child: Text(
-                        textAlign: TextAlign.center,
+                        textAlign: TextAlign.left,
                         maxLines: 1,
                         location,
                         style: TextStyle(
-                          fontSize: screenhight * 0.0117,
+                          height: 0,
+                          color: kPrimaryColor,
+                          fontSize: screenHeight * 0.0133,
                           fontWeight: FontWeight.w400,
                         ),
                         overflow: TextOverflow.ellipsis,

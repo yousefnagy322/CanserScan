@@ -191,29 +191,31 @@ class _DoctorsPageState extends State<DoctorsPage> {
       child: Scaffold(
         backgroundColor: Colors.white,
         bottomNavigationBar: const HomeBottomNavBar(),
+
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(kToolbarHeight),
-          child: AppBar(
-            automaticallyImplyLeading: false,
-            centerTitle: true,
-            title: GradientText(
-              'Doctors',
-              style: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: screenWidth * 0.08,
+          child: Container(
+            decoration: const BoxDecoration(color: kPrimaryColor),
+            child: AppBar(
+              automaticallyImplyLeading: false,
+              centerTitle: true,
+              title: Text(
+                'Doctors',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: screenWidth * 0.08,
+                ),
               ),
-              colors: const [Color(0xff12748B), Color(0xff051F25)],
+              scrolledUnderElevation: 0,
+              toolbarHeight: 40,
+              leadingWidth: 90,
+              backgroundColor: Colors.transparent,
             ),
-            bottom: PreferredSize(
-              preferredSize: Size.fromHeight(1.0),
-              child: Divider(height: 1, thickness: 1, color: kPrimaryColor),
-            ),
-            scrolledUnderElevation: 0,
-            toolbarHeight: 40,
-            leadingWidth: 90,
-            backgroundColor: Colors.transparent,
           ),
         ),
+
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -226,6 +228,12 @@ class _DoctorsPageState extends State<DoctorsPage> {
                           (value) =>
                               setState(() => searchQuery = value.toLowerCase()),
                       decoration: InputDecoration(
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: kPrimaryColor,
+                            width: 2,
+                          ),
+                        ),
                         hintText: 'Search doctors by name...',
                         prefixIcon: Icon(Icons.search, color: kPrimaryColor),
                         filled: true,
@@ -614,7 +622,7 @@ class _DoctorsPageState extends State<DoctorsPage> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             gradient: LinearGradient(
-              colors: [Colors.transparent, Color(0xff56EACF).withOpacity(0.1)],
+              colors: [Colors.transparent, Color(0xff56EACF).withOpacity(0.15)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),

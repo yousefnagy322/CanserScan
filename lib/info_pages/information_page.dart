@@ -59,27 +59,22 @@ class _InformationPageState extends State<InformationPage> {
         return true; // Allow the pop to proceed
       },
       child: Scaffold(
-        backgroundColor: const Color(0xffE3F7F5),
+        backgroundColor: Colors.white, //const Color(0xffE3F7F5)
         bottomNavigationBar: const HomeBottomNavBar(),
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(kToolbarHeight),
           child: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xff56EACF), Color(0xff194D59)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
+            decoration: const BoxDecoration(color: kPrimaryColor),
             child: AppBar(
               automaticallyImplyLeading: false,
               centerTitle: true,
-              title: const Text(
+              title: Text(
                 'Information',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w700,
+                  fontSize: screenWidth * 0.08,
                 ),
               ),
               scrolledUnderElevation: 0,
@@ -156,23 +151,36 @@ class _InformationPageState extends State<InformationPage> {
     required double screenWidth,
   }) {
     return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 2,
+      color: Colors.grey[200],
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      child: ListTile(
-        leading: const Icon(Icons.info, color: kPrimaryColor),
-        title: Text(
-          title,
-          style: TextStyle(
-            fontSize: screenWidth * 0.045,
-            fontWeight: FontWeight.bold,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          gradient: LinearGradient(
+            colors: [Colors.transparent, Color(0xff56EACF).withOpacity(0.15)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
         ),
-        subtitle: Text(
-          subtitle,
-          style: TextStyle(fontSize: screenWidth * 0.035),
+        child: ListTile(
+          leading: const Icon(Icons.info, color: kPrimaryColor),
+          title: Text(
+            title,
+            style: TextStyle(
+              fontSize: screenWidth * 0.045,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          subtitle: Text(
+            subtitle,
+            style: TextStyle(fontSize: screenWidth * 0.035),
+          ),
+          onTap: () {
+            Navigator.pushNamed(context, destination);
+          },
         ),
-        onTap: () {
-          Navigator.pushNamed(context, destination);
-        },
       ),
     );
   }
