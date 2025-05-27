@@ -1,9 +1,10 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:canser_scan/helper/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:simple_gradient_text/simple_gradient_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:location/location.dart';
 import 'package:geolocator/geolocator.dart';
@@ -61,18 +62,13 @@ class _DoctorsPageState extends State<DoctorsPage> {
           await FirebaseFirestore.instance.collection('dermatologists').get();
       final uniqueGovernorates =
           snapshot.docs
-              .map(
-                (doc) =>
-                    (doc.data() as Map<String, dynamic>)['governorate']
-                        as String,
-              )
+              .map((doc) => (doc.data())['governorate'] as String)
               .toSet()
               .toList();
       setState(() {
         governorates = ['All', ...uniqueGovernorates];
       });
     } catch (e) {
-      print('Error fetching governorates: $e');
       setState(() {
         governorates = ['All', 'Cairo', 'Giza', 'Alexandria'];
       });
@@ -85,19 +81,13 @@ class _DoctorsPageState extends State<DoctorsPage> {
           await FirebaseFirestore.instance.collection('dermatologists').get();
       final uniqueSpecialties =
           snapshot.docs
-              .map(
-                (doc) =>
-                    (doc.data() as Map<String, dynamic>)['specialty']
-                        as String? ??
-                    'Unknown',
-              )
+              .map((doc) => (doc.data())['specialty'] as String? ?? 'Unknown')
               .toSet()
               .toList();
       setState(() {
         specialties = ['All', ...uniqueSpecialties];
       });
     } catch (e) {
-      print('Error fetching specialties: $e');
       setState(() {
         specialties = ['All', 'Dermatology', 'Oncology'];
       });
@@ -107,29 +97,25 @@ class _DoctorsPageState extends State<DoctorsPage> {
   Future<void> _getUserLocation() async {
     if (userLatLng != null) return;
 
-    try {
-      bool serviceEnabled = await location.serviceEnabled();
-      if (!serviceEnabled) {
-        serviceEnabled = await location.requestService();
-        if (!serviceEnabled) return;
-      }
-
-      PermissionStatus permissionGranted = await location.hasPermission();
-      if (permissionGranted == PermissionStatus.denied) {
-        permissionGranted = await location.requestPermission();
-        if (permissionGranted != PermissionStatus.granted) return;
-      }
-
-      var currentLocation = await location.getLocation();
-      setState(() {
-        userLatLng = LatLng(
-          currentLocation.latitude!,
-          currentLocation.longitude!,
-        );
-      });
-    } catch (e) {
-      print("Error getting location: $e");
+    bool serviceEnabled = await location.serviceEnabled();
+    if (!serviceEnabled) {
+      serviceEnabled = await location.requestService();
+      if (!serviceEnabled) return;
     }
+
+    PermissionStatus permissionGranted = await location.hasPermission();
+    if (permissionGranted == PermissionStatus.denied) {
+      permissionGranted = await location.requestPermission();
+      if (permissionGranted != PermissionStatus.granted) return;
+    }
+
+    var currentLocation = await location.getLocation();
+    setState(() {
+      userLatLng = LatLng(
+        currentLocation.latitude!,
+        currentLocation.longitude!,
+      );
+    });
   }
 
   void updateRegions(List<Doctor> doctors) {

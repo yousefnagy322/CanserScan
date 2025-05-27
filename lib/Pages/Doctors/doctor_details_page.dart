@@ -1,6 +1,7 @@
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
+
 import 'package:canser_scan/helper/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:simple_gradient_text/simple_gradient_text.dart';
 import 'package:cached_network_image/cached_network_image.dart'; // Import cached_network_image
 import 'package:url_launcher/url_launcher.dart';
 import '../map_page.dart';
@@ -16,7 +17,7 @@ class DoctorDetailsPage extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    void _launchGoogleMaps(double lat, double lng) async {
+    void launchGoogleMaps(double lat, double lng) async {
       final url =
           'https://www.google.com/maps/dir/?api=1&destination=$lat,$lng';
       if (await canLaunch(url)) {
@@ -455,7 +456,7 @@ class DoctorDetailsPage extends StatelessWidget {
                             elevation: 4,
                           ),
                           onPressed: () {
-                            _launchGoogleMaps(doctor.lat, doctor.lng);
+                            launchGoogleMaps(doctor.lat, doctor.lng);
                           },
                           child: Row(
                             mainAxisSize: MainAxisSize.min,

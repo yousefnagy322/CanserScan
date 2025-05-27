@@ -114,7 +114,6 @@ class _LoginPageState extends State<LoginPage> {
                               await isEmailVerified();
                               checkEmailVerification(context);
                             } on FirebaseAuthException catch (e) {
-                              print(e.code);
                               if (e.code == 'invalid-credential') {
                                 showSnackBar(
                                   context,

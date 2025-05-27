@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:canser_scan/helper/constants.dart';
 import 'package:canser_scan/Pages/info_pages/actinic_keratosis.dart';
 import 'package:canser_scan/Pages/info_pages/basal_cell_carcinoma.dart';
@@ -50,7 +52,6 @@ class _InformationPageState extends State<InformationPage> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
 
     return WillPopScope(
       onWillPop: () async {

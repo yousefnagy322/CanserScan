@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:canser_scan/Pages/about_us_page.dart';
 import 'package:canser_scan/Pages/Doctors/doctors_page.dart';
 import 'package:canser_scan/helper/constants.dart';

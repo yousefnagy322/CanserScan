@@ -9,7 +9,6 @@ class AppLanguagePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
-    double screenWidth = MediaQuery.of(context).size.width;
 
     // List of languages (only Arabic and English)
     final List<String> languages = ['English', 'Arabic'];
@@ -93,7 +92,6 @@ class AppLanguagePage extends StatelessWidget {
                           onTap: () {
                             // Handle language selection here
                             // For example, update app language and pop
-                            print('Selected: ${languages[index]}');
                           },
                         ),
                         if (index < languages.length - 1)

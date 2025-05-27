@@ -7,12 +7,7 @@ Future<void> sendVerificationEmail() async {
   User? user = FirebaseAuth.instance.currentUser;
 
   if (user != null && !user.emailVerified) {
-    try {
-      await user.sendEmailVerification();
-      print("Verification email sent.");
-    } catch (e) {
-      print("Error sending verification email: $e");
-    }
+    await user.sendEmailVerification();
   }
 }
 
@@ -20,14 +15,7 @@ Future<void> resendVerificationEmail() async {
   User? user = FirebaseAuth.instance.currentUser;
 
   if (user != null && !user.emailVerified) {
-    try {
-      await user.sendEmailVerification();
-      print("Verification email resent.");
-    } catch (e) {
-      print("Error resending verification email: $e");
-    }
-  } else {
-    print("User is already verified or not logged in.");
+    await user.sendEmailVerification();
   }
 }
 

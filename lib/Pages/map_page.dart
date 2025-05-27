@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable, deprecated_member_use, use_build_context_synchronously
+
 import 'package:canser_scan/Pages/Doctors/doctor_details_page.dart';
 import 'package:canser_scan/helper/constants.dart';
 import 'package:canser_scan/models/doctor.dart';
@@ -13,7 +15,7 @@ class MapPage extends StatefulWidget {
   double? doctorLatfdp;
   double? doctorLngfdp;
 
-  MapPage({this.doctorLatfdp, this.doctorLngfdp});
+  MapPage({super.key, this.doctorLatfdp, this.doctorLngfdp});
 
   @override
   MapPageState createState() => MapPageState();
@@ -68,11 +70,6 @@ class MapPageState extends State<MapPage> {
       if (permissionGranted == PermissionStatus.denied) {
         permissionGranted = await location.requestPermission();
         if (permissionGranted != PermissionStatus.granted) {
-          setState() {
-            _isLoading = false;
-          }
-
-          ;
           return;
         }
       }
@@ -90,8 +87,6 @@ class MapPageState extends State<MapPage> {
           CameraUpdate.newLatLngZoom(userLatLng!, 14),
         );
       }
-    } catch (e) {
-      print("Error getting location: $e");
     } finally {
       setState(() {
         _isLoading = false;
@@ -172,7 +167,6 @@ class MapPageState extends State<MapPage> {
             });
           },
           onError: (e) {
-            print("Error fetching dermatologists: $e");
             setState(() {
               _isLoading = false;
             });

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class NavigationProvider with ChangeNotifier {
   int _selectedIndex = 2; // Default to Home
-  List<int> _navigationStack = [2]; // Start with Home (index 2)
+  final List<int> _navigationStack = [2]; // Start with Home (index 2)
 
   int get selectedIndex => _selectedIndex;
   List<int> get navigationStack => _navigationStack;

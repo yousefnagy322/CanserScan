@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:canser_scan/Pages/chatbot_page.dart';
 import 'package:canser_scan/Pages/Login-Register/login_page.dart';
 import 'package:canser_scan/Pages/Drawer/account_settings_page.dart';
@@ -107,7 +109,6 @@ class _HomePageState extends State<HomePage> with RouteAware {
         _isLoading = false;
       });
     } catch (e) {
-      print("Error getting location: $e");
       setState(() {
         _isLoading = false;
       });
@@ -116,11 +117,6 @@ class _HomePageState extends State<HomePage> with RouteAware {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final screenWidth = size.width;
-    final screenHeight = size.height;
-    final User? user = FirebaseAuth.instance.currentUser;
-
     return Scaffold(
       backgroundColor: const Color(0xffFFFFFF),
       drawer: const HomeDrawer(),
@@ -385,20 +381,6 @@ class HomeBody extends StatelessWidget {
                   ),
                 ),
               ),
-
-              // Center(
-              //   child: GradientText(
-              //     'Skin Cancer Detector',
-              //     textAlign: TextAlign.center,
-              //     style: TextStyle(
-              //       fontWeight: FontWeight.w700,
-              //       fontSize: screenWidth * 0.045,
-              //       height: 1,
-              //     ),
-              //     colors: const [Color(0xff12748B), Color(0xff051F25)],
-              //     gradientDirection: GradientDirection.rtl,
-              //   ),
-              // ),
               SizedBox(height: screenHeight * 0.05),
               const Text(
                 'Latest Test',

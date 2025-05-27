@@ -201,59 +201,54 @@ class AccountSettingsState extends State<AccountSettings> {
       formKey.currentState!.save();
       String userId = FirebaseAuth.instance.currentUser!.uid;
 
-      try {
-        // Fetch current user data
-        DocumentSnapshot userDoc =
-            await FirebaseFirestore.instance
-                .collection('users')
-                .doc(userId)
-                .get();
-        Map<String, dynamic> currentData =
-            userDoc.data() as Map<String, dynamic>;
+      // Fetch current user data
+      DocumentSnapshot userDoc =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(userId)
+              .get();
+      Map<String, dynamic> currentData = userDoc.data() as Map<String, dynamic>;
 
-        // Use old values if new ones are null
-        String updatedFirstName =
-            newfirstname?.isNotEmpty == true
-                ? newfirstname!
-                : currentData['First name'];
-        String updatedSecondName =
-            newsecoundname?.isNotEmpty == true
-                ? newsecoundname!
-                : currentData['Second name'];
-        String updatedEmail =
-            newemail?.isNotEmpty == true ? newemail! : currentData['Email'];
-        String updatedPassword =
-            newpassword?.isNotEmpty == true
-                ? newpassword!
-                : currentData['Password'];
-        String updatedGender =
-            gender?.isNotEmpty == true ? gender! : currentData['Gender'];
+      // Use old values if new ones are null
+      String updatedFirstName =
+          newfirstname?.isNotEmpty == true
+              ? newfirstname!
+              : currentData['First name'];
+      String updatedSecondName =
+          newsecoundname?.isNotEmpty == true
+              ? newsecoundname!
+              : currentData['Second name'];
+      String updatedEmail =
+          newemail?.isNotEmpty == true ? newemail! : currentData['Email'];
+      String updatedPassword =
+          newpassword?.isNotEmpty == true
+              ? newpassword!
+              : currentData['Password'];
+      String updatedGender =
+          gender?.isNotEmpty == true ? gender! : currentData['Gender'];
 
-        // Update Firestore with new (or old) values
-        await FirebaseFirestore.instance.collection('users').doc(userId).update({
-          'First name': updatedFirstName,
-          'Second name': updatedSecondName,
-          'Email': updatedEmail,
-          'Password':
-              updatedPassword, // ⚠️ Storing passwords in Firestore is **not** secure
-          'Gender': updatedGender,
-        });
+      // Update Firestore with new (or old) values
+      await FirebaseFirestore.instance.collection('users').doc(userId).update({
+        'First name': updatedFirstName,
+        'Second name': updatedSecondName,
+        'Email': updatedEmail,
+        'Password':
+            updatedPassword, // ⚠️ Storing passwords in Firestore is **not** secure
+        'Gender': updatedGender,
+      });
 
-        // Update Firebase Authentication email (only if changed)
-        if (newemail?.isNotEmpty == true) {
-          await FirebaseAuth.instance.currentUser!.verifyBeforeUpdateEmail(
-            updatedEmail,
-          );
-        }
+      // Update Firebase Authentication email (only if changed)
+      if (newemail?.isNotEmpty == true) {
+        await FirebaseAuth.instance.currentUser!.verifyBeforeUpdateEmail(
+          updatedEmail,
+        );
+      }
 
-        // Update Firebase Authentication password (only if changed)
-        if (newpassword?.isNotEmpty == true) {
-          await FirebaseAuth.instance.currentUser!.updatePassword(
-            updatedPassword,
-          );
-        }
-      } catch (e) {
-        print('Error updating user data: $e');
+      // Update Firebase Authentication password (only if changed)
+      if (newpassword?.isNotEmpty == true) {
+        await FirebaseAuth.instance.currentUser!.updatePassword(
+          updatedPassword,
+        );
       }
     }
   }

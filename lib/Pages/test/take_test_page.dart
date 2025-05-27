@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:io';
 import 'package:canser_scan/helper/constants.dart';
 import 'package:canser_scan/provider/navigation_provider.dart';

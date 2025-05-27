@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 import 'package:canser_scan/Pages/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -74,7 +76,7 @@ class SplashScreenState extends State<SplashScreen> {
               ),
               SizedBox(height: 10),
               Text(
-                'Early Detection, Early Protection',
+                'Early Detection, Better Protection',
                 style: TextStyle(fontSize: 16, color: Colors.white),
               ),
               SizedBox(height: 30),

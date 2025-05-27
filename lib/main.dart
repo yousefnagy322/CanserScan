@@ -44,6 +44,8 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
+  MyApp({super.key});
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
