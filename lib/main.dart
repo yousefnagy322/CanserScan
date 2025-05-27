@@ -1,39 +1,36 @@
-import 'package:canser_scan/Chatbot/chat_page.dart';
-import 'package:canser_scan/Login-Register/confirm_page.dart';
-import 'package:canser_scan/Login-Register/forgot_password_page.dart';
-import 'package:canser_scan/Login-Register/login_page.dart';
-import 'package:canser_scan/Login-Register/register_page.dart';
-import 'package:canser_scan/about_us_page.dart';
-import 'package:canser_scan/account_settings.dart';
-
-import 'package:canser_scan/app_language_page.dart';
-import 'package:canser_scan/doctors_page.dart';
+import 'package:canser_scan/Pages/chatbot_page.dart';
+import 'package:canser_scan/Pages/Login-Register/confirm_page.dart';
+import 'package:canser_scan/Pages/Login-Register/forgot_password_page.dart';
+import 'package:canser_scan/Pages/Login-Register/login_page.dart';
+import 'package:canser_scan/Pages/Login-Register/register_page.dart';
+import 'package:canser_scan/Pages/about_us_page.dart';
+import 'package:canser_scan/Pages/Drawer/account_settings_page.dart';
+import 'package:canser_scan/Pages/Drawer/app_language_page.dart';
+import 'package:canser_scan/Pages/Doctors/doctors_page.dart';
 import 'package:canser_scan/helper/constants.dart';
-import 'package:canser_scan/history_page.dart';
-import 'package:canser_scan/home_page.dart';
-import 'package:canser_scan/home_page_v2.dart';
-import 'package:canser_scan/info_pages/actinic_keratosis.dart';
-import 'package:canser_scan/info_pages/basal_cell_carcinoma.dart';
-import 'package:canser_scan/info_pages/benign_keratosis.dart';
-import 'package:canser_scan/info_pages/dermatofibroma.dart';
-import 'package:canser_scan/info_pages/information_page.dart';
-import 'package:canser_scan/info_pages/melanocytic_nevus.dart';
-import 'package:canser_scan/info_pages/melanoma.dart';
-import 'package:canser_scan/info_pages/skin_cancer.dart';
-import 'package:canser_scan/info_pages/vascular_lesion.dart';
-import 'package:canser_scan/map_page.dart';
-
-import 'package:canser_scan/navigation_provider.dart';
+import 'package:canser_scan/Pages/history_page.dart';
+import 'package:canser_scan/trash/home_page_old.dart';
+import 'package:canser_scan/Pages/home_page.dart';
+import 'package:canser_scan/Pages/info_pages/actinic_keratosis.dart';
+import 'package:canser_scan/Pages/info_pages/basal_cell_carcinoma.dart';
+import 'package:canser_scan/Pages/info_pages/benign_keratosis.dart';
+import 'package:canser_scan/Pages/info_pages/dermatofibroma.dart';
+import 'package:canser_scan/Pages/info_pages/information_page.dart';
+import 'package:canser_scan/Pages/info_pages/melanocytic_nevus.dart';
+import 'package:canser_scan/Pages/info_pages/melanoma.dart';
+import 'package:canser_scan/Pages/info_pages/skin_cancer.dart';
+import 'package:canser_scan/Pages/info_pages/vascular_lesion.dart';
+import 'package:canser_scan/Pages/map_page.dart';
+import 'package:canser_scan/provider/navigation_provider.dart';
 import 'package:canser_scan/splash.dart';
-import 'package:canser_scan/test/take_test_confirm_page.dart';
-import 'package:canser_scan/test/take_test_page.dart';
-import 'package:canser_scan/test/test_result_neg.dart';
-import 'package:canser_scan/test/test_result_pos.dart';
+import 'package:canser_scan/Pages/test/take_test_confirm_page.dart';
+import 'package:canser_scan/Pages/test/take_test_page.dart';
+import 'package:canser_scan/Pages/test/test_result_neg.dart';
+import 'package:canser_scan/Pages/test/test_result_pos.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
-import 'firebase_options.dart';
+import 'core/firebase_options.dart';
 import 'package:flutter/material.dart';
-import 'welcome_page.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
@@ -63,12 +60,11 @@ class MyApp extends StatelessWidget {
           ),
         ),
         routes: {
-          WelcomePage.id: (context) => WelcomePage(),
           LoginPage.id: (context) => LoginPage(),
           RegisterPage.id: (context) => RegisterPage(),
           ConfirmPage.id: (context) => ConfirmPage(),
+          HomePageOld.id: (context) => HomePageOld(),
           HomePage.id: (context) => HomePage(),
-          HomePageV2.id: (context) => HomePageV2(),
           AccountSettings.id: (context) => AccountSettings(),
           TakeTestPage.id: (context) => TakeTestPage(),
           TakeTestConfirmPage.id: (context) => TakeTestConfirmPage(),
@@ -88,7 +84,6 @@ class MyApp extends StatelessWidget {
           DoctorsPage.id: (context) => DoctorsPage(),
           MapPage.id: (context) => MapPage(),
           HistoryPage.id: (context) => HistoryPage(),
-
           ForgotPasswordPage.id: (context) => ForgotPasswordPage(),
           AboutUsPage.id: (context) => const AboutUsPage(),
           AppLanguagePage.id: (context) => const AppLanguagePage(),

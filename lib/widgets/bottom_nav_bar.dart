@@ -1,10 +1,10 @@
-import 'package:canser_scan/about_us_page.dart';
-import 'package:canser_scan/doctors_page.dart';
+import 'package:canser_scan/Pages/about_us_page.dart';
+import 'package:canser_scan/Pages/Doctors/doctors_page.dart';
 import 'package:canser_scan/helper/constants.dart';
-import 'package:canser_scan/home_page_v2.dart';
-import 'package:canser_scan/info_pages/information_page.dart';
-import 'package:canser_scan/navigation_provider.dart';
-import 'package:canser_scan/test/take_test_page.dart';
+import 'package:canser_scan/Pages/home_page.dart';
+import 'package:canser_scan/Pages/info_pages/information_page.dart';
+import 'package:canser_scan/provider/navigation_provider.dart';
+import 'package:canser_scan/Pages/test/take_test_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -39,7 +39,7 @@ class HomeBottomNavBar extends StatelessWidget {
     NavBarItem(
       icon: 'assets/photos/navbarhome.png',
       label: 'Home',
-      route: HomePageV2.id,
+      route: HomePage.id,
       isActive: true,
     ),
     NavBarItem(

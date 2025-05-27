@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'package:canser_scan/home_page_v2.dart';
+import 'package:canser_scan/Pages/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:canser_scan/Login-Register/login_page.dart';
+import 'package:canser_scan/Pages/Login-Register/login_page.dart';
 import 'package:canser_scan/helper/constants.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -38,7 +38,7 @@ class SplashScreenState extends State<SplashScreen> {
       // User is logged in, navigate to Home Page
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomePageV2()),
+        MaterialPageRoute(builder: (context) => HomePage()),
       );
     } else {
       // User is not logged in, navigate to Login Page

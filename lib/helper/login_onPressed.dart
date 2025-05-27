@@ -1,7 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:canser_scan/helper/show_snack_bar.dart';
-import 'package:canser_scan/home_page.dart';
+import 'package:canser_scan/trash/home_page_old.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +15,7 @@ Future<void> loginOnPressed(
     try {
       await loginUser(email, password);
       showSnackBar(context, 'suucess');
-      Navigator.pushNamed(context, HomePage.id);
+      Navigator.pushNamed(context, HomePageOld.id);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         showSnackBar(context, 'No user found for that email.');
