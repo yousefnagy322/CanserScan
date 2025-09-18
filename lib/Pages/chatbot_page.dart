@@ -6,7 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 // Define the GeminiProvider as a top-level constant
 const String geminiApiKey =
-    'AIzaSyCIcDAUfJMDoUOpGjB8HrQ1N7PJuoIF-Eg'; // Replace with secure loading (e.g., .env)
+    ''; 
 
 final _provider = GeminiProvider(
   model: GenerativeModel(
